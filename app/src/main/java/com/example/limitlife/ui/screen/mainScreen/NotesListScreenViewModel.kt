@@ -1,4 +1,4 @@
-package com.example.limitlife.ui.screen.MainScreen
+package com.example.limitlife.ui.screen.mainScreen
 
 import androidx.lifecycle.ViewModel
 

@@ -1,4 +1,4 @@
-package com.example.limitlife.ui.screen.MainScreen
+package com.example.limitlife.ui.screen.mainScreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -7,11 +7,17 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -36,7 +42,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -46,20 +51,35 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.limitlife.R
+import com.example.limitlife.utils.dummyList
 
 
 @Composable
-fun NotesListScreen (notes: List<Pair<String, String>>, onAddNoteClick: () -> Unit , modifier : Modifier = Modifier ) {
+fun NotesListMainScreen (
+    onDetailsIconClicked : () -> Unit ,
+    notes: List<Pair<String, String>>,
+    onAddNoteClick: () -> Unit,
+    modifier : Modifier = Modifier  ,
+    isSideBarEnabled :Boolean = false
+ ) {
     Scaffold(
+        modifier = modifier ,
         floatingActionButton = {
             FloatingActionButton(onClick = onAddNoteClick) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add Note")
             }
         } ,
-        topBar = { NotesListScreenSearchScreen(onSearch =  {} ) }
+        topBar = {
+            SearchBar(
+                onDetailsIconClicked = onDetailsIconClicked,
+                isSideBarEnabled =  isSideBarEnabled,
+                onSearch =  {}
+            )
+        }
     ) {
         NotesList(notes = notes , modifier = Modifier.padding(it))
     }
@@ -124,80 +144,70 @@ fun NoteItem(noteTitle: String, imageUrl: String , modifier: Modifier = Modifier
 }
 
 
-@OptIn(ExperimentalComposeUiApi::class)
-@Composable
-fun SearchBar(
-    onSearch : (String) -> Unit ,
-    modifier : Modifier = Modifier ,
-) {
-    var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
-    val keyboardController = LocalSoftwareKeyboardController.current
-    TextField(
-        value = searchQuery,
-        onValueChange = { searchQuery = it },
-        placeholder = { Text(text = "Search...", fontSize = 16.sp) },
-        leadingIcon = {
-            IconButton(onClick = {
-                // Handle voice search click
-            }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_mic_24), // Replace with your mic icon
-                    contentDescription = "Mic",
-                    tint = Color.Gray
-                )
-            }
-        },
-        trailingIcon = {
-            IconButton(onClick = {
-                onSearch(searchQuery.text) // Trigger search when the icon is clicked
-            }) {
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_search_24), // Replace with your search icon
-                    contentDescription = "Search",
-                    tint = Color.Gray
-                )
-            }
-        },
-        singleLine = true,
-        shape = RoundedCornerShape(24.dp), // Rounded corners
-        keyboardOptions = KeyboardOptions.Default.copy(
-            imeAction = ImeAction.Search // IME action set to "Search"
-        ),
-        keyboardActions = KeyboardActions(
-            onSearch = {
-                onSearch(searchQuery.text) // Trigger search when the "Search" key is pressed
-                keyboardController?.hide() // Hide the keyboard
-            }
-        ),
-        colors = TextFieldDefaults.colors(
-            focusedIndicatorColor =  Color.Transparent ,
-            unfocusedIndicatorColor =  Color.Transparent ,
-        ),
-        modifier = modifier
-            .fillMaxWidth()
-            .height(56.dp)
-            .background(Color.LightGray, shape = RoundedCornerShape(24.dp))
-    )
-}
 
 @Composable
-fun NotesListScreenSearchScreen (
+fun SearchBar (
+    onDetailsIconClicked : () -> Unit ,
     modifier: Modifier = Modifier ,
-    isMenuIconDisplaying : Boolean = true ,
+    isSideBarEnabled : Boolean = true ,
     onSearch: (String) -> Unit ,
 ) {
     Row(  modifier = modifier.padding(
         top = 12.dp ,
         end = 8.dp ,
-        bottom = 12.dp
+        bottom = 12.dp ,
+        start = 8.dp
+        ).statusBarsPadding()
+    )  {
+        var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
+        val keyboardController = LocalSoftwareKeyboardController.current
+        TextField(
+            value = searchQuery,
+            onValueChange = { searchQuery = it },
+            placeholder = { Text(text = "Search...", fontSize = 16.sp) },
+            leadingIcon = {
+                IconButton(
+                    onClick = onDetailsIconClicked ,
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_menu_24), // Replace with your mic icon
+                        contentDescription = "Mic",
+                        tint = Color.Gray ,
+                        modifier =  Modifier.fillMaxSize()
+                    )
+                }
+            },
+            trailingIcon = {
+                IconButton(onClick = {
+                    onSearch(searchQuery.text) // Trigger search when the icon is clicked
+                }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.baseline_search_24), // Replace with your search icon
+                        contentDescription = "Search",
+                        tint = Color.Gray
+                    )
+                }
+            },
+            singleLine = true,
+            shape = RoundedCornerShape(24.dp), // Rounded corners
+            keyboardOptions = KeyboardOptions.Default.copy(
+                imeAction = ImeAction.Search // IME action set to "Search"
+            ),
+            keyboardActions = KeyboardActions(
+                onSearch = {
+                    onSearch(searchQuery.text) // Trigger search when the "Search" key is pressed
+                    keyboardController?.hide() // Hide the keyboard
+                }
+            ),
+            colors = TextFieldDefaults.colors(
+                focusedIndicatorColor =  Color.Transparent ,
+                unfocusedIndicatorColor =  Color.Transparent ,
+            ),
+            modifier = modifier
+                .fillMaxWidth()
+                .height(56.dp)
+                .background(Color.LightGray, shape = RoundedCornerShape(24.dp))
         )
-    ) {
-        if (isMenuIconDisplaying){
-            IconButton(onClick = { /*TODO*/ } ) {
-                Icon(painter = painterResource(id = R.drawable.baseline_menu_24), contentDescription = null , modifier.fillMaxSize())
-            }
-        }
-        SearchBar(onSearch = onSearch)
     }
 }
 @Preview(showBackground = true)
@@ -212,17 +222,12 @@ fun PreviewNoteItem() {
 @Preview(showBackground = true)
 @Composable
 fun PreviewNotesList() {
-    val notes = listOf(
-        Pair("Unit 7: Part 1", "https://example.com/image1.jpg"),
-        Pair("Unit 5: Part 2", "https://example.com/image2.jpg"),
-        Pair("Unit 6: Part 2", "https://example.com/image3.jpg"),
-        Pair("Creating a Server on Android", "https://example.com/image4.jpg")
-    )
-    NotesListScreen(notes = notes  , onAddNoteClick =  {})
+    val notes =
+    NotesListMainScreen(notes = dummyList  , onAddNoteClick =  {} , onDetailsIconClicked = {} )
 }
 
 @Preview
 @Composable
 fun SearchBarPreview() {
-    SearchBar(onSearch = { })
+    SearchBar(onSearch = { } , onDetailsIconClicked = {})
 }
