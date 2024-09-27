@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
     id("org.jetbrains.kotlin.plugin.serialization") version "2.0.20" // Ensure you're using the correct version
+
 }
 
 android {
@@ -71,4 +72,13 @@ dependencies {
     // navigation implementation
     implementation(libs.navigation.compose)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    implementation("androidx.compose.material:material-icons-extended:1.4.3")
+
+    // datastore files
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
+
+    // hilt dependney injection
+
+
 }
