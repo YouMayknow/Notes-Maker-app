@@ -71,4 +71,9 @@ dependencies {
     // navigation implementation
     implementation(libs.navigation.compose)
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    implementation("androidx.compose.material:material-icons-extended:1.4.3")
+
+    // datastore files
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
 }
