@@ -23,10 +23,10 @@ fun HomeScreen (
         }
         navigation<EntryScreen>( startDestination = Signup){
             composable<Login>{
-                LoginScreen()
+                LoginScreen(navigateToSignupScreen = {navController.navigate(Signup)})
             }
             composable<Signup> {
-                SignupScreen(navigateToLoginScreen = { navController.navigate(Login) })
+                SignupScreen()
             }
         }
 
@@ -37,4 +37,3 @@ fun HomeScreen (
 @Serializable  object Login
 @Serializable object Signup
 @Serializable object MainScreen
-

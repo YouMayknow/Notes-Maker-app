@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -15,19 +16,22 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.limitlife.ui.screen.HomeScreen
+import com.example.limitlife.ui.screen.entryScreen.SignupScreen
+import com.example.limitlife.ui.screen.entryScreen.SignupScreenViewModel
 import com.example.limitlife.ui.screen.mainScreen.UserDetailedScreen
 import com.example.limitlife.ui.theme.LimitLifeTheme
+import dagger.hilt.android.AndroidEntryPoint
 
+
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             LimitLifeTheme {
-                val layoutDirection = LocalLayoutDirection.current
-               //SignupScreen(navigateToLoginScreen = {})
-                //HomeScreen(modifier =Modifier.fillMaxSize())
-                AppScreen()
+                SignupScreen()
             }
         }
     }
