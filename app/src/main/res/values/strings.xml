@@ -4,8 +4,6 @@
     <string name="Login">Login</string>
     <string name="create_account">CREATE ACCOUNT</string>
     <string name="login_account">LOGIN ACCOUNT</string>
-    <string name="navigate_to_signup">Don \'t have account , Signup</string>
-    <string name="navigate_to_login">Already have account , Login</string>
 
     <string name="drawer_item_recent">Recent</string>
     <string name="drawer_item_starred">Starred</string>

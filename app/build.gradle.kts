@@ -3,11 +3,6 @@ plugins {
     alias(libs.plugins.jetbrains.kotlin.android)
     alias(libs.plugins.compose.compiler)
     id("org.jetbrains.kotlin.plugin.serialization") version "2.0.20" // Ensure you're using the correct version
-
-    // kapt for hilt and dagger
-    id("kotlin-kapt")
-    id("com.google.dagger.hilt.android")
-
 }
 
 android {
@@ -81,19 +76,4 @@ dependencies {
     // datastore files
     implementation("androidx.datastore:datastore-preferences:1.0.0")
 
-    // hilt dependency
-    implementation("com.google.dagger:hilt-android:2.51.1")
-    kapt("com.google.dagger:hilt-android-compiler:2.51.1")
-
-    // retrofit and it's converter
-    implementation("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
-    implementation("com.squareup.okhttp3:okhttp:4.11.0")
-
-    // hilt ans viewmodel intergration 
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
-
-}
-kapt {
-    correctErrorTypes = true
 }

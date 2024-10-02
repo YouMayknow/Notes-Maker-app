@@ -38,7 +38,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -65,10 +64,8 @@ fun NotesListMainScreen (
     notes: List<Pair<String, String>>,
     onAddNoteClick: () -> Unit,
     modifier : Modifier = Modifier  ,
-    isSideBarEnabled :Boolean = false ,
-    viewModel: NotesListScreenViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    isSideBarEnabled :Boolean = false
  ) {
-   // val uiState = viewModel.getUserToken.collectAsState()
     Scaffold(
         modifier = modifier ,
         floatingActionButton = {
@@ -84,7 +81,6 @@ fun NotesListMainScreen (
             )
         }
     ) {
-        Text(text =   "fddf") //uiState.value.userToken)
         NotesList(notes = notes , modifier = Modifier.padding(it))
     }
 }
@@ -156,14 +152,12 @@ fun SearchBar (
     isSideBarEnabled : Boolean = true ,
     onSearch: (String) -> Unit ,
 ) {
-    Row(  modifier = modifier
-        .padding(
-            top = 12.dp,
-            end = 8.dp,
-            bottom = 12.dp,
-            start = 8.dp
-        )
-        .statusBarsPadding()
+    Row(  modifier = modifier.padding(
+        top = 12.dp ,
+        end = 8.dp ,
+        bottom = 12.dp ,
+        start = 8.dp
+        ).statusBarsPadding()
     )  {
         var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
         val keyboardController = LocalSoftwareKeyboardController.current
