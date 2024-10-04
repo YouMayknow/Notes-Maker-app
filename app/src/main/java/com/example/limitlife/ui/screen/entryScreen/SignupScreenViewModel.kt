@@ -46,6 +46,7 @@ class  SignupScreenViewModel @Inject constructor(
                             responseToDisplay = "Successful ,logging....."
                         )
                     }
+                    val token = response.body()?.token
                     userTokenRepository.saveUserToken(response.body()?.token ?: "")
                     _uiState.update {
                         it.copy(

@@ -1,10 +1,20 @@
 package com.example.limitlife.repository
 
+import androidx.compose.runtime.collectAsState
+import androidx.datastore.core.DataStore
+import androidx.datastore.dataStore
+import androidx.lifecycle.LifecycleCoroutineScope
 import com.example.limitlife.network.AppApiService
 import com.example.limitlife.network.LoginResponse
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
+import okhttp3.Interceptor
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.Retrofit
@@ -16,11 +26,15 @@ interface  UserDataRepository : AppApiService {
   override suspend fun loginUser(username: String, password: String) : Response<LoginResponse>
 }
 class NetworkUserDataRepository @Inject constructor(
-  //  private  val appApiService: AppApiService
+    tokenRepository: OfflineUserTokenRepository
 ) : UserDataRepository {
-    private  val baseUrl =" http://192.168.1.12:8080"
+    private var client = OkHttpClient.Builder()
+        .addInterceptor(AuthInspector(tokenRepository))
+        .build()
+    private  val baseUrl = "http://192.168.1.14:8080"
     private val retrofit = Retrofit.Builder()
         .baseUrl(baseUrl)
+        .client(client)
         .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
         .build()
     private val retrofitService : AppApiService by lazy {
@@ -28,4 +42,25 @@ class NetworkUserDataRepository @Inject constructor(
     }
     override suspend fun registerUser(username: String, password: String) = retrofitService.registerUser(username, password)
     override suspend fun loginUser(username: String, password: String): Response<LoginResponse> = retrofitService.loginUser(username, password)
+
+
+
+
 }
+
+
+
+class AuthInspector ( private val tokenRepository: OfflineUserTokenRepository ) : Interceptor{
+    override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
+        val originalRequest = chain.request() // intercept the chain and get the original request that is being made
+        //create a builder to create a new request with manipulation
+        val token =   runBlocking {
+              tokenRepository.userToken.first()
+}
+        val builder = originalRequest.newBuilder()
+            .header("Authorization","Bearer $token")
+        return chain.proceed(builder.build())
+    }
+}
+
+

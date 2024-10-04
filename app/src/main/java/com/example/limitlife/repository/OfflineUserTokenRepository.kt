@@ -15,7 +15,7 @@ class OfflineUserTokenRepository(
 
 ) {
    private companion object {
-        val TOKEN = stringPreferencesKey("")
+        val TOKEN = stringPreferencesKey("user_token")
     }
     suspend fun saveUserToken (userToken : String) {
         dataStore.edit { token ->
