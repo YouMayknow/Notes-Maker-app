@@ -13,44 +13,55 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.modifier.modifierLocalOf
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.limitlife.R
 import com.example.limitlife.ui.theme.LimitLifeTheme
 
 @Composable
 fun SignupScreen(
     modifier: Modifier = Modifier ,
-    navigateToLoginScreen : () -> Unit
+    viewModel: SignupScreenViewModel = hiltViewModel()
 ) {
     Box(
         modifier = modifier
-            .fillMaxSize() ,    // Light blue background
+            .fillMaxSize()
+            .background(Color(0xFFB3E5FC)) ,    // Light blue background
         contentAlignment = Alignment.Center
     ) {
+         val uiState = viewModel.uiState.collectAsState()
+        val currentUiScreen = uiState.value.currentScreen
         Card(
-            modifier = Modifier
-                .width(300.dp),
+            modifier = Modifier,
             shape = RoundedCornerShape(8.dp),
             elevation = CardDefaults.outlinedCardElevation(4.dp)
         ) {
@@ -60,14 +71,14 @@ fun SignupScreen(
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                CredentialsOfSigningColumn(heading =R.string.signUp , aheadActionLabel = R.string.create_account  ) {
-
+                Text(text = uiState.value.responseToDisplay ?: "" , color = MaterialTheme.colorScheme.error )
+                CredentialsOfSigningColumn(heading = currentUiScreen.heading  , aheadActionLabel = currentUiScreen.aheadActionButton  ) { username , password ->
+                    viewModel.aheadActionButton(username , password)
                 }
                 // Login Link
-                TextButton(onClick = navigateToLoginScreen) {
+                TextButton(onClick = { viewModel.navigateScreenButtonAction() }) {
                     Text(
-                        text = "Already a user? LOGIN",
-                      //  color = Color.Blue,
+                        text = stringResource(id = currentUiScreen.navigateScreenButtonHeading),
                         textAlign = TextAlign.Center
                     )
                 }
@@ -82,8 +93,10 @@ fun CredentialsOfSigningColumn(
     modifier : Modifier = Modifier,
     heading : Int ,
     aheadActionLabel : Int ,
-    aheadAction : () -> Unit ,
+    aheadAction : (String , String) -> Unit ,
 ) {
+    var userName by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
     Column(modifier = modifier
         .padding(16.dp)
         .fillMaxWidth(),
@@ -94,32 +107,44 @@ fun CredentialsOfSigningColumn(
             fontSize = 20.sp,
             modifier = Modifier
                 .padding(bottom = 16.dp) ,
+
         )
 
         // Email Input Field
         TextField(
-            value = "", // You can manage state here
-            onValueChange = {},
-            label = { Text("Email") },
+            value = userName, // You can manage state here
+            onValueChange = {userName =  it},
+            label = { Text("Username") },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp)
+                .padding(bottom = 16.dp) ,
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Next
+            ) ,
+            maxLines = 1 ,
         )
 
         // Password Input Field
         TextField(
-            value = "", // You can manage state here
-            onValueChange = {},
+            value = password, // You can manage state here
+            onValueChange = {password = it},
             label = { Text("Password") },
             visualTransformation = PasswordVisualTransformation(),
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp)
+                .padding(bottom = 16.dp) ,
+            keyboardActions = KeyboardActions(
+                onDone = { aheadAction(userName, password) }
+            ),
+            keyboardOptions = KeyboardOptions(
+                imeAction = ImeAction.Done
+            ) ,
+            maxLines = 1 ,
         )
 
         // Sign Up Button
         Button(
-            onClick =aheadAction ,
+            onClick = { aheadAction(userName, password) } ,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 8.dp),
@@ -175,7 +200,7 @@ fun CredentialsOfSigningColumn(
 @Composable
 fun PreviewSignUpScreen() {
     LimitLifeTheme(darkTheme = true) {
-    SignupScreen(navigateToLoginScreen = {})
+    SignupScreen( )
 
     }
 }
@@ -184,7 +209,9 @@ fun PreviewSignUpScreen() {
 @Composable
 fun CredentialsOfSigningPreview() {
     LimitLifeTheme(darkTheme = true) {
-    CredentialsOfSigningColumn(heading = R.string.signUp , aheadActionLabel = R.string.create_account ){}
+    CredentialsOfSigningColumn(heading = R.string.signUp , aheadActionLabel = R.string.create_account ) {
+            _ , _ ->
+    }
     }
 }
 
