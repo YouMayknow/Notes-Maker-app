@@ -1,15 +1,10 @@
 package com.example.limitlife.repository
 
-import androidx.compose.runtime.collectAsState
-import androidx.datastore.core.DataStore
-import androidx.datastore.dataStore
-import androidx.lifecycle.LifecycleCoroutineScope
 import com.example.limitlife.network.AppApiService
 import com.example.limitlife.network.LoginResponse
+import com.example.limitlife.network.ShortNote
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
 import okhttp3.Interceptor
@@ -31,21 +26,20 @@ class NetworkUserDataRepository @Inject constructor(
     private var client = OkHttpClient.Builder()
         .addInterceptor(AuthInspector(tokenRepository))
         .build()
-    private  val baseUrl = "http://192.168.1.14:8080"
+    private  val baseUrl = "http://192.168.1.18:8080"
+   private val json = Json{ignoreUnknownKeys = true }
     private val retrofit = Retrofit.Builder()
         .baseUrl(baseUrl)
         .client(client)
-        .addConverterFactory(Json.asConverterFactory("application/json".toMediaType()))
+        .addConverterFactory(json.asConverterFactory("application/json".toMediaType()))
         .build()
     private val retrofitService : AppApiService by lazy {
         retrofit.create(AppApiService::class.java)
     }
     override suspend fun registerUser(username: String, password: String) = retrofitService.registerUser(username, password)
     override suspend fun loginUser(username: String, password: String): Response<LoginResponse> = retrofitService.loginUser(username, password)
-
-
-
-
+    override suspend fun getAllUserNotes(): Response<List<ShortNote>> =  retrofitService.getAllUserNotes()
+    override suspend fun createNewNote(shortNote: ShortNote) = retrofitService.createNewNote(shortNote)
 }
 
 

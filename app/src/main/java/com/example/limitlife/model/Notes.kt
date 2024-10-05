@@ -10,4 +10,5 @@ data class Notes(
     val id : Int ,
     val lastEdit : String ,
     val content : String ,
+    val image : String  = "null"
 )

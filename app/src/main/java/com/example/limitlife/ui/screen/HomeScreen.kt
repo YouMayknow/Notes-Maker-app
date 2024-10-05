@@ -5,13 +5,15 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
-import com.example.limitlife.ui.screen.entryScreen.LoginScreen
 import com.example.limitlife.ui.screen.entryScreen.SignupScreen
 import com.example.limitlife.ui.screen.mainScreen.MainScreenNavigation
 import kotlinx.serialization.Serializable
 
+
+/*This screen have access to all the screen of the app and sub navigation and navigation
+is implemented with it
+ */
 @Composable
 fun HomeScreen (
     navController: NavHostController = rememberNavController() ,
@@ -19,21 +21,14 @@ fun HomeScreen (
 ) {
     NavHost(navController = navController, startDestination = EntryScreen , modifier = modifier){
         composable<MainScreen>{
-            MainScreenNavigation(navController = navController)
+            MainScreenNavigation()
         }
-        navigation<EntryScreen>( startDestination = Signup){
-            composable<Login>{
-                LoginScreen(navigateToSignupScreen = {navController.navigate(Signup)})
-            }
-            composable<Signup> {
-                SignupScreen()
-            }
+        composable<EntryScreen> {
+            SignupScreen(navigateToMainScreen = {navController.navigate(MainScreen)})
         }
 
     }
 }
 
 @Serializable object EntryScreen
-@Serializable  object Login
-@Serializable object Signup
 @Serializable object MainScreen

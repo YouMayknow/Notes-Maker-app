@@ -27,6 +27,10 @@ import com.example.limitlife.ui.theme.LimitLifeTheme
 import com.example.limitlife.utils.DrawerItems
 import com.example.limitlife.utils.dummyList
 
+
+/* this screen makes the drawer screen on the basis of
+ options clicked by the user
+ */
 @Composable
 fun IndividualDrawerScreen (
     onBackClick : () -> Unit , 
@@ -35,7 +39,7 @@ fun IndividualDrawerScreen (
 
 ) {
     BackHandler {
-        onBackClick
+        onBackClick()
     }
     Scaffold(
         modifier = modifier.fillMaxSize() ,
@@ -68,7 +72,8 @@ fun IndividualDrawerScreen (
             }
         }
     ) {
-        NotesList(notes = dummyList , modifier = modifier.padding(it))
+        Text(text = "asdfsd", modifier.padding(it))
+      //  NotesList(notes = dummyList , modifier = modifier.padding(it))
     }
 }
 

@@ -9,6 +9,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
@@ -24,8 +25,9 @@ class  SignupScreenViewModel @Inject constructor(
 ) : ViewModel() {
     private var _uiState =  MutableStateFlow(SignupScreenUiState())
     val uiState = _uiState.asStateFlow()
-    fun aheadActionButton (username: String , password: String)= viewModelScope.launch{
+    fun aheadActionButton (username: String , password: String)  = viewModelScope.launch{
         try {
+            /*this block will be executed when the user is creating account*/
             if (_uiState.value.currentScreen == AuthenticationScreen.Signup) {
                 val response = userDataRepository.registerUser(username, password)
                 _uiState.update {
@@ -38,6 +40,12 @@ class  SignupScreenViewModel @Inject constructor(
                     )
                 }
             }
+
+            /*this block will be executed when the user is logging in his account
+            * here first if the user is authenticated the first if block will be applied
+            * if fails the second one wil highlight the issue
+            * it will also catch the http exception from the  server
+            * iOException from the client side */
             else {
                 val response = userDataRepository.loginUser(username, password)
                 if (response.isSuccessful){
@@ -46,16 +54,14 @@ class  SignupScreenViewModel @Inject constructor(
                             responseToDisplay = "Successful ,logging....."
                         )
                     }
-                    val token = response.body()?.token
                     userTokenRepository.saveUserToken(response.body()?.token ?: "")
+                    // this display the token to th user just for trials only
                     _uiState.update {
                         it.copy(
-                            responseToDisplay = userTokenRepository.userToken.toString()
+                            responseToDisplay = userTokenRepository.userToken.first() ,
+                            isLoginSuccess = true
                         )
                     }
-                    val userToken = userTokenRepository.userToken.map {
-                        it
-                    }.stateIn(viewModelScope , SharingStarted.WhileSubscribed(5000L),"" )
                 } else {
                     _uiState.update {
                         it.copy(
@@ -82,7 +88,6 @@ class  SignupScreenViewModel @Inject constructor(
                 )
             }
         }
-
     }
 
     fun navigateScreenButtonAction (){
@@ -97,9 +102,12 @@ class  SignupScreenViewModel @Inject constructor(
     }
 }
 
+
+
 data class  SignupScreenUiState(
     val responseToDisplay : String? = "" ,
     val currentScreen : AuthenticationScreen = AuthenticationScreen.Login ,
+    val isLoginSuccess : Boolean  = false
 )
 
 enum class  AuthenticationScreen(

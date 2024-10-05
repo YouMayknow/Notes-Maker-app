@@ -10,6 +10,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import kotlinx.serialization.Serializable
 
+
+/*it is a main  navigation screen that have access of all the screen except entry screen it takes to notesListAndDetail
+screen that have the both our screen .
+on this basis of the click it prepares the drawer based screen for the user using individual screen
+ */
 @Composable
 fun  MainScreenNavigation (
     navController: NavHostController = rememberNavController()  ,
@@ -17,7 +22,7 @@ fun  MainScreenNavigation (
 ) {
     NavHost(navController = navController, startDestination = ScreenUserDetail , modifier = modifier) {
         composable<ScreenUserDetail>{
-            UserDetailedScreen(
+            UserDetailsAndDrawerScreen(
                 onDrawerItemClicked = {drawerItem ->
                     navController.navigate("DrawerItems/${drawerItem}")
                 }

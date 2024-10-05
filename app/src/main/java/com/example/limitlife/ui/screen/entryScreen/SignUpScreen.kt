@@ -50,7 +50,8 @@ import com.example.limitlife.ui.theme.LimitLifeTheme
 @Composable
 fun SignupScreen(
     modifier: Modifier = Modifier ,
-    viewModel: SignupScreenViewModel = hiltViewModel()
+    viewModel: SignupScreenViewModel = hiltViewModel() ,
+    navigateToMainScreen : () -> Unit
 ) {
     Box(
         modifier = modifier
@@ -74,6 +75,7 @@ fun SignupScreen(
                 Text(text = uiState.value.responseToDisplay ?: "" , color = MaterialTheme.colorScheme.error )
                 CredentialsOfSigningColumn(heading = currentUiScreen.heading  , aheadActionLabel = currentUiScreen.aheadActionButton  ) { username , password ->
                     viewModel.aheadActionButton(username , password)
+                        navigateToMainScreen()
                 }
                 // Login Link
                 TextButton(onClick = { viewModel.navigateScreenButtonAction() }) {
@@ -200,7 +202,7 @@ fun CredentialsOfSigningColumn(
 @Composable
 fun PreviewSignUpScreen() {
     LimitLifeTheme(darkTheme = true) {
-    SignupScreen( )
+    SignupScreen( navigateToMainScreen = {})
 
     }
 }

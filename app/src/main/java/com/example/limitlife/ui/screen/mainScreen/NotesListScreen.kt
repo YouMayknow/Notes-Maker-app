@@ -7,16 +7,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -27,6 +23,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
@@ -38,11 +35,11 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -51,28 +48,30 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.limitlife.R
+import com.example.limitlife.network.ShortNote
 import com.example.limitlife.utils.dummyList
 
 
 @Composable
 fun NotesListMainScreen (
     onDetailsIconClicked : () -> Unit ,
-    notes: List<Pair<String, String>>,
     onAddNoteClick: () -> Unit,
     modifier : Modifier = Modifier  ,
     isSideBarEnabled :Boolean = false ,
-    viewModel: NotesListScreenViewModel = androidx.lifecycle.viewmodel.compose.viewModel()
+    viewModel: NotesListScreenViewModel = hiltViewModel()
  ) {
-   // val uiState = viewModel.getUserToken.collectAsState()
+    val uiState = viewModel.loadingScreenUiState
+
     Scaffold(
         modifier = modifier ,
         floatingActionButton = {
-            FloatingActionButton(onClick = onAddNoteClick) {
+            FloatingActionButton(onClick = {}) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add Note")
             }
         } ,
@@ -84,13 +83,58 @@ fun NotesListMainScreen (
             )
         }
     ) {
-        Text(text =   "fddf") //uiState.value.userToken)
-        NotesList(notes = notes , modifier = Modifier.padding(it))
+        when(uiState) {
+            is NotesListScreenUiState.Success -> NotesListSuccessScreen(Modifier.padding(it) , uiState.notes)
+            is NotesListScreenUiState.Error -> NotesListFailureScreen(Modifier.padding(it) , uiState.error ,  viewModel::getNotes
+            )
+
+            else -> NotesListLoadingScreen(modifier.padding(it))
+        }
     }
 }
 
 @Composable
-fun NotesList(notes: List<Pair<String, String>> , modifier: Modifier = Modifier ) {
+fun NotesListLoadingScreen (
+    modifier: Modifier = Modifier
+) {
+    Image(painter = painterResource(id = R.drawable.loading_img) ,
+        contentDescription =  null ,
+        modifier =  modifier.size(200.dp)
+    )
+
+    
+}@Composable
+fun NotesListFailureScreen (
+    modifier: Modifier = Modifier ,
+    errorMessage : String ,
+    retryOption : ()-> Unit ,
+) {
+    Column(
+        modifier = modifier ,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_connection_error),
+            contentDescription = null
+        )
+        Text(text = errorMessage , textAlign = TextAlign.Center)
+        Button(onClick = retryOption ) {
+            Text(text = "Retry")
+        }
+    }
+}
+
+@Composable
+fun NotesListSuccessScreen (
+    modifier: Modifier = Modifier ,
+    notes : List<ShortNote>
+) {
+    NotesList(notes = notes , modifier = modifier)
+}
+
+@Composable
+fun NotesList(notes:List<ShortNote>, modifier: Modifier = Modifier ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(count = 2),
         modifier = modifier.fillMaxSize(),
@@ -98,7 +142,7 @@ fun NotesList(notes: List<Pair<String, String>> , modifier: Modifier = Modifier 
     ) {
         items(notes) { note ->
             // Each note will have a title and an image URL
-            NoteItem(noteTitle = note.first, imageUrl = note.second , modifier = Modifier.aspectRatio(0.75f))
+            NoteItem(noteTitle = note.heading, imageUrl = note.content , modifier = Modifier.aspectRatio(0.75f))
         }
     }
 }
@@ -229,7 +273,7 @@ fun PreviewNoteItem() {
 @Composable
 fun PreviewNotesList() {
     val notes =
-    NotesListMainScreen(notes = dummyList  , onAddNoteClick =  {} , onDetailsIconClicked = {} )
+    NotesListMainScreen( onAddNoteClick =  {} , onDetailsIconClicked = {} )
 }
 
 @Preview
