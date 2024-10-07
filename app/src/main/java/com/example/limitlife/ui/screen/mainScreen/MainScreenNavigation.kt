@@ -8,6 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 import kotlinx.serialization.Serializable
 
 
@@ -20,10 +21,12 @@ fun  MainScreenNavigation (
     navController: NavHostController = rememberNavController()  ,
     modifier: Modifier = Modifier ,
 ) {
-    NavHost(navController = navController, startDestination = ScreenUserDetail , modifier = modifier) {
-        composable<ScreenUserDetail>{
+    NavHost(navController = navController, startDestination = RouteScreenUserDetail , modifier = modifier) {
+        composable<RouteScreenUserDetail>{
             UserDetailsAndDrawerScreen(
-                onDrawerItemClicked = {drawerItem ->
+                modifier = modifier,
+                onAddNoteClick = {navController.navigate(RouteEditNoteScreen())},
+                onDrawerItemClicked = { drawerItem ->
                     navController.navigate("DrawerItems/${drawerItem}")
                 }
             )
@@ -35,11 +38,17 @@ fun  MainScreenNavigation (
             })
         ){
             val selectedDrawer = it.arguments?.getString("selectedDrawer") ?: ""
-            IndividualDrawerScreen(onBackClick = { navController.navigate(ScreenUserDetail)}, drawerItemName = selectedDrawer)
+            IndividualDrawerScreen(onBackClick = { navController.navigate(RouteScreenUserDetail)}, drawerItemName = selectedDrawer)
+        }
+        composable<RouteEditNoteScreen> {
+            val args =  it.toRoute<RouteEditNoteScreen>()
+            EditNoteScreen(noteID = args.noteID, navigateToNotesListScreen = {navController.navigate(RouteScreenUserDetail)})
         }
     }
 }
 
 @Serializable
-object ScreenUserDetail
+object RouteScreenUserDetail
+@Serializable
+data class RouteEditNoteScreen(val noteID : Int = -1)
 

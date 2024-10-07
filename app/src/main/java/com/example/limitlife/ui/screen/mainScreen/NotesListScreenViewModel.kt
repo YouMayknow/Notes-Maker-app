@@ -17,6 +17,7 @@ import javax.inject.Inject
 class NotesListScreenViewModel @Inject constructor(
     private val userDataRepository: NetworkUserDataRepository
 ) : ViewModel() {
+
     var loadingScreenUiState : NotesListScreenUiState by  mutableStateOf(NotesListScreenUiState.Loading)
          private set
     init {

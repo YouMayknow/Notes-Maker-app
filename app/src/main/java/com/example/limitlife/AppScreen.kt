@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
+import com.example.limitlife.ui.screen.HomeScreen
 import com.example.limitlife.ui.screen.mainScreen.MainScreenNavigation
 
 @Composable
@@ -22,5 +23,6 @@ fun AppScreen(
             .calculateEndPadding(layoutDirection = LayoutDirection.Ltr )
     )
 ) {
-    MainScreenNavigation(modifier = modifier)
+    HomeScreen()
+
 }
