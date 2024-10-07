@@ -3,6 +3,7 @@ package com.example.limitlife.network
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import okhttp3.ResponseBody
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
@@ -28,10 +29,15 @@ interface AppApiService {
     @GET("/notes/all")
     suspend fun  getAllUserNotes() : retrofit2.Response<List<ShortNote>>
 
-    @POST("/new/notes")
+    @POST("/notes/new")
     suspend fun createNewNote(
       @Body shortNote: ShortNote
-    )
+    ) : retrofit2.Response<ResponseBody>
+
+
+    @GET("/token/verifier")
+    suspend fun isTokenValid(
+    ) : Response<ResponseBody>
 }
 
 @Serializable

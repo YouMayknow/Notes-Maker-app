@@ -31,7 +31,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.limitlife.ui.theme.LimitLifeTheme
 import com.example.limitlife.utils.DrawerItems
-import com.example.limitlife.utils.dummyList
 import kotlinx.coroutines.launch
 
 
@@ -41,6 +40,7 @@ main Screen that adhere the notes from the database and also have button to add 
  */
 @Composable
 fun UserDetailsAndDrawerScreen(
+    onAddNoteClick :()-> Unit ,
     onDrawerItemClicked: (String) -> Unit,
     modifier : Modifier =   Modifier
 ) {
@@ -55,7 +55,7 @@ fun UserDetailsAndDrawerScreen(
     ) {
         NotesListMainScreen(
             modifier = modifier,
-            onAddNoteClick = { /*TODO*/ } ,
+            onAddNoteClick = onAddNoteClick ,
             onDetailsIconClicked = {
                 scope.launch {
                     drawerState.apply {
@@ -112,7 +112,7 @@ fun MenuItem(icon: androidx.compose.ui.graphics.vector.ImageVector, text: String
 @Composable
 fun NavigationRailPreview() {
     LimitLifeTheme(darkTheme = false) {
-        UserDetailsAndDrawerScreen(onDrawerItemClicked =  {})
+        UserDetailsAndDrawerScreen(onAddNoteClick = {}, onDrawerItemClicked =  {})
     }
 }
 

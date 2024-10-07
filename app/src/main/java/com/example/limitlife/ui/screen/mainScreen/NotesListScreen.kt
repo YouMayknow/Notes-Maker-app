@@ -35,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -55,7 +56,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.limitlife.R
 import com.example.limitlife.network.ShortNote
-import com.example.limitlife.utils.dummyList
 
 
 @Composable
@@ -66,12 +66,15 @@ fun NotesListMainScreen (
     isSideBarEnabled :Boolean = false ,
     viewModel: NotesListScreenViewModel = hiltViewModel()
  ) {
+   LaunchedEffect(Unit) {
+       viewModel.getNotes()
+   }
     val uiState = viewModel.loadingScreenUiState
 
     Scaffold(
         modifier = modifier ,
         floatingActionButton = {
-            FloatingActionButton(onClick = {}) {
+            FloatingActionButton(onClick =onAddNoteClick) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add Note")
             }
         } ,
@@ -84,8 +87,8 @@ fun NotesListMainScreen (
         }
     ) {
         when(uiState) {
-            is NotesListScreenUiState.Success -> NotesListSuccessScreen(Modifier.padding(it) , uiState.notes)
-            is NotesListScreenUiState.Error -> NotesListFailureScreen(Modifier.padding(it) , uiState.error ,  viewModel::getNotes
+            is NotesListScreenUiState.Success -> NotesListSuccessScreen(modifier.padding(it) , uiState.notes)
+            is NotesListScreenUiState.Error -> NotesListFailureScreen(modifier.padding(it) , uiState.error ,  viewModel::getNotes
             )
 
             else -> NotesListLoadingScreen(modifier.padding(it))

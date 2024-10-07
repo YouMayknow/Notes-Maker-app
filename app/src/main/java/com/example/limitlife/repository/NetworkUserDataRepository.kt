@@ -26,7 +26,7 @@ class NetworkUserDataRepository @Inject constructor(
     private var client = OkHttpClient.Builder()
         .addInterceptor(AuthInspector(tokenRepository))
         .build()
-    private  val baseUrl = "http://192.168.1.18:8080"
+    private  val baseUrl = "http://192.168.1.22:8080"
    private val json = Json{ignoreUnknownKeys = true }
     private val retrofit = Retrofit.Builder()
         .baseUrl(baseUrl)
@@ -39,7 +39,8 @@ class NetworkUserDataRepository @Inject constructor(
     override suspend fun registerUser(username: String, password: String) = retrofitService.registerUser(username, password)
     override suspend fun loginUser(username: String, password: String): Response<LoginResponse> = retrofitService.loginUser(username, password)
     override suspend fun getAllUserNotes(): Response<List<ShortNote>> =  retrofitService.getAllUserNotes()
-    override suspend fun createNewNote(shortNote: ShortNote) = retrofitService.createNewNote(shortNote)
+    override suspend fun createNewNote(shortNote: ShortNote): Response<ResponseBody> = retrofitService.createNewNote(shortNote)
+    override suspend fun isTokenValid(): Response<ResponseBody> = retrofitService.isTokenValid()
 }
 
 
