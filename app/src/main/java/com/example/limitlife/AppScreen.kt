@@ -23,6 +23,6 @@ fun AppScreen(
             .calculateEndPadding(layoutDirection = LayoutDirection.Ltr )
     )
 ) {
-    HomeScreen()
+    HomeScreen(modifier = modifier)
 
 }

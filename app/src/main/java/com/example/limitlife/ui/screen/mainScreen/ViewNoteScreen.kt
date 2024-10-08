@@ -8,5 +8,4 @@ import androidx.compose.ui.Modifier
 fun  ViewNoteScreen(
     modifier : Modifier = Modifier
 ) {
-
 }

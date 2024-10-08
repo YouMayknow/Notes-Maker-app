@@ -2,6 +2,8 @@ package com.example.limitlife.ui.screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.limitlife.repository.NetworkStatus
+import com.example.limitlife.repository.NetworkStatusManager
 import com.example.limitlife.repository.NetworkUserDataRepository
 import com.example.limitlife.repository.OfflineUserTokenRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -9,6 +11,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.io.IOException
 import javax.inject.Inject
 
 
@@ -18,6 +21,7 @@ class HomeScreenViewModel @Inject constructor(
     private val userDataRepository: NetworkUserDataRepository ,
 
 ) : ViewModel() {
+    val networkStatus : StateFlow<NetworkStatus> = NetworkStatusManager.networkStatus
     private val _isTokenValid = MutableStateFlow<Boolean?>(null)
     val isTokenValid : StateFlow<Boolean?> =  _isTokenValid
 
@@ -25,10 +29,15 @@ class HomeScreenViewModel @Inject constructor(
     val isNewUser : StateFlow<Boolean?> =  _isNewUser
 
     fun checkLoginRequirement() = viewModelScope.launch {
-        val token = userTokenRepository.userToken.first()
-        _isNewUser.value = token.isEmpty()
+       try {
+           val token = userTokenRepository.userToken.first()
+           _isNewUser.value = token.isEmpty()
 
-        val tokenResponse = userDataRepository.isTokenValid()
-        _isTokenValid.value = tokenResponse.isSuccessful
+           val tokenResponse = userDataRepository.isTokenValid()
+           _isTokenValid.value = tokenResponse.isSuccessful
+       } catch (e : Exception) {
+           println("THe exception justr scuek up my mood and profress ot the wokr . $e")
+       }
+
     }
 }

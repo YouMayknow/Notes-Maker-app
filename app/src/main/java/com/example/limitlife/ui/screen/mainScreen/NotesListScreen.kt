@@ -72,7 +72,7 @@ fun NotesListMainScreen (
     val uiState = viewModel.loadingScreenUiState
 
     Scaffold(
-        modifier = modifier ,
+        modifier = modifier.fillMaxSize(),
         floatingActionButton = {
             FloatingActionButton(onClick =onAddNoteClick) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add Note")
@@ -102,7 +102,7 @@ fun NotesListLoadingScreen (
 ) {
     Image(painter = painterResource(id = R.drawable.loading_img) ,
         contentDescription =  null ,
-        modifier =  modifier.size(200.dp)
+        modifier =  modifier.size(200.dp).fillMaxSize()
     )
 
     

@@ -4,6 +4,8 @@ import com.example.limitlife.network.AppApiService
 import com.example.limitlife.network.LoginResponse
 import com.example.limitlife.network.ShortNote
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import kotlinx.serialization.json.Json
@@ -13,6 +15,7 @@ import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.Retrofit
+import java.io.IOException
 import javax.inject.Inject
 
 
@@ -24,9 +27,10 @@ class NetworkUserDataRepository @Inject constructor(
     tokenRepository: OfflineUserTokenRepository
 ) : UserDataRepository {
     private var client = OkHttpClient.Builder()
+        .addInterceptor(NetworkInterceptor())
         .addInterceptor(AuthInspector(tokenRepository))
         .build()
-    private  val baseUrl = "http://192.168.1.22:8080"
+    private  val baseUrl = "http://192.168.1.12:8080"
    private val json = Json{ignoreUnknownKeys = true }
     private val retrofit = Retrofit.Builder()
         .baseUrl(baseUrl)
@@ -56,6 +60,40 @@ class AuthInspector ( private val tokenRepository: OfflineUserTokenRepository ) 
             .header("Authorization","Bearer $token")
         return chain.proceed(builder.build())
     }
+}
+
+class NetworkInterceptor() : Interceptor{
+    override fun intercept(chain: Interceptor.Chain): okhttp3.Response {
+       return try {
+      val response =   chain.proceed(chain.request())
+            NetworkStatusManager.internetConnected()
+           response
+        } catch (e : IOException){
+            NetworkStatusManager.internetNotConnected()
+           throw NoInternetException("No internet connection")
+        }
+    }
+}
+
+class  NoInternetException( message : String ) : Exception(message)
+
+
+object  NetworkStatusManager{
+    private val _networkStatus =  MutableStateFlow<NetworkStatus>(NetworkStatus.NoInternet)
+    val networkStatus  : StateFlow<NetworkStatus> =  _networkStatus
+
+    fun internetConnected() {
+        _networkStatus.value = NetworkStatus.Connected
+    }
+    fun internetNotConnected() {
+        _networkStatus.value = NetworkStatus.NoInternet
+    }
+
+
+}
+sealed class NetworkStatus{
+   data object Connected : NetworkStatus()
+    data object  NoInternet :NetworkStatus()
 }
 
 
