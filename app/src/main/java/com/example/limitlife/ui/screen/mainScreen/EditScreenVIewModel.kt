@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.limitlife.network.ShortNote
+import com.example.limitlife.network.UpdatedShortNote
 import com.example.limitlife.repository.NetworkUserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +26,7 @@ class EditScreenVIewModel @Inject constructor(
             Log.e("response","${e.message}")
         }
     }
-    fun updateNote(shortNote: ShortNote , noteid : Int) = viewModelScope.launch {
-
+    fun updateNote(updatedShortNote: UpdatedShortNote) = viewModelScope.launch {
+        userDataRepository.updateNote(updatedShortNote)
     }
 }

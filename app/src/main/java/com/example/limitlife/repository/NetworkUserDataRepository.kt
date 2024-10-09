@@ -3,6 +3,7 @@ package com.example.limitlife.repository
 import com.example.limitlife.network.AppApiService
 import com.example.limitlife.network.LoginResponse
 import com.example.limitlife.network.ShortNote
+import com.example.limitlife.network.UpdatedShortNote
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -24,9 +25,10 @@ class NetworkUserDataRepository @Inject constructor(
     tokenRepository: OfflineUserTokenRepository
 ) : UserDataRepository {
     private var client = OkHttpClient.Builder()
+        .cache(null)
         .addInterceptor(AuthInspector(tokenRepository))
         .build()
-    private  val baseUrl = "http://192.168.1.22:8080"
+    private  val baseUrl = "http://192.168.1.14:8080"
    private val json = Json{ignoreUnknownKeys = true }
     private val retrofit = Retrofit.Builder()
         .baseUrl(baseUrl)
@@ -38,9 +40,10 @@ class NetworkUserDataRepository @Inject constructor(
     }
     override suspend fun registerUser(username: String, password: String) = retrofitService.registerUser(username, password)
     override suspend fun loginUser(username: String, password: String): Response<LoginResponse> = retrofitService.loginUser(username, password)
-    override suspend fun getAllUserNotes(): Response<List<ShortNote>> =  retrofitService.getAllUserNotes()
+    override suspend fun getAllUserNotes(): Response<List<UpdatedShortNote>> =  retrofitService.getAllUserNotes()
     override suspend fun createNewNote(shortNote: ShortNote): Response<ResponseBody> = retrofitService.createNewNote(shortNote)
     override suspend fun isTokenValid(): Response<ResponseBody> = retrofitService.isTokenValid()
+    override suspend fun updateNote(updatedShortNote: UpdatedShortNote): Response<ResponseBody>  = retrofitService.updateNote(updatedShortNote)
 }
 
 

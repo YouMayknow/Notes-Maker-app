@@ -4,7 +4,15 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -13,8 +21,15 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
@@ -31,38 +46,46 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.limitlife.R
 import com.example.limitlife.network.ShortNote
+import com.example.limitlife.network.UpdatedShortNote
 import com.example.limitlife.ui.theme.LimitLifeTheme
+import kotlinx.serialization.json.Json
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditNoteScreen(
-    initialText : String ="" ,
-    initialHeading :  String = "",
-    noteID : Int =   0  ,
     modifier: Modifier = Modifier ,
+    shortNote: String = "" ,
     navigateToNotesListScreen : () -> Unit ,
     viewModel: EditScreenVIewModel = hiltViewModel()
 ) {
+    var content by rememberSaveable { mutableStateOf("") }
+    var id by rememberSaveable { mutableIntStateOf(-1) }
+    var heading by rememberSaveable { mutableStateOf("") }
+    LaunchedEffect (Unit){
+        if (shortNote != "") {
+            val note = Json.decodeFromString<UpdatedShortNote>(shortNote)
+            content = note.content
+            heading = note.heading
+            id = note.id
+        }
+    }
     val problem = viewModel.response.collectAsState()
-    var text by rememberSaveable { mutableStateOf(initialText) }
-    var heading by rememberSaveable { mutableStateOf(initialHeading) }
     var  isFocused  by  rememberSaveable { mutableStateOf(false) }
 
     Column(modifier = modifier) {
         TopAppBar(
             title = {
                 BasicTextField(
-                    value = if(heading.isEmpty() && !isFocused) "Create Heading" else heading ,
-                    onValueChange = { heading = it },
-                    textStyle = TextStyle(
-                        fontSize = 18.sp ,
-                        color = if (isSystemInDarkTheme()) Color.White else Color.Black
-                    )  ,
-                    modifier = modifier.onFocusChanged { focusState -> isFocused = focusState.isFocused } ,
-
-                )
-            },
+                value = if(heading.isEmpty() && !isFocused) "Create Heading" else heading ,
+                onValueChange = { heading = it },
+                textStyle = TextStyle(
+                    fontSize = 18.sp ,
+                    color = if (isSystemInDarkTheme()) Color.White else Color.Black
+                )  ,
+                modifier = modifier.onFocusChanged { focusState -> isFocused = focusState.isFocused } ,
+            )
+    },
             navigationIcon = {
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_arrow_back_24),
@@ -72,8 +95,19 @@ fun EditNoteScreen(
             },
             actions = {
                 SaveButton {
-                        viewModel.createNote(ShortNote(content = text , heading = heading,))
-                            viewModel.updateNote(ShortNote(content = text , heading = heading) , noteid = noteID)
+                    if(shortNote == ""){
+                        viewModel.createNote(ShortNote(
+                            content = content,
+                            heading = heading,
+                        ))
+                    } else {
+                        viewModel.updateNote(UpdatedShortNote(
+                            content = content,
+                            heading = heading,
+                            id = id
+                        )
+                        )
+                    }
                     navigateToNotesListScreen()
                 }
             } ,
@@ -81,12 +115,12 @@ fun EditNoteScreen(
         )
         Text(text = problem.value)
         CustomNoteTextField(
-            initialText = initialText ,
             modifier = modifier
                 .fillMaxSize()
                 .statusBarsPadding()
                 .navigationBarsPadding(),
-            editedText = {text = it}
+            value = content,
+            onValueChange = {content = it }
         )
     }
 }
@@ -121,12 +155,12 @@ fun EditScreenTextDecorationBar() {
 
 @Composable
 fun CustomNoteTextField(
-    initialText: String = "",
     modifier: Modifier = Modifier,
-    editedText : (String) -> Unit ,
+    value: String ,
+    onValueChange : (String) -> Unit ,
     placeholder: String = "Enter your note here...",
 ) {
-    var text by remember { mutableStateOf(initialText) }
+    //var text by remember { mutableStateOf(value) }
     var isFocused by remember { mutableStateOf(false) }
     var undoStack = remember { mutableListOf<String>() }
     var redoStack = remember { mutableListOf<String>() }
@@ -150,7 +184,7 @@ fun CustomNoteTextField(
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Box {
-            if (text.isEmpty() && !isFocused) {
+            if (value.isEmpty() && !isFocused) {
                 // Placeholder Text
                 Text(
                     text = placeholder,
@@ -160,12 +194,15 @@ fun CustomNoteTextField(
                 )
             }
             BasicTextField(
-                value = text,
-                onValueChange = {
-                    undoStack.add(text)  // Add previous text state to the undo stack
-                    text = it
-                    editedText(it)
-                },
+                value = value,
+                onValueChange = onValueChange,
+//                 value = text,
+//                onValueChange = {
+//                    undoStack.add(text)  // Add previous text state to the undo stack
+//                    text = it
+//                    editedText(it)
+//                },
+//
                 textStyle = TextStyle(
                     fontSize = fontSize,
                     fontWeight = if (isBold) FontWeight.Bold else FontWeight.Normal,
@@ -179,17 +216,6 @@ fun CustomNoteTextField(
                     .padding(end = 32.dp, start = 8.dp, top = 8.dp, bottom = 8.dp), // Padding to make space for clear button
                 maxLines = 10 // Max number of lines
             )
-            // Clear Text Button
-            if (text.isNotEmpty()) {
-                Icon(
-                    painter = painterResource(id = R.drawable.baseline_menu_24),
-                    contentDescription = "Clear text",
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .clickable { text = "" }
-                        .padding(4.dp)
-                )
-            }
         }
         Row(
             modifier = Modifier
@@ -229,8 +255,8 @@ fun CustomNoteTextField(
             }
             IconButton(onClick = {
                 if (undoStack.isNotEmpty()) {
-                    redoStack.add(text)
-                    text = undoStack.removeLast()
+                    redoStack.add(value)
+                    onValueChange(undoStack.removeLast())
                 }
             }) {
                 Icon(
@@ -240,8 +266,8 @@ fun CustomNoteTextField(
             }
             IconButton(onClick = {
                 if (redoStack.isNotEmpty()) {
-                    undoStack.add(text)
-                    text = redoStack.removeLast()
+                    undoStack.add(value)
+                    onValueChange(undoStack.removeLast())
                 }
             }) {
                 Icon(
@@ -256,7 +282,7 @@ fun CustomNoteTextField(
 @Preview(showBackground = true)
 @Composable
 fun PreviewCustomNoteTextField() {
-    CustomNoteTextField(editedText = {  })
+    CustomNoteTextField(value = "", onValueChange = {})
 }
 
 

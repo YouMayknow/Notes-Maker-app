@@ -8,6 +8,7 @@ import retrofit2.http.Body
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 
 
@@ -27,7 +28,7 @@ interface AppApiService {
     ) : retrofit2.Response<LoginResponse>
 
     @GET("/notes/all")
-    suspend fun  getAllUserNotes() : retrofit2.Response<List<ShortNote>>
+    suspend fun  getAllUserNotes() : retrofit2.Response<List<UpdatedShortNote>>
 
     @POST("/notes/new")
     suspend fun createNewNote(
@@ -38,6 +39,11 @@ interface AppApiService {
     @GET("/token/verifier")
     suspend fun isTokenValid(
     ) : Response<ResponseBody>
+
+    @PATCH("/notes/update")
+    suspend fun updateNote(
+        @Body updatedShortNote: UpdatedShortNote
+    ) : Response<ResponseBody>
 }
 
 @Serializable
@@ -46,7 +52,14 @@ interface AppApiService {
  )
 
 @Serializable
-data class ShortNote (
+data class ShortNote(
     val content : String,
     val heading: String,
+)
+
+@Serializable
+data class UpdatedShortNote(
+    val content : String,
+    val heading: String,
+    val  id : Int
 )

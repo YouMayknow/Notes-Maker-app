@@ -2,6 +2,7 @@ package com.example.limitlife.ui.screen.mainScreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -56,10 +57,12 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.limitlife.R
 import com.example.limitlife.network.ShortNote
+import com.example.limitlife.network.UpdatedShortNote
 
 
 @Composable
 fun NotesListMainScreen (
+    onNoteClick: (UpdatedShortNote) -> Unit ,
     onDetailsIconClicked : () -> Unit ,
     onAddNoteClick: () -> Unit,
     modifier : Modifier = Modifier  ,
@@ -74,7 +77,7 @@ fun NotesListMainScreen (
     Scaffold(
         modifier = modifier ,
         floatingActionButton = {
-            FloatingActionButton(onClick =onAddNoteClick) {
+            FloatingActionButton(onClick = onAddNoteClick) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add Note")
             }
         } ,
@@ -87,7 +90,11 @@ fun NotesListMainScreen (
         }
     ) {
         when(uiState) {
-            is NotesListScreenUiState.Success -> NotesListSuccessScreen(modifier.padding(it) , uiState.notes)
+            is NotesListScreenUiState.Success -> NotesListSuccessScreen(
+                modifier.padding(it),
+                uiState.notes ,
+                onNoteClick
+            )
             is NotesListScreenUiState.Error -> NotesListFailureScreen(modifier.padding(it) , uiState.error ,  viewModel::getNotes
             )
 
@@ -100,20 +107,24 @@ fun NotesListMainScreen (
 fun NotesListLoadingScreen (
     modifier: Modifier = Modifier
 ) {
-    Image(painter = painterResource(id = R.drawable.loading_img) ,
-        contentDescription =  null ,
-        modifier =  modifier.size(200.dp)
-    )
+    Column(
+        modifier = modifier.fillMaxSize() ,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        CircularProgressIndicator()
+    }
+}
 
-    
-}@Composable
+
+@Composable
 fun NotesListFailureScreen (
     modifier: Modifier = Modifier ,
     errorMessage : String ,
     retryOption : ()-> Unit ,
 ) {
     Column(
-        modifier = modifier ,
+        modifier = modifier.fillMaxSize() ,
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -131,13 +142,14 @@ fun NotesListFailureScreen (
 @Composable
 fun NotesListSuccessScreen (
     modifier: Modifier = Modifier ,
-    notes : List<ShortNote>
+    notes : List<UpdatedShortNote> ,
+    onNoteClick: (UpdatedShortNote) -> Unit ,
 ) {
-    NotesList(notes = notes , modifier = modifier)
+    NotesList(notes = notes ,onNoteClick ,  modifier = modifier )
 }
 
 @Composable
-fun NotesList(notes:List<ShortNote>, modifier: Modifier = Modifier ) {
+fun NotesList(notes:List<UpdatedShortNote>,onNoteClick : (UpdatedShortNote) -> Unit ,  modifier: Modifier = Modifier ) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(count = 2),
         modifier = modifier.fillMaxSize(),
@@ -145,16 +157,27 @@ fun NotesList(notes:List<ShortNote>, modifier: Modifier = Modifier ) {
     ) {
         items(notes) { note ->
             // Each note will have a title and an image URL
-            NoteItem(noteTitle = note.heading, imageUrl = note.content , modifier = Modifier.aspectRatio(0.75f))
+            NoteItem(
+                noteTitle = note.heading,
+                imageUrl = note.content,
+                onNoteClick = { onNoteClick(note) } ,
+                modifier = Modifier.aspectRatio(0.75f)
+            )
         }
     }
 }
 @Composable
-fun NoteItem(noteTitle: String, imageUrl: String , modifier: Modifier = Modifier) {
+fun NoteItem(
+    noteTitle: String,
+    imageUrl: String ,
+    onNoteClick : () -> Unit ,
+    modifier: Modifier = Modifier
+) {
     Card(
         modifier = modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(8.dp)
+            .clickable { onNoteClick() },
         elevation =CardDefaults.cardElevation(12.dp),
         shape = RoundedCornerShape(8.dp)
     ) {
@@ -268,15 +291,15 @@ fun SearchBar (
 fun PreviewNoteItem() {
     NoteItem(
         noteTitle = "Unit 7: Part 1",
-        imageUrl = "https://example.com/image1.jpg"
+        imageUrl = "https://example.com/image1.jpg",
+        onNoteClick = {}
     )
 }
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewNotesList() {
-    val notes =
-    NotesListMainScreen( onAddNoteClick =  {} , onDetailsIconClicked = {} )
+    NotesListMainScreen( onAddNoteClick =  {} , onDetailsIconClicked = {}  , onNoteClick =  {})
 }
 
 @Preview

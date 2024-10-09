@@ -6,6 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.limitlife.network.ShortNote
+import com.example.limitlife.network.UpdatedShortNote
 import com.example.limitlife.repository.NetworkUserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -52,7 +53,7 @@ data class random (
 )
 
 sealed interface NotesListScreenUiState{
-    data class Success(val notes : List<ShortNote>) : NotesListScreenUiState
+    data class Success(val notes : List<UpdatedShortNote>) : NotesListScreenUiState
     data class Error(val error : String) : NotesListScreenUiState
     data object Loading : NotesListScreenUiState
 }

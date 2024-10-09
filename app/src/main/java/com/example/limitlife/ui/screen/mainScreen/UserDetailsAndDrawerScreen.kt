@@ -29,10 +29,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.example.limitlife.network.ShortNote
 import com.example.limitlife.ui.theme.LimitLifeTheme
 import com.example.limitlife.utils.DrawerItems
 import kotlinx.coroutines.launch
-
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 
 
 /* It is a screen that contains the modal navigation  drawer and the list
@@ -40,7 +42,8 @@ main Screen that adhere the notes from the database and also have button to add 
  */
 @Composable
 fun UserDetailsAndDrawerScreen(
-    onAddNoteClick :()-> Unit ,
+    onNoteClick : (String) -> Unit,
+    onAddNoteClick :()-> Unit,
     onDrawerItemClicked: (String) -> Unit,
     modifier : Modifier =   Modifier
 ) {
@@ -56,6 +59,10 @@ fun UserDetailsAndDrawerScreen(
         NotesListMainScreen(
             modifier = modifier,
             onAddNoteClick = onAddNoteClick ,
+            onNoteClick = {
+                        val note =  Json.encodeToString(it)
+                onNoteClick(note)
+                          },
             onDetailsIconClicked = {
                 scope.launch {
                     drawerState.apply {
@@ -112,7 +119,7 @@ fun MenuItem(icon: androidx.compose.ui.graphics.vector.ImageVector, text: String
 @Composable
 fun NavigationRailPreview() {
     LimitLifeTheme(darkTheme = false) {
-        UserDetailsAndDrawerScreen(onAddNoteClick = {}, onDrawerItemClicked =  {})
+        UserDetailsAndDrawerScreen(onAddNoteClick = {}, onDrawerItemClicked =  {} , onNoteClick =  {})
     }
 }
 

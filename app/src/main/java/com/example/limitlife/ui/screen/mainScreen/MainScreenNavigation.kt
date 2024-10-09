@@ -9,6 +9,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.toRoute
+import com.example.limitlife.model.defaultNote
+import com.example.limitlife.network.ShortNote
 import kotlinx.serialization.Serializable
 
 
@@ -25,7 +27,8 @@ fun  MainScreenNavigation (
         composable<RouteScreenUserDetail>{
             UserDetailsAndDrawerScreen(
                 modifier = modifier,
-                onAddNoteClick = {navController.navigate(RouteEditNoteScreen())},
+                onAddNoteClick = {navController.navigate(RouteCreateNoteScreen)} ,
+                onNoteClick = {navController.navigate(RouteEditNoteScreen(it))},
                 onDrawerItemClicked = { drawerItem ->
                     navController.navigate("DrawerItems/${drawerItem}")
                 }
@@ -42,7 +45,14 @@ fun  MainScreenNavigation (
         }
         composable<RouteEditNoteScreen> {
             val args =  it.toRoute<RouteEditNoteScreen>()
-            EditNoteScreen(noteID = args.noteID, navigateToNotesListScreen = {navController.navigate(RouteScreenUserDetail)})
+          EditNoteScreen(
+                   shortNote = args.shortNote,
+                   navigateToNotesListScreen = {navController.navigate(RouteScreenUserDetail)}
+          )
+        }
+        composable<RouteCreateNoteScreen> {
+            EditNoteScreen(
+                navigateToNotesListScreen = {navController.navigate(RouteScreenUserDetail)})
         }
     }
 }
@@ -50,5 +60,7 @@ fun  MainScreenNavigation (
 @Serializable
 object RouteScreenUserDetail
 @Serializable
-data class RouteEditNoteScreen(val noteID : Int = -1)
+data class RouteEditNoteScreen(val shortNote: String = "")
 
+@Serializable
+object RouteCreateNoteScreen
