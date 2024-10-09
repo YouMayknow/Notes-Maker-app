@@ -9,8 +9,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.toRoute
-import com.example.limitlife.model.defaultNote
-import com.example.limitlife.network.ShortNote
 import kotlinx.serialization.Serializable
 
 
@@ -46,13 +44,13 @@ fun  MainScreenNavigation (
         composable<RouteEditNoteScreen> {
             val args =  it.toRoute<RouteEditNoteScreen>()
           EditNoteScreen(
-                   shortNote = args.shortNote,
-                   navigateToNotesListScreen = {navController.navigate(RouteScreenUserDetail)}
+              shortNote = args.shortNote,
+              onBackPressed = {navController.navigateUp()}
           )
         }
         composable<RouteCreateNoteScreen> {
             EditNoteScreen(
-                navigateToNotesListScreen = {navController.navigate(RouteScreenUserDetail)})
+                onBackPressed =  {navController.navigateUp()})
         }
     }
 }

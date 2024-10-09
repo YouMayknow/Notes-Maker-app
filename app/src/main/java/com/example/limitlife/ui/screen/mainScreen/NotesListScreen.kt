@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -27,6 +28,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -56,8 +59,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.limitlife.R
-import com.example.limitlife.network.ShortNote
 import com.example.limitlife.network.UpdatedShortNote
+import com.example.limitlife.ui.theme.LimitLifeTheme
 
 
 @Composable
@@ -91,9 +94,13 @@ fun NotesListMainScreen (
     ) {
         when(uiState) {
             is NotesListScreenUiState.Success -> NotesListSuccessScreen(
-                modifier.padding(it),
-                uiState.notes ,
-                onNoteClick
+               modifier =  modifier.padding(it),
+              notes =   uiState.notes ,
+               onNoteClick =  onNoteClick ,
+              onDetailsIconClicked = {} ,
+               onDeleteIconClicked = {  },
+               onBackupIconClicked = {  },
+               onShareIconClicked = {  }
             )
             is NotesListScreenUiState.Error -> NotesListFailureScreen(modifier.padding(it) , uiState.error ,  viewModel::getNotes
             )
@@ -144,35 +151,64 @@ fun NotesListSuccessScreen (
     modifier: Modifier = Modifier ,
     notes : List<UpdatedShortNote> ,
     onNoteClick: (UpdatedShortNote) -> Unit ,
+    onDetailsIconClicked: (Int) -> Unit ,
+    onDeleteIconClicked: (Int) -> Unit ,
+    onBackupIconClicked: (Int) -> Unit ,
+    onShareIconClicked : (Int) -> Unit ,
 ) {
-    NotesList(notes = notes ,onNoteClick ,  modifier = modifier )
+    NotesList(notes = notes, onNoteClick, modifier = modifier, onDetailsIconClicked,onDeleteIconClicked, onBackupIconClicked,onShareIconClicked)
 }
 
 @Composable
-fun NotesList(notes:List<UpdatedShortNote>,onNoteClick : (UpdatedShortNote) -> Unit ,  modifier: Modifier = Modifier ) {
+fun NotesList(
+    notes:List<UpdatedShortNote>,
+    onNoteClick : (UpdatedShortNote) -> Unit ,
+    modifier: Modifier = Modifier  ,
+    onDetailsIconClicked: (Int) -> Unit ,
+    onDeleteIconClicked: (Int) -> Unit ,
+    onBackupIconClicked: (Int) -> Unit ,
+    onShareIconClicked : (Int) -> Unit ,
+) {
+    var expanded by remember {mutableStateOf(true) }
     LazyVerticalGrid(
         columns = GridCells.Fixed(count = 2),
         modifier = modifier.fillMaxSize(),
         contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp)
     ) {
         items(notes) { note ->
-            // Each note will have a title and an image URL
-            NoteItem(
-                noteTitle = note.heading,
-                imageUrl = note.content,
-                onNoteClick = { onNoteClick(note) } ,
-                modifier = Modifier.aspectRatio(0.75f)
-            )
+            Box {
+                NoteItem(
+                    onDetailsIconClicked = { onDetailsIconClicked(note.id)},
+                    onDeleteIconClicked = {onDeleteIconClicked(note.id)},
+                    onBackupIconClicked = {onBackupIconClicked(note.id)},
+                    onShareIconClicked = {onShareIconClicked(note.id)},
+                    noteTitle = note.heading,
+                    imageUrl = note.content,
+                    onNoteClick = { onNoteClick(note) },
+                    modifier = Modifier.aspectRatio(0.75f),
+                    onMenuClick = {expanded != expanded }
+                )
+                if (expanded){
+                Text(text = "dafd dafdaf dasf ")
+                }
+            }
         }
     }
 }
 @Composable
 fun NoteItem(
+    onDetailsIconClicked: () -> Unit ,
+    onDeleteIconClicked: () -> Unit ,
+    onBackupIconClicked: () -> Unit ,
+    onShareIconClicked : () -> Unit ,
     noteTitle: String,
     imageUrl: String ,
     onNoteClick : () -> Unit ,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier ,
+    onMenuClick : () -> Unit
 ) {
+    var expanded by remember {mutableStateOf(false) }
+
     Card(
         modifier = modifier
             .fillMaxWidth()
@@ -207,12 +243,49 @@ fun NoteItem(
                     maxLines =  2 ,
                       style = MaterialTheme.typography.titleMedium // here the real is h6
                 )
-                IconButton(onClick = { /*TODO*/ }  ) {
-                   // Icon(i = vecto(image = R.drawable.baseline_more_vert_24), contentDescription = null  )
+
+                IconButton(onClick = { expanded =! expanded } ) {
                     Icon(painter = painterResource(id = R.drawable.baseline_more_vert_24), contentDescription = null , tint = Color.Black)
                 }
+                DropdownMenu(
+                    expanded = expanded ,
+                    onDismissRequest = { expanded = false }, // Dismiss when clicking outside
+                    //offset = DpOffset(4.dp, 4.dp)
+                ) {
+                    DropdownMenuItem(
+                        text = { Text("Details" , style = MaterialTheme.typography.titleMedium) },
+                        onClick = {
+                            onDetailsIconClicked()
+                            expanded = false
+                            // Handle Edit action here
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Delete", style = MaterialTheme.typography.titleMedium) },
+                        onClick = {
+                            onDeleteIconClicked()
+                            expanded = false
+                            // Handle Delete action here
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Share" , style = MaterialTheme.typography.titleMedium) },
+                        onClick = {
+                            onShareIconClicked()
+                            expanded = false
+                            // Handle Share action here
+                        }
+                    )
+                    DropdownMenuItem(
+                        text = { Text("Offline" , style = MaterialTheme.typography.titleMedium) },
+                        onClick = {
+                            onBackupIconClicked()
+                            expanded = false
+                            // Handle Share action here
+                        }
+                    )
+                }
             }
-
         }
     }
 }
@@ -290,20 +363,43 @@ fun SearchBar (
 @Composable
 fun PreviewNoteItem() {
     NoteItem(
+        onDetailsIconClicked = {},
+        onDeleteIconClicked = {},
+        onBackupIconClicked = {},
+        onShareIconClicked = {},
         noteTitle = "Unit 7: Part 1",
         imageUrl = "https://example.com/image1.jpg",
-        onNoteClick = {}
+        onNoteClick = {},
+        onMenuClick = {}
     )
 }
 
 @Preview(showBackground = true)
 @Composable
 fun PreviewNotesList() {
-    NotesListMainScreen( onAddNoteClick =  {} , onDetailsIconClicked = {}  , onNoteClick =  {})
+    NotesListMainScreen(
+        onNoteClick =  {},
+        onDetailsIconClicked = {},
+        onAddNoteClick =  {})
 }
 
 @Preview
 @Composable
 fun SearchBarPreview() {
     SearchBar(onSearch = { } , onDetailsIconClicked = {})
+}
+
+@Preview
+@Composable
+fun NotesListrear() {
+    LimitLifeTheme(darkTheme =  false) {
+    NotesList(
+        notes = listOf(UpdatedShortNote(  "fasdfasd" , "fadfdfasd" , 1)),
+        onNoteClick = {},
+        onDetailsIconClicked = {},
+        onDeleteIconClicked = {},
+        onBackupIconClicked = {},
+        onShareIconClicked = {})
+
+    }
 }

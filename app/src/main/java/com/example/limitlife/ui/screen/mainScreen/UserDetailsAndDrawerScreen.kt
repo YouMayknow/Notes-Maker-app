@@ -29,7 +29,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.example.limitlife.network.ShortNote
 import com.example.limitlife.ui.theme.LimitLifeTheme
 import com.example.limitlife.utils.DrawerItems
 import kotlinx.coroutines.launch
@@ -57,8 +56,6 @@ fun UserDetailsAndDrawerScreen(
         modifier =  modifier ,
     ) {
         NotesListMainScreen(
-            modifier = modifier,
-            onAddNoteClick = onAddNoteClick ,
             onNoteClick = {
                         val note =  Json.encodeToString(it)
                 onNoteClick(note)
@@ -70,6 +67,8 @@ fun UserDetailsAndDrawerScreen(
                     }
                 }
             },
+            onAddNoteClick = onAddNoteClick,
+            modifier = modifier,
         )
     }
 }

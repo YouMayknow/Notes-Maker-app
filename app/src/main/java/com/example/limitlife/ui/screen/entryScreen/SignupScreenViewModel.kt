@@ -3,6 +3,7 @@ package com.example.limitlife.ui.screen.entryScreen
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.limitlife.R
+import com.example.limitlife.repository.FakeUserDataRepository
 import com.example.limitlife.repository.OfflineUserTokenRepository
 import com.example.limitlife.repository.UserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class  SignupScreenViewModel @Inject constructor(
-    private  val userDataRepository: UserDataRepository,
+    private  val userDataRepository: FakeUserDataRepository,
     private val userTokenRepository: OfflineUserTokenRepository ,
 ) : ViewModel() {
     private var _uiState =  MutableStateFlow(SignupScreenUiState())

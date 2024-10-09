@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.limitlife.repository.AuthInspector
+import com.example.limitlife.repository.FakeUserDataRepository
 import com.example.limitlife.repository.NetworkUserDataRepository
 import com.example.limitlife.repository.OfflineUserTokenRepository
 import com.example.limitlife.repository.UserDataRepository
@@ -46,6 +47,12 @@ abstract class AppModule {
     @Binds
    abstract fun getUserDataRepository(
         networkUserRepository : NetworkUserDataRepository
+    ) : UserDataRepository
+
+    @Singleton
+    @Binds
+    abstract fun getFakeUserDataRepository(
+        fakeUserDataRepository : FakeUserDataRepository
     ) : UserDataRepository
 }
 

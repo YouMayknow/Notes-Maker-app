@@ -2,6 +2,7 @@ package com.example.limitlife.ui.screen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.limitlife.repository.FakeUserDataRepository
 import com.example.limitlife.repository.NetworkUserDataRepository
 import com.example.limitlife.repository.OfflineUserTokenRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     private  val userTokenRepository: OfflineUserTokenRepository ,
-    private val userDataRepository: NetworkUserDataRepository ,
+    private val userDataRepository: FakeUserDataRepository ,
 
 ) : ViewModel() {
     private val _isTokenValid = MutableStateFlow<Boolean?>(null)

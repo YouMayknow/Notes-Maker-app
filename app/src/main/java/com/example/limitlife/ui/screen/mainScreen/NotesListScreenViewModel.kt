@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.limitlife.network.ShortNote
 import com.example.limitlife.network.UpdatedShortNote
+import com.example.limitlife.repository.FakeUserDataRepository
 import com.example.limitlife.repository.NetworkUserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
@@ -16,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NotesListScreenViewModel @Inject constructor(
-    private val userDataRepository: NetworkUserDataRepository
+    private val userDataRepository: FakeUserDataRepository
 ) : ViewModel() {
 
     var loadingScreenUiState : NotesListScreenUiState by  mutableStateOf(NotesListScreenUiState.Loading)
@@ -38,14 +39,6 @@ class NotesListScreenViewModel @Inject constructor(
     fun createNewNote (note: ShortNote) =  viewModelScope.launch{
         userDataRepository.createNewNote(note)
     }
-
-//  //  val getUserToken : StateFlow<NotesListScreenUiState> = offlineUserTokenRepository.userToken
-//        .filterNotNull()
-//        .map {
-//       // NotesListScreenUiState(userToken =  it)
-//    }.stateIn(
-//        viewModelScope , SharingStarted.WhileSubscribed(5_000L) ,  NotesListScreenUiState() ,
-//    )
 }
 
 data class random (

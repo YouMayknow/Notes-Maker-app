@@ -1,5 +1,6 @@
 package com.example.limitlife.ui.screen.mainScreen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -56,12 +57,14 @@ import kotlinx.serialization.json.Json
 fun EditNoteScreen(
     modifier: Modifier = Modifier ,
     shortNote: String = "" ,
-    navigateToNotesListScreen : () -> Unit ,
+    onBackPressed : () -> Unit ,
     viewModel: EditScreenVIewModel = hiltViewModel()
 ) {
     var content by rememberSaveable { mutableStateOf("") }
     var id by rememberSaveable { mutableIntStateOf(-1) }
     var heading by rememberSaveable { mutableStateOf("") }
+    val problem = viewModel.response.collectAsState()
+    var  isFocused  by  rememberSaveable { mutableStateOf(false) }
     LaunchedEffect (Unit){
         if (shortNote != "") {
             val note = Json.decodeFromString<UpdatedShortNote>(shortNote)
@@ -70,9 +73,6 @@ fun EditNoteScreen(
             id = note.id
         }
     }
-    val problem = viewModel.response.collectAsState()
-    var  isFocused  by  rememberSaveable { mutableStateOf(false) }
-
     Column(modifier = modifier) {
         TopAppBar(
             title = {
@@ -90,7 +90,7 @@ fun EditNoteScreen(
                 Icon(
                     painter = painterResource(id = R.drawable.baseline_arrow_back_24),
                     contentDescription = stringResource(id = R.string.back),
-                    modifier = Modifier.clickable { /* Handle back navigation */ }
+                    modifier = Modifier.clickable { onBackPressed() }
                 )
             },
             actions = {
@@ -108,7 +108,7 @@ fun EditNoteScreen(
                         )
                         )
                     }
-                    navigateToNotesListScreen()
+                    onBackPressed()
                 }
             } ,
             modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
