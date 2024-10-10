@@ -16,7 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeScreenViewModel @Inject constructor(
     private  val userTokenRepository: OfflineUserTokenRepository ,
-    private val userDataRepository: FakeUserDataRepository ,
+    private val userDataRepository: NetworkUserDataRepository ,
 
 ) : ViewModel() {
     private val _isTokenValid = MutableStateFlow<Boolean?>(null)

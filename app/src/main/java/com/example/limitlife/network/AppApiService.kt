@@ -5,11 +5,13 @@ import kotlinx.serialization.Serializable
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.Field
 import retrofit2.http.FormUrlEncoded
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.POST
+import retrofit2.http.Path
 
 
 interface AppApiService {
@@ -44,6 +46,16 @@ interface AppApiService {
     suspend fun updateNote(
         @Body updatedShortNote: UpdatedShortNote
     ) : Response<ResponseBody>
+
+    @DELETE("/notes/delete/{id}")
+    suspend fun  deleteSelectedNote(
+         @Path("id") id : Int
+    ) : Response<ResponseBody>
+
+    @GET("/notes/{id}")
+    suspend fun  getSelectedNote(
+        @Path("id") id : Int
+    ) : Response<DetailedNote>
 }
 
 @Serializable
@@ -62,4 +74,10 @@ data class UpdatedShortNote(
     val content : String,
     val heading: String,
     val  id : Int
+)
+
+@Serializable
+data class DetailedNote(
+    val dateCreated : String,
+    val lastCreated : String,
 )

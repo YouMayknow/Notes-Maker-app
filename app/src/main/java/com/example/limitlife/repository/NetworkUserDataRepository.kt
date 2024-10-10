@@ -1,6 +1,7 @@
 package com.example.limitlife.repository
 
 import com.example.limitlife.network.AppApiService
+import com.example.limitlife.network.DetailedNote
 import com.example.limitlife.network.LoginResponse
 import com.example.limitlife.network.ShortNote
 import com.example.limitlife.network.UpdatedShortNote
@@ -28,7 +29,7 @@ class NetworkUserDataRepository @Inject constructor(
         .cache(null)
         .addInterceptor(AuthInspector(tokenRepository))
         .build()
-    private  val baseUrl = "http://192.168.1.14:8080"
+    private  val baseUrl = "http://192.168.1.50:8080"
    private val json = Json{ignoreUnknownKeys = true }
     private val retrofit = Retrofit.Builder()
         .baseUrl(baseUrl)
@@ -44,6 +45,8 @@ class NetworkUserDataRepository @Inject constructor(
     override suspend fun createNewNote(shortNote: ShortNote): Response<ResponseBody> = retrofitService.createNewNote(shortNote)
     override suspend fun isTokenValid(): Response<ResponseBody> = retrofitService.isTokenValid()
     override suspend fun updateNote(updatedShortNote: UpdatedShortNote): Response<ResponseBody>  = retrofitService.updateNote(updatedShortNote)
+    override suspend fun deleteSelectedNote(id: Int): Response<ResponseBody>  = retrofitService.deleteSelectedNote(id)
+    override suspend fun getSelectedNote(id: Int): Response<DetailedNote> = retrofitService.getSelectedNote(id)
 }
 
 

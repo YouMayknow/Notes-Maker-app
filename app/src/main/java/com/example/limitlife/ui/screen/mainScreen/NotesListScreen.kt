@@ -43,6 +43,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -76,6 +77,8 @@ fun NotesListMainScreen (
        viewModel.getNotes()
    }
     val uiState = viewModel.loadingScreenUiState
+    var detailedScreen =  viewModel.detailedNoteUiState
+    var isDetailedScreenVisible by rememberSaveable { mutableStateOf(false) }
 
     Scaffold(
         modifier = modifier ,
@@ -93,15 +96,30 @@ fun NotesListMainScreen (
         }
     ) {
         when(uiState) {
-            is NotesListScreenUiState.Success -> NotesListSuccessScreen(
-               modifier =  modifier.padding(it),
-              notes =   uiState.notes ,
-               onNoteClick =  onNoteClick ,
-              onDetailsIconClicked = {} ,
-               onDeleteIconClicked = {  },
-               onBackupIconClicked = {  },
-               onShareIconClicked = {  }
-            )
+            is NotesListScreenUiState.Success -> Box(modifier = modifier.fillMaxSize()) {
+                NotesListSuccessScreen(
+                    modifier =  modifier.padding(it),
+                    notes =   uiState.notes ,
+                    onNoteClick =  onNoteClick ,
+                    onDetailsIconClicked = {noteId ->
+                    isDetailedScreenVisible = true
+                        viewModel.getDetailsOfNote(noteId)
+                        viewModel.refreshNotes()
+                                           } ,
+                    onDeleteIconClicked = { noteId -> viewModel.deleteNote(noteId) },
+                    onBackupIconClicked ={   },
+                    onShareIconClicked = {   }
+                )
+                if (isDetailedScreenVisible){
+                    DetailedScreen(
+                        modifier.fillMaxSize().align(Alignment.Center) ,
+                        onEdit = { },
+                        onClose = { isDetailedScreenVisible = false },
+                        createdOn  = detailedScreen.detailedNote?.dateCreated ?: "",
+                        lastEdited =  detailedScreen.detailedNote?.lastCreated ?: ""
+                    )
+                }
+            }
             is NotesListScreenUiState.Error -> NotesListFailureScreen(modifier.padding(it) , uiState.error ,  viewModel::getNotes
             )
 
@@ -188,9 +206,6 @@ fun NotesList(
                     modifier = Modifier.aspectRatio(0.75f),
                     onMenuClick = {expanded != expanded }
                 )
-                if (expanded){
-                Text(text = "dafd dafdaf dasf ")
-                }
             }
         }
     }

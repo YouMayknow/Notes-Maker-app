@@ -25,4 +25,13 @@
     <string name="bold">Bold</string>
     <string name="text_size">Text size</string>
     <string name="change_color">Change color</string>
+
+    // detailed screen strings
+    <string name="note_details_title">Note Details</string>
+    <string name="created_on_label">Created on:</string>
+    <string name="last_edited_on_label">Last Edited on:</string>
+    <string name="created_date">%s</string>
+    <string name="last_edited_date">%s</string>
+    <string name="edit_note_button">Edit Note</string>
+    <string name="close_button">Close</string>
 </resources>

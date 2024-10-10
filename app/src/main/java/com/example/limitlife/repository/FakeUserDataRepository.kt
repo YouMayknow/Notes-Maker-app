@@ -1,6 +1,7 @@
 package com.example.limitlife.repository
 
 import androidx.compose.ui.graphics.vector.PathNode
+import com.example.limitlife.network.DetailedNote
 import com.example.limitlife.network.LoginResponse
 import com.example.limitlife.network.ShortNote
 import com.example.limitlife.network.UpdatedShortNote
@@ -35,6 +36,15 @@ class FakeUserDataRepository @Inject constructor () : UserDataRepository {
     override suspend fun updateNote(updatedShortNote: UpdatedShortNote): Response<ResponseBody> {
         TODO("Not yet implemented")
     }
+
+    override suspend fun deleteSelectedNote(id: Int): Response<ResponseBody> {
+        TODO("Not yet implemented")
+    }
+
+    override suspend fun getSelectedNote(id: Int): Response<DetailedNote> {
+        TODO("Not yet implemented")
+    }
+
 
 }
 
