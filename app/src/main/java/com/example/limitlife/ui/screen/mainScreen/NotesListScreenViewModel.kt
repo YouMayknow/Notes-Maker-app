@@ -42,6 +42,7 @@ class NotesListScreenViewModel @Inject constructor(
     fun deleteNote(noteId : Int) = viewModelScope.launch {
         try {
        val action =  userDataRepository.deleteSelectedNote(noteId)
+            getNotes()
         } catch (e : IOException) {
             loadingScreenUiState = NotesListScreenUiState.Error(e.message.toString())
         } catch (e  : HttpException){

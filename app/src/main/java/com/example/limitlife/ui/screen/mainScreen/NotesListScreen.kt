@@ -1,5 +1,7 @@
 package com.example.limitlife.ui.screen.mainScreen
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.EnterTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -73,9 +75,7 @@ fun NotesListMainScreen (
     isSideBarEnabled :Boolean = false ,
     viewModel: NotesListScreenViewModel = hiltViewModel()
  ) {
-   LaunchedEffect(Unit) {
-       viewModel.getNotes()
-   }
+
     val uiState = viewModel.loadingScreenUiState
     var detailedScreen =  viewModel.detailedNoteUiState
     var isDetailedScreenVisible by rememberSaveable { mutableStateOf(false) }
@@ -104,21 +104,27 @@ fun NotesListMainScreen (
                     onDetailsIconClicked = {noteId ->
                     isDetailedScreenVisible = true
                         viewModel.getDetailsOfNote(noteId)
-                        viewModel.refreshNotes()
+
                                            } ,
-                    onDeleteIconClicked = { noteId -> viewModel.deleteNote(noteId) },
+                    onDeleteIconClicked = {
+                        noteId ->
+                        viewModel.deleteNote(noteId)
+                                          },
                     onBackupIconClicked ={   },
                     onShareIconClicked = {   }
                 )
-                if (isDetailedScreenVisible){
+                AnimatedVisibility(visible = isDetailedScreenVisible ) {// add animation here
                     DetailedScreen(
-                        modifier.fillMaxSize().align(Alignment.Center) ,
+                        modifier
+                            .fillMaxSize()
+                            .align(Alignment.Center) ,
                         onEdit = { },
                         onClose = { isDetailedScreenVisible = false },
                         createdOn  = detailedScreen.detailedNote?.dateCreated ?: "",
                         lastEdited =  detailedScreen.detailedNote?.lastCreated ?: ""
                     )
                 }
+
             }
             is NotesListScreenUiState.Error -> NotesListFailureScreen(modifier.padding(it) , uiState.error ,  viewModel::getNotes
             )

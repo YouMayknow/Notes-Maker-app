@@ -29,7 +29,7 @@ class NetworkUserDataRepository @Inject constructor(
         .cache(null)
         .addInterceptor(AuthInspector(tokenRepository))
         .build()
-    private  val baseUrl = "http://192.168.1.50:8080"
+    private  val baseUrl = "http://192.168.1.16:8080"
    private val json = Json{ignoreUnknownKeys = true }
     private val retrofit = Retrofit.Builder()
         .baseUrl(baseUrl)
