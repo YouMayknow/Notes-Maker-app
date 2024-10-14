@@ -11,6 +11,7 @@ import com.example.limitlife.network.ShortNote
 import com.example.limitlife.network.UpdatedShortNote
 import com.example.limitlife.repository.FakeUserDataRepository
 import com.example.limitlife.repository.NetworkUserDataRepository
+import com.example.limitlife.repository.OfflineUserDataRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -20,6 +21,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NotesListScreenViewModel @Inject constructor(
+    private val offlineUserDataRepository: OfflineUserDataRepository ,
     private val userDataRepository: NetworkUserDataRepository
 ) : ViewModel() {
 
@@ -32,9 +34,17 @@ class NotesListScreenViewModel @Inject constructor(
     }
      fun getNotes()  = viewModelScope.launch{
         loadingScreenUiState = try {
-            val notes = userDataRepository.getAllUserNotes()
-            NotesListScreenUiState.Success(notes.body() ?: emptyList())
+//            val notes = userDataRepository.getAllUserNotes()
+//            NotesListScreenUiState.Success(notes.body() ?: emptyList())
+            NotesListScreenUiState.Success(notes = offlineUserDataRepository.noteDao.getAllNotes().map {
+                UpdatedShortNote(
+                    heading = it.heading ?: "" ,
+                    content = it.content  ?: "" ,
+                    id = it.noteId ?: 1
+                )
+            })
         } catch (e  : Exception){
+
             NotesListScreenUiState.Error(e.message.toString())
         }
     }

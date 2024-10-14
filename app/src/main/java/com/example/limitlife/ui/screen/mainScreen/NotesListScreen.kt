@@ -83,7 +83,9 @@ fun NotesListMainScreen (
     Scaffold(
         modifier = modifier ,
         floatingActionButton = {
-            FloatingActionButton(onClick = onAddNoteClick) {
+            FloatingActionButton(
+                onClick = onAddNoteClick
+            ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = "Add Note")
             }
         } ,
@@ -104,7 +106,6 @@ fun NotesListMainScreen (
                     onDetailsIconClicked = {noteId ->
                     isDetailedScreenVisible = true
                         viewModel.getDetailsOfNote(noteId)
-
                                            } ,
                     onDeleteIconClicked = {
                         noteId ->
@@ -169,7 +170,6 @@ fun NotesListFailureScreen (
         }
     }
 }
-
 @Composable
 fun NotesListSuccessScreen (
     modifier: Modifier = Modifier ,

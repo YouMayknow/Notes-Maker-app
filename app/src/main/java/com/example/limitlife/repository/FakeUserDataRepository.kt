@@ -1,6 +1,6 @@
 package com.example.limitlife.repository
 
-import androidx.compose.ui.graphics.vector.PathNode
+
 import com.example.limitlife.network.DetailedNote
 import com.example.limitlife.network.LoginResponse
 import com.example.limitlife.network.ShortNote

@@ -22,7 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class  SignupScreenViewModel @Inject constructor(
-    private  val userDataRepository: NetworkUserDataRepository,
+    private  val userDataRepository: FakeUserDataRepository,
     private val userTokenRepository: OfflineUserTokenRepository ,
 ) : ViewModel() {
     private var _uiState =  MutableStateFlow(SignupScreenUiState())

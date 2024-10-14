@@ -1,21 +1,22 @@
 package com.example.limitlife.hilt
 
 import android.app.Application
+import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
-import com.example.limitlife.repository.AuthInspector
 import com.example.limitlife.repository.FakeUserDataRepository
 import com.example.limitlife.repository.NetworkUserDataRepository
+import com.example.limitlife.repository.NoteDatabase
+import com.example.limitlife.repository.OfflineUserDataRepository
 import com.example.limitlife.repository.OfflineUserTokenRepository
 import com.example.limitlife.repository.UserDataRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import okhttp3.OkHttp
-import okhttp3.OkHttpClient
 import javax.inject.Singleton
 
 
@@ -36,6 +37,16 @@ object AppModuleForToken{
     fun provideUserTokenRepository (dataStore: DataStore<Preferences>) : OfflineUserTokenRepository {
         return OfflineUserTokenRepository(dataStore = dataStore )
     }
+
+
+    @Provides // tell how we will create the token provider instance
+    @Singleton
+    fun provideOfflineUserDataRepository (
+        @ApplicationContext  context : Context
+    ) : OfflineUserDataRepository {
+        return OfflineUserDataRepository(noteDao = NoteDatabase.getDatabase(context = context ).noteDao() )
+    }
+
 
 }
 
