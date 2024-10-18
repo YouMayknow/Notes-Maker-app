@@ -1,6 +1,5 @@
 package com.example.limitlife.ui.screen.mainScreen
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -55,6 +54,7 @@ import kotlinx.serialization.json.Json
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun EditNoteScreen(
+    onSaveNoteClick : () -> Unit  ,
     modifier: Modifier = Modifier ,
     shortNote: String = "" ,
     onBackPressed : () -> Unit ,
@@ -108,7 +108,7 @@ fun EditNoteScreen(
                         )
                         )
                     }
-                    onBackPressed()
+                    onSaveNoteClick()
                 }
             } ,
             modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)

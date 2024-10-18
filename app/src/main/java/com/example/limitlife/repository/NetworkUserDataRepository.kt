@@ -1,5 +1,6 @@
 package com.example.limitlife.repository
 
+import androidx.compose.material3.TimeInput
 import com.example.limitlife.network.AppApiService
 import com.example.limitlife.network.DetailedNote
 import com.example.limitlife.network.LoginResponse
@@ -15,6 +16,7 @@ import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.Retrofit
+import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 
@@ -26,10 +28,10 @@ class NetworkUserDataRepository @Inject constructor(
     tokenRepository: OfflineUserTokenRepository
 ) : UserDataRepository {
     private var client = OkHttpClient.Builder()
-        .cache(null)
+      //  .callTimeout(5 , TimeUnit.SECONDS)
         .addInterceptor(AuthInspector(tokenRepository))
         .build()
-    private  val baseUrl = "http://192.168.1.16:8080"
+    private  val baseUrl = "http://192.168.1.2:8080"
    private val json = Json{ignoreUnknownKeys = true }
     private val retrofit = Retrofit.Builder()
         .baseUrl(baseUrl)
@@ -48,8 +50,6 @@ class NetworkUserDataRepository @Inject constructor(
     override suspend fun deleteSelectedNote(id: Int): Response<ResponseBody>  = retrofitService.deleteSelectedNote(id)
     override suspend fun getSelectedNote(id: Int): Response<DetailedNote> = retrofitService.getSelectedNote(id)
 }
-
-
 
 class AuthInspector ( private val tokenRepository: OfflineUserTokenRepository ) : Interceptor{
     override fun intercept(chain: Interceptor.Chain): okhttp3.Response {

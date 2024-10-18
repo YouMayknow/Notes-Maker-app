@@ -4,14 +4,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.focusModifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -29,37 +27,35 @@ is implemented with it
 
 @Composable
 fun HomeScreen (
+    modifier: Modifier = Modifier ,
     navController: NavHostController = rememberNavController() ,
-    modifier: Modifier = Modifier.fillMaxSize() ,
-    viewModel: HomeScreenViewModel = hiltViewModel()
+    viewModel: HomeScreenViewModel = hiltViewModel() ,
 ) {
     Column(
         Modifier.fillMaxSize() ,
         horizontalAlignment = Alignment.CenterHorizontally ,
         verticalArrangement = Arrangement.Center
     ) {
-        val isNewUser = viewModel.isNewUser.collectAsState()
-        val isTokenValid = viewModel.isTokenValid.collectAsState()
-
+        val uiState by viewModel.uiState.collectAsState()
         LaunchedEffect(Unit) {
             viewModel.checkLoginRequirement()
-
         }
-        if (isNewUser.value == null || isTokenValid.value == null){
+        if ((uiState.isNewUser == null || uiState.isTokenValid == null)  && uiState.isNetworkAvailable == null ){
             CircularProgressIndicator()
         }
         else {
             NavHost(
                 navController = navController,
                 startDestination = when {
-                    isNewUser.value == true -> EntryScreen
-                    isTokenValid.value == true -> MainScreen
+                   uiState.isNewUser == true -> EntryScreen
+                    uiState.isTokenValid == true -> MainScreen
+                    uiState.isNetworkAvailable == false -> MainScreen
                     else -> EntryScreen
                 } ,
                 modifier = modifier
             ){
                 composable<MainScreen>{
-                    MainScreenNavigation(modifier = modifier )
+                    MainScreenNavigation(modifier = modifier)
                 }
                 composable<EntryScreen> {
                     SignupScreen(navigateToMainScreen = {navController.navigate(MainScreen)} , modifier =  modifier )
@@ -67,9 +63,6 @@ fun HomeScreen (
             }
         }
     }
-
-
 }
-
 @Serializable object EntryScreen
 @Serializable object MainScreen

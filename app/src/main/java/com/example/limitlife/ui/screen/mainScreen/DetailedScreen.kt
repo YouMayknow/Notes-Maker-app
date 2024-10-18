@@ -96,7 +96,6 @@ fun DetailedScreen(
                 ) {
                     Text(text = stringResource(R.string.edit_note_button))
                 }
-
                 Button(
                     onClick = onClose,
                     shape = RoundedCornerShape(50),
@@ -108,7 +107,6 @@ fun DetailedScreen(
         }
     }
 }
-
 @Composable
 @Preview
 fun DetailedScreenViewModel() {

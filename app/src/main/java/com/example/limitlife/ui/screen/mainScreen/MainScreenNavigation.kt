@@ -1,7 +1,13 @@
 package com.example.limitlife.ui.screen.mainScreen
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -18,18 +24,28 @@ on this basis of the click it prepares the drawer based screen for the user usin
  */
 @Composable
 fun  MainScreenNavigation (
-    navController: NavHostController = rememberNavController()  ,
     modifier: Modifier = Modifier ,
+    navController: NavHostController = rememberNavController()  ,
+    viewModel: NotesListScreenViewModel = hiltViewModel()
 ) {
     NavHost(navController = navController, startDestination = RouteScreenUserDetail , modifier = modifier) {
         composable<RouteScreenUserDetail>{
+            val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
+            var shouldRefresh by remember { mutableStateOf(false) }
+             savedStateHandle?.getLiveData<Boolean>("shouldRefresh")?.observe(
+                LocalLifecycleOwner.current) {
+                 shouldRefresh = it ?: false
+            }
             UserDetailsAndDrawerScreen(
-                modifier = modifier,
-                onAddNoteClick = {navController.navigate(RouteCreateNoteScreen)} ,
+                shouldRefresh = shouldRefresh,
+                viewModel = viewModel,
                 onNoteClick = {navController.navigate(RouteEditNoteScreen(it))},
+                onAddNoteClick = {navController.navigate(RouteCreateNoteScreen)},
+                turnShouldRefreshFalse = {navController.previousBackStackEntry?.savedStateHandle?.set("shouldRefresh" , false)},
                 onDrawerItemClicked = { drawerItem ->
                     navController.navigate("DrawerItems/${drawerItem}")
-                }
+                },
+                modifier = modifier
             )
         }
         composable(
@@ -44,12 +60,18 @@ fun  MainScreenNavigation (
         composable<RouteEditNoteScreen> {
             val args =  it.toRoute<RouteEditNoteScreen>()
           EditNoteScreen(
+              onSaveNoteClick = {
+                                val savedStateHandle = navController.previousBackStackEntry?.savedStateHandle
+                  savedStateHandle?.set("shouldRefresh" , true)
+                  navController.popBackStack()
+              },
               shortNote = args.shortNote,
               onBackPressed = {navController.navigateUp()}
           )
         }
         composable<RouteCreateNoteScreen> {
             EditNoteScreen(
+                onSaveNoteClick = {},
                 onBackPressed =  {navController.navigateUp()})
         }
     }

@@ -22,9 +22,9 @@ class EditScreenVIewModel @Inject constructor(
     var  response  =  MutableStateFlow("")
     fun createNote(shortNote: ShortNote) = viewModelScope.launch{
         try {
-          // val reply   =  userDataRepository.createNewNote(shortNote)
-           val reply   =  offlineUserDataRepository.save(Note(heading = shortNote.heading , content =  shortNote.content , noteId = 1 ))
-         // response.value =   reply.message()
+           val reply   =  userDataRepository.createNewNote(shortNote)
+          // val reply   =  offlineUserDataRepository.save(Note(heading = shortNote.heading , content =  shortNote.content , noteId = 1 ))
+         // response.value =   reply.detailedNoteMessage()
         } catch ( e : Exception ){
             response.value  = (e.message + response )
             Log.e("response","${e.message}")

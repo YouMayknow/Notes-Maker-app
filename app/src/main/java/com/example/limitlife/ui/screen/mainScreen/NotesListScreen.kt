@@ -1,7 +1,6 @@
 package com.example.limitlife.ui.screen.mainScreen
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.EnterTransition
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -37,15 +36,18 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -64,22 +66,39 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.limitlife.R
 import com.example.limitlife.network.UpdatedShortNote
 import com.example.limitlife.ui.theme.LimitLifeTheme
+import kotlinx.coroutines.launch
 
 
 @Composable
 fun NotesListMainScreen (
+    modifier : Modifier = Modifier  ,
+    shouldRefresh : Boolean = false ,
     onNoteClick: (UpdatedShortNote) -> Unit ,
     onDetailsIconClicked : () -> Unit ,
     onAddNoteClick: () -> Unit,
-    modifier : Modifier = Modifier  ,
     isSideBarEnabled :Boolean = false ,
-    viewModel: NotesListScreenViewModel = hiltViewModel()
+    turnShouldRefreshFalse : ()-> Unit ,
+    viewModel: NotesListScreenViewModel
  ) {
-
-    val uiState = viewModel.loadingScreenUiState
-    var detailedScreen =  viewModel.detailedNoteUiState
-    var isDetailedScreenVisible by rememberSaveable { mutableStateOf(false) }
-
+    //val pullRefreshState =
+    val uiState by  viewModel.uiState.collectAsState()
+    val snackBarMessage by viewModel.snackBarMessage.collectAsState()
+    val snackBarHostState = remember { SnackbarHostState()}
+    val scope = rememberCoroutineScope()
+    LaunchedEffect(shouldRefresh) {
+        if (shouldRefresh) {
+            viewModel.refreshNotes()
+            turnShouldRefreshFalse()
+        }
+    }
+    snackBarMessage?.let {message ->
+        LaunchedEffect(message) {
+            scope.launch {
+                snackBarHostState.showSnackbar(message)
+                viewModel.resetSnackBar()
+            }
+        }
+    }
     Scaffold(
         modifier = modifier ,
         floatingActionButton = {
@@ -95,45 +114,44 @@ fun NotesListMainScreen (
                 isSideBarEnabled =  isSideBarEnabled,
                 onSearch =  {}
             )
-        }
+        } ,
+        snackbarHost = {
+            SnackbarHost(hostState = snackBarHostState)
+        } ,
     ) {
-        when(uiState) {
-            is NotesListScreenUiState.Success -> Box(modifier = modifier.fillMaxSize()) {
+        if(uiState.isLoading) {
+            NotesListLoadingScreen(modifier.padding(it))
+        } else {
+            Box(modifier = modifier.fillMaxSize()) {
                 NotesListSuccessScreen(
                     modifier =  modifier.padding(it),
                     notes =   uiState.notes ,
                     onNoteClick =  onNoteClick ,
                     onDetailsIconClicked = {noteId ->
-                    isDetailedScreenVisible = true
                         viewModel.getDetailsOfNote(noteId)
-                                           } ,
-                    onDeleteIconClicked = {
-                        noteId ->
+                    } ,
+                    onDeleteIconClicked = {noteId ->
                         viewModel.deleteNote(noteId)
-                                          },
-                    onBackupIconClicked ={   },
+                    },
+                    onBackupIconClicked ={},
                     onShareIconClicked = {   }
                 )
-                AnimatedVisibility(visible = isDetailedScreenVisible ) {// add animation here
+                AnimatedVisibility(visible = uiState.isDetailedNoteVisible ) {// add animation here
                     DetailedScreen(
                         modifier
                             .fillMaxSize()
                             .align(Alignment.Center) ,
-                        onEdit = { },
-                        onClose = { isDetailedScreenVisible = false },
-                        createdOn  = detailedScreen.detailedNote?.dateCreated ?: "",
-                        lastEdited =  detailedScreen.detailedNote?.lastCreated ?: ""
+                        onEdit = {},
+                        onClose = viewModel::closeDetailedNote,
+                        createdOn  = uiState.detailedNote?.dateCreated?: "",
+                        lastEdited =  uiState.detailedNote?.lastCreated?: ""?: ""
                     )
                 }
-
             }
-            is NotesListScreenUiState.Error -> NotesListFailureScreen(modifier.padding(it) , uiState.error ,  viewModel::getNotes
-            )
-
-            else -> NotesListLoadingScreen(modifier.padding(it))
         }
     }
 }
+
 
 @Composable
 fun NotesListLoadingScreen (
@@ -147,7 +165,6 @@ fun NotesListLoadingScreen (
         CircularProgressIndicator()
     }
 }
-
 
 @Composable
 fun NotesListFailureScreen (
@@ -180,14 +197,22 @@ fun NotesListSuccessScreen (
     onBackupIconClicked: (Int) -> Unit ,
     onShareIconClicked : (Int) -> Unit ,
 ) {
-    NotesList(notes = notes, onNoteClick, modifier = modifier, onDetailsIconClicked,onDeleteIconClicked, onBackupIconClicked,onShareIconClicked)
+    NotesList(
+        modifier = modifier,
+        notes = notes,
+        onNoteClick,
+        onDetailsIconClicked,
+        onDeleteIconClicked,
+        onBackupIconClicked,
+        onShareIconClicked
+    )
 }
 
 @Composable
 fun NotesList(
+    modifier: Modifier = Modifier  ,
     notes:List<UpdatedShortNote>,
     onNoteClick : (UpdatedShortNote) -> Unit ,
-    modifier: Modifier = Modifier  ,
     onDetailsIconClicked: (Int) -> Unit ,
     onDeleteIconClicked: (Int) -> Unit ,
     onBackupIconClicked: (Int) -> Unit ,
@@ -202,6 +227,7 @@ fun NotesList(
         items(notes) { note ->
             Box {
                 NoteItem(
+                    modifier = Modifier.aspectRatio(0.75f),
                     onDetailsIconClicked = { onDetailsIconClicked(note.id)},
                     onDeleteIconClicked = {onDeleteIconClicked(note.id)},
                     onBackupIconClicked = {onBackupIconClicked(note.id)},
@@ -209,7 +235,6 @@ fun NotesList(
                     noteTitle = note.heading,
                     imageUrl = note.content,
                     onNoteClick = { onNoteClick(note) },
-                    modifier = Modifier.aspectRatio(0.75f),
                     onMenuClick = {expanded != expanded }
                 )
             }
@@ -218,6 +243,7 @@ fun NotesList(
 }
 @Composable
 fun NoteItem(
+    modifier: Modifier = Modifier ,
     onDetailsIconClicked: () -> Unit ,
     onDeleteIconClicked: () -> Unit ,
     onBackupIconClicked: () -> Unit ,
@@ -225,7 +251,6 @@ fun NoteItem(
     noteTitle: String,
     imageUrl: String ,
     onNoteClick : () -> Unit ,
-    modifier: Modifier = Modifier ,
     onMenuClick : () -> Unit
 ) {
     var expanded by remember {mutableStateOf(false) }
@@ -401,7 +426,10 @@ fun PreviewNotesList() {
     NotesListMainScreen(
         onNoteClick =  {},
         onDetailsIconClicked = {},
-        onAddNoteClick =  {})
+        onAddNoteClick =  {},
+        viewModel = hiltViewModel() ,
+        turnShouldRefreshFalse =  {}
+    )
 }
 
 @Preview

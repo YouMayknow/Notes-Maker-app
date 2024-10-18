@@ -22,7 +22,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class  SignupScreenViewModel @Inject constructor(
-    private  val userDataRepository: FakeUserDataRepository,
+    private  val userDataRepository: NetworkUserDataRepository,
     private val userTokenRepository: OfflineUserTokenRepository ,
 ) : ViewModel() {
     private var _uiState =  MutableStateFlow(SignupScreenUiState())
@@ -40,7 +40,7 @@ class  SignupScreenViewModel @Inject constructor(
                             response.errorBody()?.string() ?: "Unknown error occurred"
                         }
                     )
-                }
+            }
             }
 
             /*this block will be executed when the user is logging in his account
@@ -91,7 +91,6 @@ class  SignupScreenViewModel @Inject constructor(
             }
         }
     }
-
     fun navigateScreenButtonAction (){
         _uiState.update {
             it.copy(
@@ -103,9 +102,6 @@ class  SignupScreenViewModel @Inject constructor(
         }
     }
 }
-
-
-
 data class  SignupScreenUiState(
     val responseToDisplay : String? = "" ,
     val currentScreen : AuthenticationScreen = AuthenticationScreen.Login ,

@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.limitlife.ui.theme.LimitLifeTheme
 import com.example.limitlife.utils.DrawerItems
 import kotlinx.coroutines.launch
@@ -41,8 +42,11 @@ main Screen that adhere the notes from the database and also have button to add 
  */
 @Composable
 fun UserDetailsAndDrawerScreen(
+     shouldRefresh : Boolean = false ,
+    viewModel: NotesListScreenViewModel ,
     onNoteClick : (String) -> Unit,
     onAddNoteClick :()-> Unit,
+     turnShouldRefreshFalse : () -> Unit,
     onDrawerItemClicked: (String) -> Unit,
     modifier : Modifier =   Modifier
 ) {
@@ -56,6 +60,8 @@ fun UserDetailsAndDrawerScreen(
         modifier =  modifier ,
     ) {
         NotesListMainScreen(
+            modifier = modifier,
+            shouldRefresh = shouldRefresh,
             onNoteClick = {
                         val note =  Json.encodeToString(it)
                 onNoteClick(note)
@@ -68,7 +74,8 @@ fun UserDetailsAndDrawerScreen(
                 }
             },
             onAddNoteClick = onAddNoteClick,
-            modifier = modifier,
+            viewModel = viewModel ,
+            turnShouldRefreshFalse = turnShouldRefreshFalse ,
         )
     }
 }
@@ -118,7 +125,10 @@ fun MenuItem(icon: androidx.compose.ui.graphics.vector.ImageVector, text: String
 @Composable
 fun NavigationRailPreview() {
     LimitLifeTheme(darkTheme = false) {
-        UserDetailsAndDrawerScreen(onAddNoteClick = {}, onDrawerItemClicked =  {} , onNoteClick =  {})
+        UserDetailsAndDrawerScreen(
+            viewModel = hiltViewModel(),
+            onNoteClick =  {},
+            onAddNoteClick = {}, turnShouldRefreshFalse = {}, onDrawerItemClicked =  {})
     }
 }
 
