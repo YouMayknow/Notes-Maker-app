@@ -20,6 +20,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -59,8 +60,8 @@ fun SignupScreen(
             .background(Color(0xFFB3E5FC)) ,    // Light blue background
         contentAlignment = Alignment.Center
     ) {
-         val uiState = viewModel.uiState.collectAsState()
-        val currentUiScreen = uiState.value.currentScreen
+         val uiState by viewModel.uiState.collectAsState()
+        val currentUiScreen = uiState.currentScreen
         Card(
             modifier = Modifier,
             shape = RoundedCornerShape(8.dp),
@@ -72,10 +73,10 @@ fun SignupScreen(
                     .fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = uiState.value.responseToDisplay ?: "" , color = MaterialTheme.colorScheme.error )
+                Text(text = uiState.responseToDisplay ?: "" , color = MaterialTheme.colorScheme.error )
                 CredentialsOfSigningColumn(heading = currentUiScreen.heading  , aheadActionLabel = currentUiScreen.aheadActionButton  ) { username , password ->
                     viewModel.aheadActionButton(username , password)
-                        navigateToMainScreen()
+                    if (uiState.isLoginSuccess) navigateToMainScreen()
                 }
                 // Login Link
                 TextButton(onClick = { viewModel.navigateScreenButtonAction() }) {
@@ -144,7 +145,7 @@ fun CredentialsOfSigningColumn(
             maxLines = 1 ,
         )
 
-        // Sign Up Button
+        // singup or login button
         Button(
             onClick = { aheadAction(userName, password) } ,
             modifier = Modifier
@@ -170,7 +171,7 @@ fun CredentialsOfSigningColumn(
                 modifier = Modifier.padding(horizontal = 8.dp),
                 color = Color.Gray
             )
-            Divider(modifier = Modifier.weight(1f), color = Color.Gray)
+            HorizontalDivider(modifier = Modifier.weight(1f), color = Color.Gray)
         }
 
         Spacer(modifier = Modifier.height(8.dp))

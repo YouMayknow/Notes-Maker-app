@@ -61,9 +61,9 @@ fun  MainScreenNavigation (
             val args =  it.toRoute<RouteEditNoteScreen>()
           EditNoteScreen(
               onSaveNoteClick = {
+                  navController.navigateUp()
                                 val savedStateHandle = navController.previousBackStackEntry?.savedStateHandle
-                  savedStateHandle?.set("shouldRefresh" , true)
-                  navController.popBackStack()
+                  savedStateHandle?.set("shouldRefresh" , true )
               },
               shortNote = args.shortNote,
               onBackPressed = {navController.navigateUp()}
@@ -71,7 +71,11 @@ fun  MainScreenNavigation (
         }
         composable<RouteCreateNoteScreen> {
             EditNoteScreen(
-                onSaveNoteClick = {},
+                onSaveNoteClick = {
+                    navController.navigateUp()
+                    val savedStateHandle = navController.previousBackStackEntry?.savedStateHandle
+                    savedStateHandle?.set("shouldRefresh" , true )
+                },
                 onBackPressed =  {navController.navigateUp()})
         }
     }

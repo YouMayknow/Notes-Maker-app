@@ -34,13 +34,10 @@ class  SignupScreenViewModel @Inject constructor(
                 val response = userDataRepository.registerUser(username, password)
                 _uiState.update {
                     it.copy(
-                        responseToDisplay = if (response.isSuccessful) {
-                            response.body()?.string()
-                        } else {
-                            response.errorBody()?.string() ?: "Unknown error occurred"
-                        }
+                        responseToDisplay = if (response.isSuccessful) response.body()?.string()
+                        else  response.errorBody()?.string() ?: "Unknown error occurred"
                     )
-            }
+                }
             }
 
             /*this block will be executed when the user is logging in his account
@@ -60,7 +57,6 @@ class  SignupScreenViewModel @Inject constructor(
                     // this display the token to th user just for trials only
                     _uiState.update {
                         it.copy(
-                            responseToDisplay = userTokenRepository.userToken.first() ,
                             isLoginSuccess = true
                         )
                     }
@@ -105,7 +101,7 @@ class  SignupScreenViewModel @Inject constructor(
 data class  SignupScreenUiState(
     val responseToDisplay : String? = "" ,
     val currentScreen : AuthenticationScreen = AuthenticationScreen.Login ,
-    val isLoginSuccess : Boolean  = false
+    val isLoginSuccess : Boolean  = false ,
 )
 
 enum class  AuthenticationScreen(

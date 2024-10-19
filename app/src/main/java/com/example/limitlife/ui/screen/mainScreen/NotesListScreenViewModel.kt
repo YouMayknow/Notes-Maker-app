@@ -119,8 +119,6 @@ class NotesListScreenViewModel @Inject constructor(
         _snackBarMessage.value = errorMessage
     }
 
-
-
     private  suspend fun fetchOfflineNotes() {
         val notes = offlineUserDataRepository.noteDao.getAllNotes().map {
             UpdatedShortNote(

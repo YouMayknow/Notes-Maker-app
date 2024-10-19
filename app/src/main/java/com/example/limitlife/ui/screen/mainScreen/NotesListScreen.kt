@@ -31,6 +31,7 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -41,6 +42,9 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshState
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -69,6 +73,7 @@ import com.example.limitlife.ui.theme.LimitLifeTheme
 import kotlinx.coroutines.launch
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotesListMainScreen (
     modifier : Modifier = Modifier  ,
@@ -80,11 +85,13 @@ fun NotesListMainScreen (
     turnShouldRefreshFalse : ()-> Unit ,
     viewModel: NotesListScreenViewModel
  ) {
-    //val pullRefreshState =
     val uiState by  viewModel.uiState.collectAsState()
     val snackBarMessage by viewModel.snackBarMessage.collectAsState()
     val snackBarHostState = remember { SnackbarHostState()}
     val scope = rememberCoroutineScope()
+    var refreshing by remember { mutableStateOf(false) }
+    val pullToRefreshState = rememberPullToRefreshState()
+
     LaunchedEffect(shouldRefresh) {
         if (shouldRefresh) {
             viewModel.refreshNotes()
@@ -122,8 +129,17 @@ fun NotesListMainScreen (
         if(uiState.isLoading) {
             NotesListLoadingScreen(modifier.padding(it))
         } else {
-            Box(modifier = modifier.fillMaxSize()) {
-                NotesListSuccessScreen(
+            PullToRefreshBox(
+                isRefreshing = refreshing ,
+                onRefresh = {
+                    refreshing = true
+                    viewModel.refreshNotes()
+                    refreshing = false
+                            },
+                state =pullToRefreshState ,
+                modifier = modifier
+                    .fillMaxSize()){
+                NotesList(
                     modifier =  modifier.padding(it),
                     notes =   uiState.notes ,
                     onNoteClick =  onNoteClick ,

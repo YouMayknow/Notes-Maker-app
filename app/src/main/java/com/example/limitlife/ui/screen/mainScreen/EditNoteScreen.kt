@@ -60,10 +60,10 @@ fun EditNoteScreen(
     onBackPressed : () -> Unit ,
     viewModel: EditScreenVIewModel = hiltViewModel()
 ) {
+    val uiState by  viewModel.uiState.collectAsState()
     var content by rememberSaveable { mutableStateOf("") }
     var id by rememberSaveable { mutableIntStateOf(-1) }
     var heading by rememberSaveable { mutableStateOf("") }
-    val problem = viewModel.response.collectAsState()
     var  isFocused  by  rememberSaveable { mutableStateOf(false) }
     LaunchedEffect (Unit){
         if (shortNote != "") {
@@ -108,12 +108,14 @@ fun EditNoteScreen(
                         )
                         )
                     }
+                }
+                if (uiState.isSaveSuccessful){
                     onSaveNoteClick()
                 }
             } ,
             modifier = Modifier.background(MaterialTheme.colorScheme.secondaryContainer)
         )
-        Text(text = problem.value)
+        Text(text = uiState.serverResponse , modifier = Modifier.padding(vertical = 8.dp , horizontal = 8.dp ))
         CustomNoteTextField(
             modifier = modifier
                 .fillMaxSize()
