@@ -11,11 +11,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.limitlife"
+    namespace = "com.example.NotesMaker"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.example.limitlife"
+        applicationId = "com.example.NotesMaker"
         minSdk = 25
         targetSdk = 34
         versionCode = 1

@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Limit Life"
+rootProject.name = "Notes Maker"
 include(":app")
  
