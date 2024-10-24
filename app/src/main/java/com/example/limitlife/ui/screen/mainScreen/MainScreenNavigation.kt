@@ -15,6 +15,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.toRoute
+import com.example.limitlife.ui.screen.NoteScreen.CreateNoteScreen
+import com.example.limitlife.ui.screen.NoteScreen.UpdateNoteScreen
 import kotlinx.serialization.Serializable
 
 
@@ -29,6 +31,10 @@ fun  MainScreenNavigation (
     viewModel: NotesListScreenViewModel = hiltViewModel()
 ) {
     NavHost(navController = navController, startDestination = RouteScreenUserDetail , modifier = modifier) {
+
+
+
+
         composable<RouteScreenUserDetail>{
             val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
             var shouldRefresh by remember { mutableStateOf(false) }
@@ -37,17 +43,19 @@ fun  MainScreenNavigation (
                  shouldRefresh = it ?: false
             }
             UserDetailsAndDrawerScreen(
+                modifier = modifier,
                 shouldRefresh = shouldRefresh,
                 viewModel = viewModel,
-                onNoteClick = {navController.navigate(RouteEditNoteScreen(it))},
+                onNoteClick = {navController.navigate(RouteUpdateNoteScreen(it))},
                 onAddNoteClick = {navController.navigate(RouteCreateNoteScreen)},
                 turnShouldRefreshFalse = {navController.previousBackStackEntry?.savedStateHandle?.set("shouldRefresh" , false)},
                 onDrawerItemClicked = { drawerItem ->
                     navController.navigate("DrawerItems/${drawerItem}")
-                },
-                modifier = modifier
+                }
             )
         }
+
+
         composable(
             "DrawerItems/{selectedDrawer}" ,
             arguments = listOf(navArgument("selectedDrawer"){
@@ -57,26 +65,25 @@ fun  MainScreenNavigation (
             val selectedDrawer = it.arguments?.getString("selectedDrawer") ?: ""
             IndividualDrawerScreen(onBackClick = { navController.navigate(RouteScreenUserDetail)}, drawerItemName = selectedDrawer)
         }
-        composable<RouteEditNoteScreen> {
-            val args =  it.toRoute<RouteEditNoteScreen>()
-          EditNoteScreen(
-              onSaveNoteClick = {
-                  navController.navigateUp()
-                                val savedStateHandle = navController.previousBackStackEntry?.savedStateHandle
-                  savedStateHandle?.set("shouldRefresh" , true )
-              },
+
+
+        composable<RouteUpdateNoteScreen> {
+            val args =  it.toRoute<RouteUpdateNoteScreen>()
+          UpdateNoteScreen(
               shortNote = args.shortNote,
-              onBackPressed = {navController.navigateUp()}
+              onBackPressed = { navController.navigateUp() },
+              redirectBackToDetailedList = { navController.navigateUp() }
           )
         }
+
+
         composable<RouteCreateNoteScreen> {
-            EditNoteScreen(
-                onSaveNoteClick = {
-                    navController.navigateUp()
-                    val savedStateHandle = navController.previousBackStackEntry?.savedStateHandle
-                    savedStateHandle?.set("shouldRefresh" , true )
-                },
-                onBackPressed =  {navController.navigateUp()})
+           CreateNoteScreen(
+               onBackPressed = {
+                   navController.navigateUp()
+               },
+               redirectBackToDetailedList = { navController.navigateUp() }
+           )
         }
     }
 }
@@ -84,7 +91,7 @@ fun  MainScreenNavigation (
 @Serializable
 object RouteScreenUserDetail
 @Serializable
-data class RouteEditNoteScreen(val shortNote: String = "")
+data class RouteUpdateNoteScreen(val shortNote: String = "")
 
 @Serializable
 object RouteCreateNoteScreen

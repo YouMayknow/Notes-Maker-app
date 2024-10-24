@@ -28,10 +28,10 @@ class NetworkUserDataRepository @Inject constructor(
     tokenRepository: OfflineUserTokenRepository
 ) : UserDataRepository {
     private var client = OkHttpClient.Builder()
-      //  .callTimeout(5 , TimeUnit.SECONDS)
+        .callTimeout(5 , TimeUnit.SECONDS)
         .addInterceptor(AuthInspector(tokenRepository))
         .build()
-    private  val baseUrl = "http://192.168.1.14:8080"
+    private  val baseUrl = "http://192.168.1.17:8080"
    private val json = Json{ignoreUnknownKeys = true }
     private val retrofit = Retrofit.Builder()
         .baseUrl(baseUrl)

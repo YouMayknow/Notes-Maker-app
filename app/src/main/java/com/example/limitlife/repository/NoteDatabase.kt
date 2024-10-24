@@ -27,7 +27,7 @@ data class Note(
     @PrimaryKey(autoGenerate = true ) val id : Int = 0  ,
     @ColumnInfo val heading : String? ,
     @ColumnInfo val content : String? ,
-    @ColumnInfo val noteId : Int?
+    @ColumnInfo val noteId : Int? = null
 )
 
 @Dao
@@ -35,15 +35,15 @@ interface NoteDao{
     @Query("SELECT * FROM Note")
    suspend fun  getAllNotes() : List<Note>
 
-   @Update
+   @Update(onConflict = OnConflictStrategy.REPLACE)
    suspend fun updateNote(note: Note)
 
 
-   @Insert(onConflict = OnConflictStrategy.REPLACE)
+   @Insert(onConflict = OnConflictStrategy.IGNORE)
    suspend fun saveNote(note: Note)
 }
 
-@Database(entities = [Note::class], version = 3 )
+@Database(entities = [Note::class], version = 4 )
 abstract class NoteDatabase : RoomDatabase() {
   abstract  fun noteDao() : NoteDao
   companion object {

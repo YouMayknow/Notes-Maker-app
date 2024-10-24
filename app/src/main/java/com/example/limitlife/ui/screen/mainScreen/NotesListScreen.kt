@@ -43,7 +43,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.pulltorefresh.PullToRefreshBox
-import androidx.compose.material3.pulltorefresh.PullToRefreshState
 import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -69,6 +68,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.limitlife.R
 import com.example.limitlife.network.UpdatedShortNote
+import com.example.limitlife.ui.screen.NoteScreen.DetailedScreen
 import com.example.limitlife.ui.theme.LimitLifeTheme
 import kotlinx.coroutines.launch
 
@@ -99,12 +99,12 @@ fun NotesListMainScreen (
         }
     }
     snackBarMessage?.let {message ->
-        LaunchedEffect(message) {
-            scope.launch {
-                snackBarHostState.showSnackbar(message)
-                viewModel.resetSnackBar()
+            LaunchedEffect(message) {
+                scope.launch {
+                    snackBarHostState.showSnackbar(message)
+                    viewModel.resetSnackBar()
+                }
             }
-        }
     }
     Scaffold(
         modifier = modifier ,
@@ -459,7 +459,7 @@ fun SearchBarPreview() {
 fun NotesListrear() {
     LimitLifeTheme(darkTheme =  false) {
     NotesList(
-        notes = listOf(UpdatedShortNote(  "fasdfasd" , "fadfdfasd" , 1)),
+        notes = listOf(UpdatedShortNote("fasdfasd", "fadfdfasd", 1, 0)),
         onNoteClick = {},
         onDetailsIconClicked = {},
         onDeleteIconClicked = {},

@@ -49,8 +49,8 @@ class FakeUserDataRepository @Inject constructor () : UserDataRepository {
 }
 
 val listOfNotes = listOf(
-    UpdatedShortNote("hero", "rajeshwar" , 1) ,
-    UpdatedShortNote("rahjua", "rajeshwar" , 1) ,
-    UpdatedShortNote("dasf", "rajeshwar" , 1) ,
+    UpdatedShortNote("hero", "rajeshwar", 1, 0) ,
+    UpdatedShortNote("rahjua", "rajeshwar", 1, 0) ,
+    UpdatedShortNote("dasf", "rajeshwar", 1, 0) ,
 
 )

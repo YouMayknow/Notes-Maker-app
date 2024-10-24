@@ -9,11 +9,9 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="02edfd3b-5ed1-4272-b90b-ba21f0364f73" name="Changes" comment="snackbar resolved , global internet avaibility checker">
-      <change afterPath="$PROJECT_DIR$/.kotlin/errors/errors-1729249880286.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.10.1/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.10.1/checksums/checksums.lock" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.10.1/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.10.1/checksums/md5-checksums.bin" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gradle/8.10.1/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.10.1/checksums/sha1-checksums.bin" afterDir="false" />
+    <list default="true" id="02edfd3b-5ed1-4272-b90b-ba21f0364f73" name="Changes" comment="uiState optimized , PullToRefresh implemented , automated Refresh implemented">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/NoteScreen/CreateNoteScreen.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/NoteScreen/EditNoteScreen.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.10.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.10.1/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.10.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.10.1/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.10.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.10.1/fileHashes/fileHashes.bin" afterDir="false" />
@@ -22,15 +20,20 @@
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/network/AppApiService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/network/AppApiService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/repository/FakeUserDataRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/repository/FakeUserDataRepository.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/repository/NetworkUserDataRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/repository/NetworkUserDataRepository.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/entryScreen/SignUpScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/entryScreen/SignUpScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/repository/NoteDatabase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/repository/NoteDatabase.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/entryScreen/SignupScreenViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/entryScreen/SignupScreenViewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/mainScreen/EditNoteScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/mainScreen/EditNoteScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/mainScreen/EditScreenVIewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/mainScreen/EditScreenVIewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/mainScreen/DetailedScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/NoteScreen/DetailedScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/mainScreen/EditNoteScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/NoteScreen/UpdateNoteScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/mainScreen/EditScreenVIewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/NoteScreen/EditScreenVIewModel.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/mainScreen/MainScreenNavigation.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/mainScreen/MainScreenNavigation.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/mainScreen/NotesListScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/mainScreen/NotesListScreen.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/mainScreen/NotesListScreenViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/mainScreen/NotesListScreenViewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/gradle/libs.versions.toml" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/libs.versions.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/mainScreen/UserDetailsAndDrawerScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/mainScreen/UserDetailsAndDrawerScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/mainScreen/ViewNoteScreen.kt" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -152,15 +155,22 @@
     "run.code.analysis.last.selected.profile": "pProject Default",
     "settings.editor.selected.configurable": "preferences.intentionPowerPack",
     "show.do.not.copy.http.proxy.settings.to.gradle": "false"
+  },
+  "keyToStringList": {
+    "com.android.tools.idea.sqlite.queryhistory": [
+      "DELETE FROM Note",
+      "DELETE  From Note",
+      "DELETE  From Note  where id = 17"
+    ]
   }
 }]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\youma\AndroidStudioProjects\LimitLife\app\src\main\java\com\example\limitlife\ui\screen\NoteScreen" />
       <recent name="C:\Users\youma\AndroidStudioProjects\LimitLife\app\src\main\java\com\example\limitlife\ui\screen\mainScreen" />
       <recent name="C:\Users\youma\AndroidStudioProjects\LimitLife\app\src\main\java\com\example\limitlife\ui\theme" />
       <recent name="C:\Users\youma\AndroidStudioProjects\LimitLife\app\src\main\java\com\example\limitlife\ui\screen\MainScreen" />
       <recent name="C:\Users\youma\AndroidStudioProjects\LimitLife\app\src\main\java\com\example\limitlife\ui\screen\EntryScreen" />
-      <recent name="C:\Users\youma\AndroidStudioProjects\LimitLife\app\src\main\res\drawable" />
     </key>
     <key name="CreateKotlinClassDialog.RecentsKey">
       <recent name="com.example.limitlife.ui.screen.MainScreen" />
@@ -424,7 +434,15 @@
       <option name="project" value="LOCAL" />
       <updated>1729255831348</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="uiState optimized , PullToRefresh implemented , automated Refresh implemented">
+      <option name="closed" value="true" />
+      <created>1729346956849</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1729346956849</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -472,9 +490,24 @@
     <MESSAGE value="listScreen-refresh-updated" />
     <MESSAGE value="room database created , along with functions" />
     <MESSAGE value="snackbar resolved , global internet avaibility checker" />
-    <option name="LAST_COMMIT_MESSAGE" value="snackbar resolved , global internet avaibility checker" />
+    <MESSAGE value="uiState optimized , PullToRefresh implemented , automated Refresh implemented" />
+    <option name="LAST_COMMIT_MESSAGE" value="uiState optimized , PullToRefresh implemented , automated Refresh implemented" />
   </component>
   <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/NoteScreen/CreateNoteScreen.kt</url>
+          <line>29</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/limitlife/ui/screen/NoteScreen/EditScreenVIewModel.kt</url>
+          <line>54</line>
+          <option name="timeStamp" value="2" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
     <watches-manager>
       <configuration name="AndroidRunConfigurationType">
         <watch expression="this" />

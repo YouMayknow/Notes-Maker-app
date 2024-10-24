@@ -4,7 +4,6 @@ package com.example.limitlife.ui.screen.mainScreen
 
 import android.content.Context
 import android.util.Log
-import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.limitlife.network.DetailedNote
@@ -42,7 +41,6 @@ class NotesListScreenViewModel @Inject constructor(
            _snackBarMessage.value = "Connected to the server"
         } else {
             _snackBarMessage.value = "Performing in Offline Mode"
-
         }
 
     }
@@ -51,7 +49,6 @@ class NotesListScreenViewModel @Inject constructor(
        _uiState.update { it.copy(isInterNetAvailable =  isOnline) }
        return  isOnline
    }
-
     private fun checkForInternetAndFetchNotes()  = viewModelScope.launch{
          val isOnline = checkForInternet()
          if (isOnline) {
@@ -122,9 +119,10 @@ class NotesListScreenViewModel @Inject constructor(
     private  suspend fun fetchOfflineNotes() {
         val notes = offlineUserDataRepository.noteDao.getAllNotes().map {
             UpdatedShortNote(
-                heading = it.heading ?: "" ,
-                content = it.content  ?: "" ,
-                id = it.noteId ?: 1
+                content = it.content  ?: "",
+                heading = it.heading ?: "",
+                id = it.noteId ?: 1,
+                localNoteId = 0
             )
         }
         _uiState.update {
@@ -148,7 +146,6 @@ class NotesListScreenViewModel @Inject constructor(
             it.copy(notes = response.body() ?: emptyList() , isInterNetAvailable =  true , isLoading = false)
         }
     }
-
 }
 
 

@@ -73,7 +73,8 @@ data class ShortNote(
 data class UpdatedShortNote(
     val content : String,
     val heading: String,
-    val  id : Int
+    val  id : Int ,
+    val localNoteId : Int? = 0
 )
 
 @Serializable

@@ -42,13 +42,13 @@ main Screen that adhere the notes from the database and also have button to add 
  */
 @Composable
 fun UserDetailsAndDrawerScreen(
+    modifier : Modifier =   Modifier ,
      shouldRefresh : Boolean = false ,
     viewModel: NotesListScreenViewModel ,
     onNoteClick : (String) -> Unit,
     onAddNoteClick :()-> Unit,
      turnShouldRefreshFalse : () -> Unit,
     onDrawerItemClicked: (String) -> Unit,
-    modifier : Modifier =   Modifier
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
