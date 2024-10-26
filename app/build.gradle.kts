@@ -11,7 +11,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.NotesMaker"
+    namespace = "com.example.notesMaker"
     compileSdk = 34
 
     defaultConfig {

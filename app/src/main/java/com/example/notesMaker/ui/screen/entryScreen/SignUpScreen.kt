@@ -19,7 +19,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -45,7 +44,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.NotesMaker.R
+import com.example.notesMaker.R
 import com.example.notesMaker.ui.theme.NotesMakerTheme
 
 @Composable
@@ -165,7 +164,7 @@ fun CredentialsOfSigningColumn(
                 .padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Divider(modifier = Modifier.weight(1f), color = Color.Gray)
+            HorizontalDivider(modifier = Modifier.weight(1f), color = Color.Gray)
             Text(
                 text = "OR",
                 modifier = Modifier.padding(horizontal = 8.dp),
@@ -187,7 +186,7 @@ fun CredentialsOfSigningColumn(
             }
             Spacer(modifier = Modifier.width(16.dp))
             IconButton(onClick = { /* Facebook action */ }) {
-                Image(painter = painterResource(id =R.drawable.ic_linkedin), contentDescription = "Facebook")
+                Image(painter = painterResource(id = R.drawable.ic_linkedin), contentDescription = "Facebook")
             }
             Spacer(modifier = Modifier.width(16.dp))
             IconButton(onClick = { /* LinkedIn action */ }) {
