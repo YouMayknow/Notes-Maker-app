@@ -75,7 +75,9 @@ fun SignupScreen(
                 Text(text = uiState.responseToDisplay ?: "" , color = MaterialTheme.colorScheme.error )
                 CredentialsOfSigningColumn(heading = currentUiScreen.heading  , aheadActionLabel = currentUiScreen.aheadActionButton  ) { username , password ->
                     viewModel.aheadActionButton(username , password)
-                    if (uiState.isLoginSuccess) navigateToMainScreen()
+                    if (uiState.isLoginSuccess) {
+                        navigateToMainScreen()
+                    }
                 }
                 // Login Link
                 TextButton(onClick = { viewModel.navigateScreenButtonAction() }) {

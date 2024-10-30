@@ -1,9 +1,14 @@
 package com.example.notesMaker.repository
 
+import javax.inject.Inject
+
+
 interface LocalDataRepository  {
     suspend fun  getAllData() : List<Note>
     suspend fun update(note : Note)
     suspend fun save(note : Note)
+    suspend fun saveNoteId(heading : String ,noteId : Int)
+
 }
 
 
@@ -20,5 +25,8 @@ class OfflineUserDataRepository(val noteDao: NoteDao ) : LocalDataRepository {
         noteDao.saveNote(note)
     }
 
+    override suspend fun saveNoteId(heading: String, noteId: Int) {
+        noteDao.saveNoteId(heading ,noteId)
+    }
 }
 

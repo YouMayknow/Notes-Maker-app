@@ -85,13 +85,20 @@ dependencies {
     implementation("com.google.dagger:hilt-android:2.51.1")
     kapt("com.google.dagger:hilt-android-compiler:2.51.1")
 
+
+    // hilt and worker integration
+    implementation("androidx.hilt:hilt-work:1.0.0")
+    kapt("androidx.hilt:hilt-compiler:1.0.0")
+    implementation(libs.androidx.work.runtime.ktx)
+
+
     // retrofit and it's converter
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.jakewharton.retrofit:retrofit2-kotlinx-serialization-converter:1.0.0")
     implementation("com.squareup.okhttp3:okhttp:4.11.0")
 
-    // hilt ans viewmodel intergration 
-    implementation("androidx.hilt:hilt-navigation-compose:1.0.0")
+    // hilt ans viewmodel intergration
+    implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
 
     // room dependency
 
@@ -100,10 +107,7 @@ dependencies {
     implementation("androidx.room:room-runtime:$room_version")
     annotationProcessor("androidx.room:room-compiler:$room_version")
 
-    // To use Kotlin annotation processing tool (kapt)
-    kapt("androidx.room:room-compiler:$room_version")
-    // To use Kotlin Symbol Processing (KSP)
-   // ksp("androidx.room:room-compiler:$room_version")
+
 
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation("androidx.room:room-ktx:$room_version")
