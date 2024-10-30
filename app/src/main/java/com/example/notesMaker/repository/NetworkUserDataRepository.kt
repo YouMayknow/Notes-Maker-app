@@ -1,6 +1,7 @@
 package com.example.notesMaker.repository
 
 import com.example.notesMaker.network.AppApiService
+import com.example.notesMaker.network.CreateNoteResponse
 import com.example.notesMaker.network.DetailedNote
 import com.example.notesMaker.network.LoginResponse
 import com.example.notesMaker.network.ShortNote
@@ -30,7 +31,7 @@ class NetworkUserDataRepository @Inject constructor(
             .callTimeout(5 , TimeUnit.SECONDS)
             .addInterceptor(AuthInspector(tokenRepository))
             .build()
-                private  val baseUrl = "http://192.168.1.17:8080"
+                private  val baseUrl = "http://192.168.1.12:8080"
                 private val json = Json{ignoreUnknownKeys = true }
                 private val retrofit = Retrofit.Builder()
             .baseUrl(baseUrl)
@@ -43,7 +44,7 @@ class NetworkUserDataRepository @Inject constructor(
     override suspend fun registerUser(username: String, password: String) = retrofitService.registerUser(username, password)
     override suspend fun loginUser(username: String, password: String): Response<LoginResponse> = retrofitService.loginUser(username, password)
     override suspend fun getAllUserNotes(): Response<List<UpdatedShortNote>> =  retrofitService.getAllUserNotes()
-    override suspend fun createNewNote(shortNote: ShortNote): Response<ResponseBody> = retrofitService.createNewNote(shortNote)
+    override suspend fun createNewNote(shortNote: ShortNote): Response<CreateNoteResponse> = retrofitService.createNewNote(shortNote)
     override suspend fun isTokenValid(): Response<ResponseBody> = retrofitService.isTokenValid()
     override suspend fun updateNote(updatedShortNote: UpdatedShortNote): Response<ResponseBody>  = retrofitService.updateNote(updatedShortNote)
     override suspend fun deleteSelectedNote(id: Int): Response<ResponseBody>  = retrofitService.deleteSelectedNote(id)

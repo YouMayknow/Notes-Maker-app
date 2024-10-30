@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Help
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalDrawerSheet
@@ -93,14 +95,14 @@ fun NavigationDrawerItems (
             color = MaterialTheme.colorScheme.onBackground ,// Using the theme color
             modifier =  modifier.padding(start = 4.dp , top = 12.dp , bottom = 8.dp)
         )
-        Divider(modifier = Modifier.height(2.dp))
+        HorizontalDivider(modifier = Modifier.height(2.dp))
         MenuItem(icon = Icons.Default.AccessTime, text = DrawerItems.Recent.name, onClick = onDrawerItemClicked)
         MenuItem(icon = Icons.Default.Star, text = DrawerItems.Starred.name, onClick = onDrawerItemClicked)
         MenuItem(icon = Icons.Default.OfflinePin, text = DrawerItems.Offline.name, onClick = onDrawerItemClicked)
         MenuItem(icon = Icons.Default.Delete, text = DrawerItems.Bin.name, onClick =onDrawerItemClicked)
-        Divider(modifier = Modifier.height(2.dp))
+        HorizontalDivider(modifier = Modifier.height(2.dp))
         MenuItem(icon = Icons.Default.Settings, text = DrawerItems.Settings.name, onClick = onDrawerItemClicked)
-        MenuItem(icon = Icons.Default.Help, text = DrawerItems.HelpAndFeedback.name, onClick =onDrawerItemClicked)
+        MenuItem(icon = Icons.AutoMirrored.Filled.Help, text = DrawerItems.HelpAndFeedback.name, onClick =onDrawerItemClicked)
     }
 }
 

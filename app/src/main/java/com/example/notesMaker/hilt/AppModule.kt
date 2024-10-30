@@ -8,16 +8,18 @@ import androidx.datastore.preferences.preferencesDataStore
 import com.example.notesMaker.repository.FakeUserDataRepository
 import com.example.notesMaker.repository.NetworkUserDataRepository
 import com.example.notesMaker.repository.NoteDatabase
+import com.example.notesMaker.repository.NotesWorkManagerRepository
 import com.example.notesMaker.repository.OfflineUserDataRepository
 import com.example.notesMaker.repository.OfflineUserTokenRepository
 import com.example.notesMaker.repository.UserDataRepository
+import com.example.notesMaker.repository.WorkManagerRepository
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
+ import javax.inject.Singleton
 
 
 private const val USER_PREFERENCE_NAME = "token_preferences"
@@ -47,7 +49,19 @@ object AppModuleForToken{
         return OfflineUserDataRepository(noteDao = NoteDatabase.getDatabase(context = context ).noteDao() )
     }
 
-
+    @Provides
+    @Singleton
+    fun provideNoteWorkManagerRepository(
+        @ApplicationContext context: Context
+    ) : WorkManagerRepository {
+        return NotesWorkManagerRepository(context)
+    }
+//    @Provides
+//    @Singleton
+//    fun provideWorkManagerWorkerBuilder(
+//        ) : CustomWorkerFactory {
+//            return CustomWorkerFactory()
+//    }
 }
 
 
@@ -65,5 +79,7 @@ abstract class AppModule {
     abstract fun getFakeUserDataRepository(
         fakeUserDataRepository : FakeUserDataRepository
     ) : UserDataRepository
+
+
 }
 

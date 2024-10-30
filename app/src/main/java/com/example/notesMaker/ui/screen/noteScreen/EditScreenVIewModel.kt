@@ -4,11 +4,14 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.work.impl.utils.taskexecutor.WorkManagerTaskExecutor
 import com.example.notesMaker.network.ShortNote
 import com.example.notesMaker.network.UpdatedShortNote
 import com.example.notesMaker.repository.NetworkUserDataRepository
 import com.example.notesMaker.repository.Note
+import com.example.notesMaker.repository.NotesWorkManagerRepository
 import com.example.notesMaker.repository.OfflineUserDataRepository
+import com.example.notesMaker.repository.WorkManagerRepository
 import com.example.notesMaker.utils.isInternetAvailable
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -22,82 +25,22 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditScreenVIewModel @Inject constructor(
-   private val userDataRepository: NetworkUserDataRepository ,
-    private val offlineUserDataRepository : OfflineUserDataRepository ,
-    @ApplicationContext private  val  context : Context
+   private val offlineUserDataRepository : OfflineUserDataRepository ,
+   private val workManagerRepository: WorkManagerRepository ,
+   @ApplicationContext private  val  context : Context
 ) : ViewModel() {
     private  var  _uiState  =  MutableStateFlow(EditScreenUiState())
     val   uiState  : StateFlow<EditScreenUiState> = _uiState.asStateFlow()
 
-    private suspend fun checkForInternet() : Boolean {
-        return  isInternetAvailable(context)
-    }
-
     fun createNote(shortNote: ShortNote) = viewModelScope.launch{
-        if (checkForInternet()){
-            try {
-                val response   =  userDataRepository.createNewNote(shortNote)
-                    _uiState.update {
-                        it.copy(
-                            isSaveSuccessful =   when {
-                              response.isSuccessful -> true
-                              else -> false
-                            } ,
-                            serverResponse = if (!response.isSuccessful)  response.message().toString() else ""
-                        )
-                }
-            } catch ( e : Exception ){
-                _uiState.update {
-                    it.copy(
-                        serverResponse =  e.message ?: "Something went wrong"
-                    )
-                }
-                saveNotesLocally(shortNote)
-                _uiState.update {
-                    it.copy(
-                        isSaveSuccessful =  true
-                    )
-                }
-            }
-        }
-        else {
-            saveNotesLocally(shortNote)
-        }
+        saveNotesLocally(shortNote)
+       workManagerRepository.saveNote(shortNote.heading , shortNote.content)
     }
 
-
-    /** See it have to handle a lot of fundamentals of updating the notes  on different basis so here ite begins
-     *
-     */
     fun updateNote(updatedShortNote: UpdatedShortNote) = viewModelScope.launch {
-        if (!checkForInternet()){
-          updateNotesLocally(updatedShortNote)
-        }
-        else {
-            try {
-                val response =  userDataRepository.updateNote(updatedShortNote)
-                if (updatedShortNote.localNoteId != -1 ){
-                    updateNotesLocally(updatedShortNote)
-                }
-                _uiState.update {
-                    it.copy(
-                        isSaveSuccessful =   when {
-                            response.isSuccessful -> true
-                            else -> false
-                        } ,
-                        serverResponse = if (!response.isSuccessful)  response.message().toString() else ""
-                    )
-                }
-            } catch ( e : Exception){
-                updateNotesLocally(updatedShortNote)
-                Log.e("Problem", "$e")
-            }
-        }
-
+        updateNotesLocally(updatedShortNote)
+        workManagerRepository.updateNote(updatedShortNote)
     }
-
-
-
 
     private suspend fun saveNotesLocally(shortNote: ShortNote) {
         val note  = Note(  heading =  shortNote.heading , content = shortNote.content ,)
@@ -116,7 +59,6 @@ class EditScreenVIewModel @Inject constructor(
            }
        }
     }
-
     /**
      * Here we are first checking it the notes is set to backup or not
      * if the notes is set to backup we have to save it offline and then sachedule for backup
