@@ -30,12 +30,12 @@ interface AppApiService {
     ) : retrofit2.Response<LoginResponse>
 
     @GET("/notes/all")
-    suspend fun  getAllUserNotes() : retrofit2.Response<List<UpdatedShortNote>>
+    suspend fun  getAllUserNotes() : Response<List<UpdatedShortNote>>
 
     @POST("/notes/new")
     suspend fun createNewNote(
       @Body shortNote: ShortNote
-    ) : retrofit2.Response<ResponseBody>
+    ) : retrofit2.Response<CreateNoteResponse>
 
 
     @GET("/token/verifier")
@@ -61,6 +61,11 @@ interface AppApiService {
 @Serializable
  data class LoginResponse (
         @SerialName("token")val token : String
+ )
+
+@Serializable
+ data class CreateNoteResponse (
+        @SerialName("noteId")val noteID : Int
  )
 
 @Serializable

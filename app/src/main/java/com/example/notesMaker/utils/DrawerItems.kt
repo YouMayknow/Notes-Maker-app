@@ -1,7 +1,7 @@
 package com.example.notesMaker.utils
 
 import androidx.annotation.StringRes
-import com.example.NotesMaker.R
+import com.example.notesMaker.R
 
 enum class DrawerItems(@StringRes val titleResId: Int) {
     Recent(R.string.drawer_item_recent),

@@ -2,7 +2,7 @@ package com.example.notesMaker.ui.screen.entryScreen
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.NotesMaker.R
+import com.example.notesMaker.R
 import com.example.notesMaker.repository.NetworkUserDataRepository
 import com.example.notesMaker.repository.OfflineUserTokenRepository
 import dagger.hilt.android.lifecycle.HiltViewModel

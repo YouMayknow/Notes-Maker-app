@@ -1,6 +1,7 @@
 package com.example.notesMaker.repository
 
 
+import com.example.notesMaker.network.CreateNoteResponse
 import com.example.notesMaker.network.DetailedNote
 import com.example.notesMaker.network.LoginResponse
 import com.example.notesMaker.network.ShortNote
@@ -12,9 +13,7 @@ import javax.inject.Inject
 class FakeUserDataRepository @Inject constructor () : UserDataRepository {
     override suspend fun registerUser(username: String, password: String): Response<ResponseBody> {
         TODO("Not yet implemented")
-
     }
-
     override suspend fun loginUser(username: String, password: String): Response<LoginResponse> {
         TODO("Not yet implemented")
     }
@@ -25,7 +24,7 @@ class FakeUserDataRepository @Inject constructor () : UserDataRepository {
         )
     }
 
-    override suspend fun createNewNote(shortNote: ShortNote): Response<ResponseBody> {
+    override suspend fun createNewNote(shortNote: ShortNote): Response<CreateNoteResponse> {
         TODO("Not yet implemented")
     }
 

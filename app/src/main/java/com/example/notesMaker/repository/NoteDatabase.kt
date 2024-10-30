@@ -37,9 +37,12 @@ interface NoteDao{
 
    @Insert()
    suspend fun saveNote(note: Note)
+
+   @Query("UPDATE note SET noteId = :noteId WHERE heading = :heading ")
+   suspend fun saveNoteId(heading: String? , noteId: Int)
 }
 
-@Database(entities = [Note::class], version = 5 )
+@Database(entities = [Note::class], version = 5  , exportSchema = false  )
 abstract class NoteDatabase : RoomDatabase() {
   abstract  fun noteDao() : NoteDao
   companion object {

@@ -45,7 +45,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.NotesMaker.R
+import com.example.notesMaker.R
 import com.example.notesMaker.ui.theme.NotesMakerTheme
 
 @Composable
@@ -76,7 +76,9 @@ fun SignupScreen(
                 Text(text = uiState.responseToDisplay ?: "" , color = MaterialTheme.colorScheme.error )
                 CredentialsOfSigningColumn(heading = currentUiScreen.heading  , aheadActionLabel = currentUiScreen.aheadActionButton  ) { username , password ->
                     viewModel.aheadActionButton(username , password)
-                    if (uiState.isLoginSuccess) navigateToMainScreen()
+                    if (uiState.isLoginSuccess) {
+                        navigateToMainScreen()
+                    }
                 }
                 // Login Link
                 TextButton(onClick = { viewModel.navigateScreenButtonAction() }) {
@@ -165,7 +167,7 @@ fun CredentialsOfSigningColumn(
                 .padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Divider(modifier = Modifier.weight(1f), color = Color.Gray)
+            HorizontalDivider(modifier = Modifier.weight(1f), color = Color.Gray)
             Text(
                 text = "OR",
                 modifier = Modifier.padding(horizontal = 8.dp),

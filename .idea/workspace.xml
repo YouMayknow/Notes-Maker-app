@@ -9,7 +9,14 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="02edfd3b-5ed1-4272-b90b-ba21f0364f73" name="Changes" comment="rename limit life to notes maker">
+    <list default="true" id="02edfd3b-5ed1-4272-b90b-ba21f0364f73" name="Changes" comment="usntasshing immediate changes">
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/repository/WorkManagerRepository.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/utils/Constants.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/worker/SaveNoteToServer.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/worker/UpdateNoteToServer.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.10.1/checksums/checksums.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.10.1/checksums/checksums.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.10.1/checksums/md5-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.10.1/checksums/md5-checksums.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gradle/8.10.1/checksums/sha1-checksums.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.10.1/checksums/sha1-checksums.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.10.1/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.10.1/executionHistory/executionHistory.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.10.1/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.10.1/executionHistory/executionHistory.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/8.10.1/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.10.1/fileHashes/fileHashes.bin" afterDir="false" />
@@ -17,42 +24,28 @@
       <change beforePath="$PROJECT_DIR$/.gradle/8.10.1/fileHashes/resourceHashesCache.bin" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/8.10.1/fileHashes/resourceHashesCache.bin" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/.gradle/file-system.probe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/androidTest/java/com/example/NotesMaker/ExampleInstrumentedTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/androidTest/java/com/example/notesMaker/ExampleInstrumentedTest.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/AppScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/AppScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/MainActivity.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/hilt/AppModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/hilt/AppModule.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/hilt/HiltApplication.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/hilt/HiltApplication.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/model/Notes.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/model/Notes.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/model/UserBasicDetail.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/model/UserBasicDetail.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/network/AppApiService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/network/AppApiService.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/repository/FakeUserDataRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/repository/FakeUserDataRepository.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/repository/LocalDataRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/repository/LocalDataRepository.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/repository/NetworkUserDataRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/repository/NetworkUserDataRepository.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/repository/NoteDatabase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/repository/NoteDatabase.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/repository/OfflineUserTokenRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/repository/OfflineUserTokenRepository.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/ui/screen/HomeScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/HomeScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/ui/screen/HomeScreenViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/HomeScreenViewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/ui/screen/NoteScreen/CreateNoteScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/noteScreen/CreateNoteScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/ui/screen/NoteScreen/DetailedScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/noteScreen/DetailedScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/ui/screen/NoteScreen/EditNoteScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/noteScreen/EditNoteScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/ui/screen/NoteScreen/EditScreenVIewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/noteScreen/EditScreenVIewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/ui/screen/NoteScreen/UpdateNoteScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/noteScreen/UpdateNoteScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/ui/screen/entryScreen/SignUpScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/entryScreen/SignUpScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/ui/screen/entryScreen/SignupScreenViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/entryScreen/SignupScreenViewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/ui/screen/mainScreen/IndividualDrawerScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/mainScreen/IndividualDrawerScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/ui/screen/mainScreen/MainScreenNavigation.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/mainScreen/MainScreenNavigation.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/ui/screen/mainScreen/NotesListScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/mainScreen/NotesListScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/ui/screen/mainScreen/NotesListScreenViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/mainScreen/NotesListScreenViewModel.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/ui/screen/mainScreen/UserDetailsAndDrawerScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/mainScreen/UserDetailsAndDrawerScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/ui/screen/trailScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/trailScreen.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/ui/theme/Color.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/theme/Color.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/ui/theme/Theme.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/theme/Theme.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/ui/theme/Type.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/theme/Type.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/utils/DrawerItems.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/utils/DrawerItems.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/utils/Naviagation.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/utils/Naviagation.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/NotesMaker/utils/NetworkConfigurationChecker.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/utils/NetworkConfigurationChecker.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/test/java/com/example/NotesMaker/ExampleUnitTest.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/test/java/com/example/notesMaker/ExampleUnitTest.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/app/build.gradle.kts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/hilt/AppModule.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/hilt/AppModule.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/hilt/HiltApplication.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/hilt/HiltApplication.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/network/AppApiService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/network/AppApiService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/repository/FakeUserDataRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/repository/FakeUserDataRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/repository/LocalDataRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/repository/LocalDataRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/repository/NetworkUserDataRepository.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/repository/NetworkUserDataRepository.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/repository/NoteDatabase.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/repository/NoteDatabase.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/entryScreen/SignUpScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/entryScreen/SignUpScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/entryScreen/SignupScreenViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/entryScreen/SignupScreenViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/mainScreen/IndividualDrawerScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/mainScreen/IndividualDrawerScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/mainScreen/NotesListScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/mainScreen/NotesListScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/mainScreen/UserDetailsAndDrawerScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/mainScreen/UserDetailsAndDrawerScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/noteScreen/DetailedScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/noteScreen/DetailedScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/noteScreen/EditNoteScreen.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/noteScreen/EditNoteScreen.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/noteScreen/EditScreenVIewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/noteScreen/EditScreenVIewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/utils/DrawerItems.kt" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/utils/DrawerItems.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/gradle/libs.versions.toml" beforeDir="false" afterPath="$PROJECT_DIR$/gradle/libs.versions.toml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -110,9 +103,9 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Kotlin Object" />
-        <option value="Kotlin Class" />
         <option value="Kotlin Interface" />
         <option value="Kotlin File" />
+        <option value="Kotlin Class" />
       </list>
     </option>
   </component>
@@ -122,7 +115,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="e16ad1a4464a1c7ff1ae5d8cfc1038f2bea5f4b9" />
+        <entry key="$PROJECT_DIR$" value="master" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -147,49 +140,51 @@
     <option name="openDirectoriesWithSingleClick" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
-    &quot;AnalyzeApkAction.lastApkPath&quot;: &quot;C:/Users/youma/AndroidStudioProjects/LimitLife/app/build/intermediates/apk/debug/app-debug.apk&quot;,
-    &quot;Android App.app.executor&quot;: &quot;Run&quot;,
-    &quot;Android Instrumented Tests.All Tests.executor&quot;: &quot;Run&quot;,
-    &quot;DEBUGGABLE_DEVICE&quot;: &quot;samsung-sm_m325f-RZ8RC20170L&quot;,
-    &quot;DEBUGGABLE_PROCESS&quot;: &quot;com.example.NotesMaker&quot;,
-    &quot;DEBUGGER_ID&quot;: &quot;Auto&quot;,
-    &quot;PROJECT_TRUSTED_KEY&quot;: &quot;true&quot;,
-    &quot;ResourceManagerPrefKey.ResourceType&quot;: &quot;LAYOUT&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.readMode.enableVisualFormatting&quot;: &quot;true&quot;,
-    &quot;SHOW_ALL_PROCESSES&quot;: &quot;true&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;com.google.services.firebase.aqiPopupShown&quot;: &quot;true&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;C:/Users/youma/AndroidStudioProjects/LimitLife&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;Dependencies&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.17&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.2&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.intentionPowerPack&quot;,
-    &quot;show.do.not.copy.http.proxy.settings.to.gradle&quot;: &quot;false&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "AnalyzeApkAction.lastApkPath": "C:/Users/youma/AndroidStudioProjects/LimitLife/app/build/intermediates/apk/debug/app-debug.apk",
+    "Android App.app.executor": "Run",
+    "Android Instrumented Tests.All Tests.executor": "Run",
+    "DEBUGGABLE_DEVICE": "samsung-sm_m325f-RZ8RC20170L",
+    "DEBUGGABLE_PROCESS": "com.example.NotesMaker",
+    "DEBUGGER_ID": "Auto",
+    "PROJECT_TRUSTED_KEY": "true",
+    "ResourceManagerPrefKey.ResourceType": "LAYOUT",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "SHOW_ALL_PROCESSES": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "com.google.services.firebase.aqiPopupShown": "true",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/youma/Downloads/adnroid studio projects/basic-android-kotlin-compose-training-workmanager-starter/basic-android-kotlin-compose-training-workmanager-starter",
+    "project.structure.last.edited": "Dependencies",
+    "project.structure.proportion": "0.17",
+    "project.structure.side.proportion": "0.2",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "preferences.pluginManager",
+    "show.do.not.copy.http.proxy.settings.to.gradle": "false"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;com.android.tools.idea.sqlite.queryhistory&quot;: [
-      &quot;DELETE FROM Note&quot;,
-      &quot;DELETE  From Note&quot;,
-      &quot;DELETE  From Note  where id = 17&quot;
+  "keyToStringList": {
+    "com.android.tools.idea.sqlite.queryhistory": [
+      "DELETE FROM note",
+      "SELECT * FROM Note",
+      "DELETE FROM Note",
+      "DELETE  From Note",
+      "DELETE  From Note  where id = 17"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\youma\AndroidStudioProjects\LimitLife\app\src\main\java\com\example\notesMaker\ui\screen\noteScreen" />
       <recent name="C:\Users\youma\AndroidStudioProjects\LimitLife\app\src\main\java\com\example\limitlife\ui\screen\NoteScreen" />
       <recent name="C:\Users\youma\AndroidStudioProjects\LimitLife\app\src\main\java\com\example\limitlife\ui\screen\mainScreen" />
       <recent name="C:\Users\youma\AndroidStudioProjects\LimitLife\app\src\main\java\com\example\limitlife\ui\theme" />
       <recent name="C:\Users\youma\AndroidStudioProjects\LimitLife\app\src\main\java\com\example\limitlife\ui\screen\MainScreen" />
-      <recent name="C:\Users\youma\AndroidStudioProjects\LimitLife\app\src\main\java\com\example\limitlife\ui\screen\EntryScreen" />
     </key>
     <key name="CreateKotlinClassDialog.RecentsKey">
       <recent name="com.example.limitlife.ui.screen.MainScreen" />
@@ -548,7 +543,23 @@
       <option name="project" value="LOCAL" />
       <updated>1729753802763</updated>
     </task>
-    <option name="localTasksCounter" value="17" />
+    <task id="LOCAL-00017" summary="rename limit life to notes maker">
+      <option name="closed" value="true" />
+      <created>1729916657399</created>
+      <option name="number" value="00017" />
+      <option name="presentableId" value="LOCAL-00017" />
+      <option name="project" value="LOCAL" />
+      <updated>1729916657399</updated>
+    </task>
+    <task id="LOCAL-00018" summary="rename limit life to notes maker">
+      <option name="closed" value="true" />
+      <created>1729916727422</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1729916727422</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="Vcs.Log.History.Properties">
@@ -569,8 +580,8 @@
             <State>
               <option name="COLUMN_ID_WIDTH">
                 <map>
-                  <entry key="Table.Default.Author.ColumnIdWidth" value="15" />
-                  <entry key="Table.Default.Date.ColumnIdWidth" value="15" />
+                  <entry key="Table.Default.Author.ColumnIdWidth" value="219" />
+                  <entry key="Table.Default.Date.ColumnIdWidth" value="100" />
                 </map>
               </option>
             </State>
@@ -603,15 +614,11 @@
     <option name="LAST_COMMIT_MESSAGE" value="rename limit life to notes maker" />
   </component>
   <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="kotlin-line">
-          <url>file://$PROJECT_DIR$/app/src/main/java/com/example/notesMaker/ui/screen/noteScreen/CreateNoteScreen.kt</url>
-          <line>29</line>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
+    <pin-to-top-manager>
+      <pinned-members>
+        <PinnedItemInfo parentTag="com.example.notesMaker.worker.SaveNote" memberName="content" />
+      </pinned-members>
+    </pin-to-top-manager>
     <watches-manager>
       <configuration name="AndroidRunConfigurationType">
         <watch expression="this" />
