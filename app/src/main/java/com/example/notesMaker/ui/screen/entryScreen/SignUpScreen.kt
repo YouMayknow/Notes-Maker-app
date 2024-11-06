@@ -26,6 +26,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -60,6 +61,9 @@ fun SignupScreen(
         contentAlignment = Alignment.Center
     ) {
          val uiState by viewModel.uiState.collectAsState()
+    LaunchedEffect(uiState.isLoginSuccess) {
+        navigateToMainScreen()
+    }
         val currentUiScreen = uiState.currentScreen
         Card(
             modifier = Modifier,
@@ -75,9 +79,6 @@ fun SignupScreen(
                 Text(text = uiState.responseToDisplay ?: "" , color = MaterialTheme.colorScheme.error )
                 CredentialsOfSigningColumn(heading = currentUiScreen.heading  , aheadActionLabel = currentUiScreen.aheadActionButton  ) { username , password ->
                     viewModel.aheadActionButton(username , password)
-                    if (uiState.isLoginSuccess) {
-                        navigateToMainScreen()
-                    }
                 }
                 // Login Link
                 TextButton(onClick = { viewModel.navigateScreenButtonAction() }) {

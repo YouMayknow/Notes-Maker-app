@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
@@ -108,23 +109,11 @@ fun NotesListMainScreen (
     }
     Scaffold(
         modifier = modifier ,
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = onAddNoteClick
-            ) {
-                Icon(imageVector = Icons.Default.Add, contentDescription = "Add Note")
-            }
+        floatingActionButton = { FloatingActionButton(onClick = onAddNoteClick) { Icon(imageVector = Icons.Default.Add, contentDescription = "Add Note") }
         } ,
-        topBar = {
-            SearchBar(
-                onDetailsIconClicked = onDetailsIconClicked,
-                isSideBarEnabled =  isSideBarEnabled,
-                onSearch =  {}
-            )
+        topBar = { SearchBar(onDetailsIconClicked = onDetailsIconClicked, isSideBarEnabled =  isSideBarEnabled, onSearch =  {})
         } ,
-        snackbarHost = {
-            SnackbarHost(hostState = snackBarHostState)
-        } ,
+        snackbarHost = {SnackbarHost(hostState = snackBarHostState) } ,
     ) {
         if(uiState.isLoading) {
             NotesListLoadingScreen(modifier.padding(it))
@@ -160,7 +149,7 @@ fun NotesListMainScreen (
                         onEdit = {},
                         onClose = viewModel::closeDetailedNote,
                         createdOn  = uiState.detailedNote?.dateCreated?: "",
-                        lastEdited =  uiState.detailedNote?.lastCreated?: ""?: ""
+                        lastEdited =  uiState.detailedNote?.lastCreated?:""
                     )
                 }
             }
@@ -358,36 +347,36 @@ fun NoteItem(
 fun SearchBar (
     onDetailsIconClicked : () -> Unit ,
     modifier: Modifier = Modifier ,
-    isSideBarEnabled : Boolean = true ,
+    isSideBarEnabled : Boolean = false ,
     onSearch: (String) -> Unit ,
 ) {
     Row(  modifier = modifier
         .padding(
             top = 12.dp,
             end = 8.dp,
-            bottom = 12.dp,
+            bottom = 4.dp,
             start = 8.dp
-        )
-        .statusBarsPadding()
+        ).statusBarsPadding()
+        .navigationBarsPadding(),
+        horizontalArrangement = Arrangement.Center ,
+        verticalAlignment = Alignment.CenterVertically
     )  {
         var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
         val keyboardController = LocalSoftwareKeyboardController.current
+        IconButton(
+            onClick = onDetailsIconClicked ,
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_menu_24), // Replace with your mic icon
+                contentDescription = "Mic",
+                tint = Color.Gray ,
+                modifier =  Modifier.fillMaxSize() ,
+            )
+        }
         TextField(
             value = searchQuery,
             onValueChange = { searchQuery = it },
             placeholder = { Text(text = "Search...", fontSize = 16.sp) },
-            leadingIcon = {
-                IconButton(
-                    onClick = onDetailsIconClicked ,
-                ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.baseline_menu_24), // Replace with your mic icon
-                        contentDescription = "Mic",
-                        tint = Color.Gray ,
-                        modifier =  Modifier.fillMaxSize()
-                    )
-                }
-            },
             trailingIcon = {
                 IconButton(onClick = {
                     onSearch(searchQuery.text) // Trigger search when the icon is clicked
@@ -415,10 +404,19 @@ fun SearchBar (
                 unfocusedIndicatorColor =  Color.Transparent ,
             ),
             modifier = modifier
-                .fillMaxWidth()
-                .height(56.dp)
+                .weight(1f)
                 .background(Color.LightGray, shape = RoundedCornerShape(24.dp))
         )
+        IconButton(
+            onClick = onDetailsIconClicked ,
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.baseline_notifications_24), // Replace with your mic icon
+                contentDescription = "Notifications",
+                tint = Color.Gray ,
+                modifier =  Modifier.fillMaxSize() ,
+            )
+        }
     }
 }
 @Preview(showBackground = true)
@@ -465,6 +463,5 @@ fun NotesListrear() {
         onDeleteIconClicked = {},
         onBackupIconClicked = {},
         onShareIconClicked = {})
-
     }
 }

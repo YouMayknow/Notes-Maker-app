@@ -3,9 +3,7 @@ package com.example.notesMaker.utils
 import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
-
-
- suspend  fun isInternetAvailable(context: Context) : Boolean {
+fun isInternetAvailable(context: Context) : Boolean {
     val connectivityManager = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val network = connectivityManager.activeNetwork ?: return false
         val activeNetwork = connectivityManager.getNetworkCapabilities(network) ?: return false
@@ -16,7 +14,6 @@ import android.net.NetworkCapabilities
             else -> false
         }
 }
-
 enum class InternetSpeed{
     AVAILABLE , NOT_AVAILABLE
 }

@@ -108,7 +108,6 @@ class NotesListScreenViewModel @Inject constructor(
             it.copy(isDetailedNoteVisible =  false)
         }
     }
-
     private  fun catchingException(exception: Exception) {
         val errorMessage = when (exception){
             is SocketTimeoutException -> "Check for internet : ${exception.message}"
@@ -118,7 +117,6 @@ class NotesListScreenViewModel @Inject constructor(
         }
         _snackBarMessage.value = errorMessage
     }
-
     private  suspend fun fetchOfflineNotes() {
         val notes = offlineUserDataRepository.noteDao.getAllNotes().map {
             UpdatedShortNote(

@@ -1,15 +1,20 @@
 package com.example.notesMaker
 
+import android.app.Activity
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import com.example.notesMaker.repository.WorkManagerRepository
 import com.example.notesMaker.ui.theme.NotesMakerTheme
+import com.example.notesMaker.utils.askForNotification
+import com.example.notesMaker.utils.basicNotificationFramework
+import com.example.notesMaker.utils.createNotificationChannel
 import dagger.hilt.android.AndroidEntryPoint
 
 
@@ -17,6 +22,10 @@ import dagger.hilt.android.AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            createNotificationChannel(this)
+            askForNotification(this)
+        }
         enableEdgeToEdge()
         setContent {
             NotesMakerTheme {
@@ -25,7 +34,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
     Text(

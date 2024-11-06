@@ -42,13 +42,13 @@ class NotesWorkManagerRepository(context: Context) : WorkManagerRepository  {
         val inputData = workDataOf(
             KEY_NOTE_CONTENT to updatedShortNote.content  ,
             KEY_NOTE_HEADING to updatedShortNote.heading ,
-            KEY_NOTE_ID to updatedShortNote.id
+            "KEY_NOTE_ID" to updatedShortNote.id
         )
         val constraints = Constraints.Builder()
             .setRequiredNetworkType(NetworkType.CONNECTED)
             .build()
         updateNoteBuilder.setInputData(inputData)
             .setConstraints(constraints)
-        workManager.enqueueUniqueWork(KEY_NOTE_ID, ExistingWorkPolicy.REPLACE , updateNoteBuilder.build() )
+        workManager.enqueueUniqueWork(KEY_NOTE_ID.toString(), ExistingWorkPolicy.REPLACE , updateNoteBuilder.build() )
     }
 }

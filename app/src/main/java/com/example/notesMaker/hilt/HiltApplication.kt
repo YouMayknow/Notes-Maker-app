@@ -18,5 +18,5 @@ class HiltApplication : Application(), androidx.work.Configuration.Provider {
         androidx.work.Configuration.Builder()
             .setWorkerFactory(workerFactory)
             .build()
-    // Inject your custom WorkerFactory, which will be provided by Hilt
+    // Inject your custom WorkerFactory, which will be provided by Hilt . 
 }

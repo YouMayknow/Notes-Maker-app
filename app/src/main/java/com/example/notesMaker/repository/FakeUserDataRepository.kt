@@ -44,7 +44,6 @@ class FakeUserDataRepository @Inject constructor () : UserDataRepository {
         TODO("Not yet implemented")
     }
 
-
 }
 
 val listOfNotes = listOf(
