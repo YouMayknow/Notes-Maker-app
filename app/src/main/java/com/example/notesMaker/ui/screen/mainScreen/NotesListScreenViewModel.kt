@@ -11,8 +11,11 @@ import com.example.notesMaker.network.UpdatedShortNote
 import com.example.notesMaker.repository.NetworkUserDataRepository
 import com.example.notesMaker.repository.OfflineUserDataRepository
 import com.example.notesMaker.utils.isInternetAvailable
+import com.example.notesMaker.worker.LOGGING_OF_APP
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -44,7 +47,7 @@ class NotesListScreenViewModel @Inject constructor(
         }
 
     }
-   private  suspend  fun checkForInternet() : Boolean {
+   private fun checkForInternet() : Boolean {
        val isOnline =  isInternetAvailable(context)
        _uiState.update { it.copy(isInterNetAvailable =  isOnline) }
        return  isOnline
@@ -63,8 +66,6 @@ class NotesListScreenViewModel @Inject constructor(
              this@NotesListScreenViewModel.fetchOfflineNotes()
          }
      }
-
-
 
     fun deleteNote(noteId : Int) = viewModelScope.launch {
         val isOnline = checkForInternet()
@@ -145,23 +146,18 @@ class NotesListScreenViewModel @Inject constructor(
         _snackBarMessage.value = null
     }
 
-
     fun refreshNotes() {
-        checkForInternetAndFetchNotes()
+        _uiState.update {
+            it.copy(isLoading = true)
+        }
+        Log.e(LOGGING_OF_APP ,"Refreshing notes")
+        viewModelScope.launch{
+            checkForInternetAndFetchNotes()
+        }
+        Log.e(LOGGING_OF_APP ,"refrshign just finsihed")
     }
-
-
-
 }
 
-
-
-
-sealed interface NotesListProgressUiState{
-    data class Success(val notes : List<UpdatedShortNote> , val isDetailedScreenVisible : Boolean = false , val isInterNetAvailable : Boolean = true) : NotesListProgressUiState
-    data class Error(val error : String) : NotesListProgressUiState
-    data object Loading : NotesListProgressUiState
-}
 
 data class  NotesListScreenUiState(
     val  detailedNote: DetailedNote? = null,

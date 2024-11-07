@@ -13,9 +13,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -26,7 +25,6 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -62,7 +60,6 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -82,7 +79,6 @@ fun NotesListMainScreen (
     onNoteClick: (UpdatedShortNote) -> Unit ,
     onDetailsIconClicked : () -> Unit ,
     onAddNoteClick: () -> Unit,
-    isSideBarEnabled :Boolean = false ,
     turnShouldRefreshFalse : ()-> Unit ,
     viewModel: NotesListScreenViewModel
  ) {
@@ -90,7 +86,6 @@ fun NotesListMainScreen (
     val snackBarMessage by viewModel.snackBarMessage.collectAsState()
     val snackBarHostState = remember { SnackbarHostState()}
     val scope = rememberCoroutineScope()
-    var refreshing by remember { mutableStateOf(false) }
     val pullToRefreshState = rememberPullToRefreshState()
 
     LaunchedEffect(shouldRefresh) {
@@ -111,25 +106,22 @@ fun NotesListMainScreen (
         modifier = modifier ,
         floatingActionButton = { FloatingActionButton(onClick = onAddNoteClick) { Icon(imageVector = Icons.Default.Add, contentDescription = "Add Note") }
         } ,
-        topBar = { SearchBar(onDetailsIconClicked = onDetailsIconClicked, isSideBarEnabled =  isSideBarEnabled, onSearch =  {})
+        topBar = { SearchBar(onDetailsIconClicked = onDetailsIconClicked, onSearch =  {})
         } ,
         snackbarHost = {SnackbarHost(hostState = snackBarHostState) } ,
     ) {
-        if(uiState.isLoading) {
-            NotesListLoadingScreen(modifier.padding(it))
-        } else {
-            PullToRefreshBox(
-                isRefreshing = refreshing ,
-                onRefresh = {
-                    refreshing = true
-                    viewModel.refreshNotes()
-                    refreshing = false
-                            },
-                state =pullToRefreshState ,
-                modifier = modifier
-                    .fillMaxSize()){
+        PullToRefreshBox(
+            isRefreshing = uiState.isLoading ,
+            onRefresh = {
+                viewModel.refreshNotes()
+                        },
+            state =pullToRefreshState ,
+            modifier = Modifier
+                .fillMaxSize()
+        ){
+            Box(modifier = Modifier.padding(it)
+            ){
                 NotesList(
-                    modifier =  modifier.padding(it),
                     notes =   uiState.notes ,
                     onNoteClick =  onNoteClick ,
                     onDetailsIconClicked = {noteId ->
@@ -141,6 +133,9 @@ fun NotesListMainScreen (
                     onBackupIconClicked ={},
                     onShareIconClicked = {   }
                 )
+              if (uiState.isLoading){
+                  CircularProgressIndicator(modifier = modifier.align(Alignment.TopCenter).size(24.dp).padding(top =8.dp) , strokeWidth = 2.dp)
+              }
                 AnimatedVisibility(visible = uiState.isDetailedNoteVisible ) {// add animation here
                     DetailedScreen(
                         modifier
@@ -157,7 +152,6 @@ fun NotesListMainScreen (
     }
 }
 
-
 @Composable
 fun NotesListLoadingScreen (
     modifier: Modifier = Modifier
@@ -172,48 +166,6 @@ fun NotesListLoadingScreen (
 }
 
 @Composable
-fun NotesListFailureScreen (
-    modifier: Modifier = Modifier ,
-    errorMessage : String ,
-    retryOption : ()-> Unit ,
-) {
-    Column(
-        modifier = modifier.fillMaxSize() ,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_connection_error),
-            contentDescription = null
-        )
-        Text(text = errorMessage , textAlign = TextAlign.Center)
-        Button(onClick = retryOption ) {
-            Text(text = "Retry")
-        }
-    }
-}
-@Composable
-fun NotesListSuccessScreen (
-    modifier: Modifier = Modifier ,
-    notes : List<UpdatedShortNote> ,
-    onNoteClick: (UpdatedShortNote) -> Unit ,
-    onDetailsIconClicked: (Int) -> Unit ,
-    onDeleteIconClicked: (Int) -> Unit ,
-    onBackupIconClicked: (Int) -> Unit ,
-    onShareIconClicked : (Int) -> Unit ,
-) {
-    NotesList(
-        modifier = modifier,
-        notes = notes,
-        onNoteClick,
-        onDetailsIconClicked,
-        onDeleteIconClicked,
-        onBackupIconClicked,
-        onShareIconClicked
-    )
-}
-
-@Composable
 fun NotesList(
     modifier: Modifier = Modifier  ,
     notes:List<UpdatedShortNote>,
@@ -223,7 +175,6 @@ fun NotesList(
     onBackupIconClicked: (Int) -> Unit ,
     onShareIconClicked : (Int) -> Unit ,
 ) {
-    var expanded by remember {mutableStateOf(true) }
     LazyVerticalGrid(
         columns = GridCells.Fixed(count = 2),
         modifier = modifier.fillMaxSize(),
@@ -239,8 +190,7 @@ fun NotesList(
                     onShareIconClicked = {onShareIconClicked(note.id)},
                     noteTitle = note.heading,
                     imageUrl = note.content,
-                    onNoteClick = { onNoteClick(note) },
-                    onMenuClick = {expanded != expanded }
+                    onNoteClick = { onNoteClick(note) }
                 )
             }
         }
@@ -255,8 +205,7 @@ fun NoteItem(
     onShareIconClicked : () -> Unit ,
     noteTitle: String,
     imageUrl: String ,
-    onNoteClick : () -> Unit ,
-    onMenuClick : () -> Unit
+    onNoteClick : () -> Unit
 ) {
     var expanded by remember {mutableStateOf(false) }
 
@@ -347,17 +296,15 @@ fun NoteItem(
 fun SearchBar (
     onDetailsIconClicked : () -> Unit ,
     modifier: Modifier = Modifier ,
-    isSideBarEnabled : Boolean = false ,
     onSearch: (String) -> Unit ,
 ) {
     Row(  modifier = modifier
         .padding(
             top = 12.dp,
             end = 8.dp,
-            bottom = 4.dp,
-            start = 8.dp
-        ).statusBarsPadding()
-        .navigationBarsPadding(),
+            start = 8.dp,
+            bottom = 8.dp ,
+        ).statusBarsPadding() , // Add status bar padding
         horizontalArrangement = Arrangement.Center ,
         verticalAlignment = Alignment.CenterVertically
     )  {
@@ -403,7 +350,7 @@ fun SearchBar (
                 focusedIndicatorColor =  Color.Transparent ,
                 unfocusedIndicatorColor =  Color.Transparent ,
             ),
-            modifier = modifier
+            modifier = Modifier
                 .weight(1f)
                 .background(Color.LightGray, shape = RoundedCornerShape(24.dp))
         )
@@ -429,8 +376,7 @@ fun PreviewNoteItem() {
         onShareIconClicked = {},
         noteTitle = "Unit 7: Part 1",
         imageUrl = "https://example.com/image1.jpg",
-        onNoteClick = {},
-        onMenuClick = {}
+        onNoteClick = {}
     )
 }
 
@@ -454,14 +400,23 @@ fun SearchBarPreview() {
 
 @Preview
 @Composable
-fun NotesListrear() {
+fun NotesListPreview() {
     NotesMakerTheme(darkTheme =  false) {
     NotesList(
-        notes = listOf(UpdatedShortNote("fasdfasd", "fadfdfasd", 1, 0)),
+        notes = listOf(UpdatedShortNote("hero is the best ", "he is the badass person in the group ", 1, 0)),
         onNoteClick = {},
         onDetailsIconClicked = {},
         onDeleteIconClicked = {},
         onBackupIconClicked = {},
         onShareIconClicked = {})
+    }
+}
+
+
+@Composable
+@Preview
+fun CircularProgressBarPreview() {
+    NotesMakerTheme {
+    CircularProgressIndicator(modifier = Modifier.size(24.dp).padding(top =8.dp) , strokeWidth = 2.dp)
     }
 }
