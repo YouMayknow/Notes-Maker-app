@@ -35,21 +35,25 @@ class HomeScreenViewModel @Inject constructor(
                 it.copy(isNetworkAvailable =  false)
             }
         } else {
+            _uiState.update {
+                it.copy(isNetworkAvailable = true)
+            }
             val token = userTokenRepository.userToken.first()
             _uiState.update {
                 it.copy(isNewUser = token.isEmpty())
             }
-            try {
-                val tokenResponse = userDataRepository.isTokenValid()
-                _uiState.update {
-                    it.copy(isTokenValid = tokenResponse.isSuccessful , isNetworkAvailable = true)
+         val response =  runCatching { userDataRepository.isTokenValid() }
+                response.onSuccess {
+                    _uiState.update {
+                        it.copy(isTokenValid = response.getOrNull()?.isSuccessful == true)
+                    }
                 }
-            }  catch (e : Exception) {
-                Log.e("problem", "$e")
-                _uiState.update {
-                    it.copy(isNetworkAvailable = false)
+                .onFailure {
+                    Log.e("problem", "$it")
+                    _uiState.update {
+                        it.copy(isTokenValid = false)
+                    }
                 }
-            }
         }
     }
 }

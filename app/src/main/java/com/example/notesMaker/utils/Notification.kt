@@ -82,7 +82,7 @@ fun showRetryNotification(context: Context, id : Int){
         }
     }
 }
-class RetryBroadcastReceiver : BroadcastReceiver() { // here broadCastReceiver is used to handle the bg actions like starting uploadWorker again , even if the app isn't in the foreground
+open class RetryBroadcastReceiver : BroadcastReceiver() { // here broadCastReceiver is used to handle the bg actions like starting uploadWorker again , even if the app isn't in the foreground
     override fun onReceive(context: Context?, intent: Intent?) {
         TODO("Not yet implemented")
     }

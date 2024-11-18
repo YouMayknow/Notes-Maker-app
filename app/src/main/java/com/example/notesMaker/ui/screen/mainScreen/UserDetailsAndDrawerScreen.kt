@@ -51,6 +51,7 @@ fun UserDetailsAndDrawerScreen(
     onAddNoteClick :()-> Unit,
      turnShouldRefreshFalse : () -> Unit,
     onDrawerItemClicked: (String) -> Unit,
+    onNotificationsIconClicked : () -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -78,6 +79,7 @@ fun UserDetailsAndDrawerScreen(
             onAddNoteClick = onAddNoteClick,
             viewModel = viewModel ,
             turnShouldRefreshFalse = turnShouldRefreshFalse ,
+            onNotificationsIconClicked = onNotificationsIconClicked
         )
     }
 }
@@ -130,7 +132,11 @@ fun NavigationRailPreview() {
         UserDetailsAndDrawerScreen(
             viewModel = hiltViewModel(),
             onNoteClick =  {},
-            onAddNoteClick = {}, turnShouldRefreshFalse = {}, onDrawerItemClicked =  {})
+            onAddNoteClick = {},
+            turnShouldRefreshFalse = {},
+            onDrawerItemClicked =  {} ,
+            onNotificationsIconClicked ={}
+        )
     }
 }
 

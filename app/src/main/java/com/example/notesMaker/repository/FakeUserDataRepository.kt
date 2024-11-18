@@ -23,7 +23,6 @@ class FakeUserDataRepository @Inject constructor () : UserDataRepository {
             listOfNotes
         )
     }
-
     override suspend fun createNewNote(shortNote: ShortNote): Response<CreateNoteResponse> {
         TODO("Not yet implemented")
     }

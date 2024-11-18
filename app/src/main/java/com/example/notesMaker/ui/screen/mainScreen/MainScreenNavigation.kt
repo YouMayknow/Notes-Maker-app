@@ -17,6 +17,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.toRoute
 import com.example.notesMaker.ui.screen.noteScreen.CreateNoteScreen
 import com.example.notesMaker.ui.screen.noteScreen.UpdateNoteScreen
+import com.example.notesMaker.ui.screen.notification.NotificationScreen
 import kotlinx.serialization.Serializable
 
 
@@ -31,10 +32,6 @@ fun  MainScreenNavigation (
     viewModel: NotesListScreenViewModel = hiltViewModel()
 ) {
     NavHost(navController = navController, startDestination = RouteScreenUserDetail , modifier = modifier) {
-
-
-
-
         composable<RouteScreenUserDetail>{
             val savedStateHandle = navController.currentBackStackEntry?.savedStateHandle
             var shouldRefresh by remember { mutableStateOf(false) }
@@ -51,11 +48,10 @@ fun  MainScreenNavigation (
                 turnShouldRefreshFalse = {navController.previousBackStackEntry?.savedStateHandle?.set("shouldRefresh" , false)},
                 onDrawerItemClicked = { drawerItem ->
                     navController.navigate("DrawerItems/${drawerItem}")
-                }
+                } ,
+                onNotificationsIconClicked = { navController.navigate(RouteNotificationScreen) }
             )
         }
-
-
         composable(
             "DrawerItems/{selectedDrawer}" ,
             arguments = listOf(navArgument("selectedDrawer"){
@@ -65,8 +61,6 @@ fun  MainScreenNavigation (
             val selectedDrawer = it.arguments?.getString("selectedDrawer") ?: ""
             IndividualDrawerScreen(onBackClick = { navController.navigate(RouteScreenUserDetail)}, drawerItemName = selectedDrawer)
         }
-
-
         composable<RouteUpdateNoteScreen> {
             val args =  it.toRoute<RouteUpdateNoteScreen>()
           UpdateNoteScreen(
@@ -75,8 +69,6 @@ fun  MainScreenNavigation (
               redirectBackToDetailedList = { navController.navigateUp() }
           )
         }
-
-
         composable<RouteCreateNoteScreen> {
            CreateNoteScreen(
                onBackPressed = {
@@ -85,13 +77,20 @@ fun  MainScreenNavigation (
                redirectBackToDetailedList = { navController.navigateUp() }
            )
         }
+        composable<RouteNotificationScreen>{
+            NotificationScreen(onBackClick = { navController.navigateUp() })
+        }
     }
 }
+
 
 @Serializable
 object RouteScreenUserDetail
 @Serializable
 data class RouteUpdateNoteScreen(val shortNote: String = "")
 
+
+@Serializable
+object RouteNotificationScreen
 @Serializable
 object RouteCreateNoteScreen

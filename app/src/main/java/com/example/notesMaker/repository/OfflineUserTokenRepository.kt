@@ -35,3 +35,30 @@ class OfflineUserTokenRepository(
         token[TOKEN] ?: ""
     }
 }
+
+
+class UnSyncedUserNoteIdRepository(
+    private  val dataStore : DataStore<Preferences>
+) {
+    private companion object {
+        val UNSYNCED_NOTES = stringPreferencesKey("unSynced_notes")
+    }
+    suspend fun saveUnSyncedNoteId(noteId: String) {
+        dataStore.edit { preferences ->
+            val currentNotes = preferences[UNSYNCED_NOTES]?.split(",")?.toMutableSet() ?: mutableSetOf()
+            currentNotes.add(noteId)
+            preferences[UNSYNCED_NOTES] = currentNotes.joinToString(",")
+        }
+    }
+    val unSyncedNotes: kotlinx.coroutines.flow.Flow<Set<String>> = dataStore.data
+        .catch {
+            if ( it is IOException){
+                emit(emptyPreferences())
+            } else {
+                throw it
+            }
+        }
+        .map { preferences ->
+            preferences[UNSYNCED_NOTES]?.split(",")?.filter { it.isNotEmpty() }?.toSet() ?: emptySet()
+        }
+}

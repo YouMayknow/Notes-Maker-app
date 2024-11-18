@@ -46,12 +46,15 @@ fun HomeScreen (
         else {
             NavHost(
                 navController = navController,
-                startDestination = when {
-                   uiState.isNewUser == true -> EntryScreen
-                    uiState.isTokenValid == true -> MainScreen
+                startDestination = MainScreen ,
+                /* here the below s=logic have to udpate so temporary
+                when {
+                    uiState.isNewUser == true -> EntryScreen
+                    uiState.isTokenValid == false -> EntryScreen
                     uiState.isNetworkAvailable == false -> MainScreen
+                    uiState.isTokenValid == true -> MainScreen
                     else -> EntryScreen
-                } ,
+                } ,*/
                 modifier = modifier
             ){
                 composable<MainScreen>{

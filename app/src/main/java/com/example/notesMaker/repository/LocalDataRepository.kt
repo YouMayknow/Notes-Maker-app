@@ -12,16 +12,17 @@ import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.Update
-import java.time.OffsetDateTime
-import java.time.OffsetDateTime.now
 
 interface LocalDataRepository  {
     suspend fun  getAllData() : List<Note>
     suspend fun update(note : Note)
-    suspend fun save(note : Note)
+    suspend fun save(note: Note)
     suspend fun saveNoteId(heading : String ,noteId : Int)
     suspend fun getNoteId(heading : String): Int?
-
+    suspend fun getNoteWithNoteId(noteId: Int) : Note
+    suspend fun createNoteAndGetId(note: Note) : Int
+    suspend fun addSyncedState(isSynced: Boolean , heading: String)
+    suspend fun getUnSyncedNotes() : List<Note>
 }
 
 
@@ -44,6 +45,22 @@ class OfflineUserDataRepository(val noteDao: NoteDao ) : LocalDataRepository {
     override suspend fun getNoteId(heading: String) : Int? {
       return  noteDao.getNoteID(heading )
     }
+
+    override suspend fun getNoteWithNoteId(noteId: Int): Note {
+        return noteDao.getNoteWithNoteId(noteId)
+    }
+
+    override suspend fun createNoteAndGetId(note: Note): Int {
+        return noteDao.createNoteAndGetId(note)
+    }
+
+    override suspend fun addSyncedState(isSynced: Boolean, heading: String) {
+        return noteDao.addSyncedState(isSynced ,heading )
+    }
+
+    override suspend fun getUnSyncedNotes(): List<Note> {
+        return noteDao.getUnSyncedNotes()
+    }
 }
 
 
@@ -53,11 +70,14 @@ on editing the same note and this enable it to distinguish between edit and upda
 
 @Entity()
 data class Note(
-    @PrimaryKey(autoGenerate = true ) val id : Int = 0  ,
-    @ColumnInfo val heading : String? ,
-    @ColumnInfo val content : String? ,
-    @ColumnInfo val noteId : Int? = null ,
-    @ColumnInfo val lastEdited : String = now().toString()
+    @PrimaryKey(autoGenerate = true ) val id : Int = 0,
+    @ColumnInfo val heading : String?,
+    @ColumnInfo val content : String?,
+    @ColumnInfo val noteId : Int? = null,
+    @ColumnInfo val createdAt : String? = null,
+    @ColumnInfo val lastUpdated : String? = null,
+    @ColumnInfo val version : Int = 1,
+    @ColumnInfo val isSynced : Boolean = false,
 )
 
 @Dao
@@ -76,10 +96,21 @@ interface NoteDao{
 
     @Query("SELECT id FROM note WHERE heading = :heading")
     suspend fun  getNoteID(heading: String) : Int?
+
+    @Query("SELECT * FROM note WHERE noteId = :noteId")
+    suspend fun  getNoteWithNoteId(noteId: Int) : Note
+    @Query("UPDATE note SET isSynced = :isSynced WHERE heading = :heading")
+    suspend  fun addSyncedState(isSynced: Boolean , heading: String)
+
+    @Query("SELECT * FROM note WHERE isSynced = 0") // here 0 means false whereas 1 means true
+    suspend fun getUnSyncedNotes() : List<Note>
+
+    suspend fun  createNoteAndGetId(note: Note) : Int {
+        saveNote(note)
+        return getNoteID(note.heading ?: "") ?: -1
+    }
 }
-
-
-@Database(entities = [Note::class], version = 6  , exportSchema = false  )
+@Database(entities = [Note::class], version = 10  , exportSchema = false  )
 abstract class NoteDatabase : RoomDatabase() {
     abstract  fun noteDao() : NoteDao
     companion object {

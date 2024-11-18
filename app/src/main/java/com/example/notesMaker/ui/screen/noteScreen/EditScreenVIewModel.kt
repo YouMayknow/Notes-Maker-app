@@ -1,18 +1,12 @@
 package com.example.notesMaker.ui.screen.noteScreen
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.work.impl.utils.taskexecutor.WorkManagerTaskExecutor
-import com.example.notesMaker.network.ShortNote
 import com.example.notesMaker.network.UpdatedShortNote
-import com.example.notesMaker.repository.NetworkUserDataRepository
 import com.example.notesMaker.repository.Note
-import com.example.notesMaker.repository.NotesWorkManagerRepository
 import com.example.notesMaker.repository.OfflineUserDataRepository
 import com.example.notesMaker.repository.WorkManagerRepository
-import com.example.notesMaker.utils.isInternetAvailable
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,9 +14,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import javax.inject.Inject
 
-
+// here in the function it will store the noteID too so that  if the work manager fails to update
+// a lot of notes we can pass just noteID there and update the notes later
 @HiltViewModel
 class EditScreenVIewModel @Inject constructor(
    private val offlineUserDataRepository : OfflineUserDataRepository ,
@@ -32,9 +28,9 @@ class EditScreenVIewModel @Inject constructor(
     private  var  _uiState  =  MutableStateFlow(EditScreenUiState())
     val   uiState  : StateFlow<EditScreenUiState> = _uiState.asStateFlow()
 
-    fun createNote(shortNote: ShortNote) = viewModelScope.launch{
-        saveNotesLocally(shortNote)
-       workManagerRepository.saveNote(shortNote.heading , shortNote.content)
+    fun createNote(note : Note) = viewModelScope.launch{
+      val localNoteId =   saveNotesLocally(note)
+      workManagerRepository.saveNote(note.heading ?: "" , note.content ?: "")
     }
 
     fun updateNote(updatedShortNote: UpdatedShortNote) = viewModelScope.launch {
@@ -42,10 +38,10 @@ class EditScreenVIewModel @Inject constructor(
         workManagerRepository.updateNote(updatedShortNote)
     }
 
-    private suspend fun saveNotesLocally(shortNote: ShortNote) {
-        val note  = Note(  heading =  shortNote.heading , content = shortNote.content ,)
+    private suspend fun saveNotesLocally(note: Note) : Int {
        try {
-       offlineUserDataRepository.save(note)
+     val localNoteId = offlineUserDataRepository.createNoteAndGetId(note)
+           return localNoteId
            _uiState.update {
                it.copy(
                isSaveSuccessful =  true
@@ -57,6 +53,7 @@ class EditScreenVIewModel @Inject constructor(
                serverResponse = e.message ?: "Something went wrong"
                 )
            }
+           return -1 // returning -1 if the note is not saved
        }
     }
     /**
@@ -69,7 +66,10 @@ class EditScreenVIewModel @Inject constructor(
             heading = updatedShortNote.heading,
             content = updatedShortNote.content ,
             id = updatedShortNote.localNoteId ?: -1 ,
-            noteId = updatedShortNote.id
+            noteId = updatedShortNote.id ,
+            createdAt = LocalDateTime.now().toString() ,
+            version = updatedShortNote.version ,
+            lastUpdated = updatedShortNote.lastUpdated
         )
         try {
             offlineUserDataRepository.update(note)

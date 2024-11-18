@@ -72,6 +72,7 @@ interface AppApiService {
 data class ShortNote(
     val content : String,
     val heading: String,
+    val dateCreated: String,
 )
 
 @Serializable
@@ -79,7 +80,9 @@ data class UpdatedShortNote(
     val content : String,
     val heading: String,
     val  id : Int ,
-    val localNoteId : Int? = -1
+    val localNoteId : Int? = -1,
+    val lastUpdated : String? = null,
+    val version: Int = 1
 )
 
 @Serializable

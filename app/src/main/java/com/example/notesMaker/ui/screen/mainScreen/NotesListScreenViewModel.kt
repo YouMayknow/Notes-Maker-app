@@ -10,15 +10,18 @@ import com.example.notesMaker.network.DetailedNote
 import com.example.notesMaker.network.UpdatedShortNote
 import com.example.notesMaker.repository.NetworkUserDataRepository
 import com.example.notesMaker.repository.OfflineUserDataRepository
+import com.example.notesMaker.utils.InternetStatus
 import com.example.notesMaker.utils.isInternetAvailable
 import com.example.notesMaker.worker.LOGGING_OF_APP
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -34,7 +37,6 @@ class NotesListScreenViewModel @Inject constructor(
 ) : ViewModel() {
     private  val _uiState  = MutableStateFlow(NotesListScreenUiState())
       val uiState  :  StateFlow<NotesListScreenUiState> = _uiState.asStateFlow()
-
     private val _snackBarMessage = MutableStateFlow<String?>(null)
     val snackBarMessage : StateFlow<String?> =  _snackBarMessage
 
@@ -48,7 +50,7 @@ class NotesListScreenViewModel @Inject constructor(
 
     }
    private fun checkForInternet() : Boolean {
-       val isOnline =  isInternetAvailable(context)
+      val isOnline =  isInternetAvailable(context)
        _uiState.update { it.copy(isInterNetAvailable =  isOnline) }
        return  isOnline
    }
@@ -124,7 +126,8 @@ class NotesListScreenViewModel @Inject constructor(
                 content = it.content  ?: "",
                 heading = it.heading ?: "",
                 id = it.noteId ?: -1,
-                localNoteId = it.id
+                localNoteId = it.id,
+                version = it.version
             )
         }
         _uiState.update {

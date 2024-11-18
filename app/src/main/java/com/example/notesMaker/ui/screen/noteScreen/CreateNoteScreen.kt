@@ -10,6 +10,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.notesMaker.network.ShortNote
+import com.example.notesMaker.repository.Note
+import java.time.Instant.now
 
 @Composable
 fun CreateNoteScreen (
@@ -28,9 +30,10 @@ fun CreateNoteScreen (
         heading = heading,
         onSaveNoteClick = {
             viewModel.createNote(
-                ShortNote(
+                Note(
                 content = content,
                 heading = heading,
+                    createdAt = now().toString(),
                 )
             )
             redirectBackToDetailedList()

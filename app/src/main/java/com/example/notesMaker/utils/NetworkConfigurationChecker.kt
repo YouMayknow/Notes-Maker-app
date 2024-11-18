@@ -22,10 +22,10 @@ fun isInternetAvailable(context: Context) : Boolean {
 }
 
 
-enum class InternetStatus{
+enum class  InternetStatus{
     AVAILABLE , NOT_AVAILABLE
 }
-fun Context.observeInternetStatus() : Flow<InternetStatus> = callbackFlow {
+fun Context.observeInternetStatus()  : Flow<InternetStatus> = callbackFlow {
     val connectivityManager = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
     val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network) {
@@ -45,5 +45,4 @@ fun Context.observeInternetStatus() : Flow<InternetStatus> = callbackFlow {
     awaitClose {
         connectivityManager.unregisterNetworkCallback(networkCallback)
     }
-
 }

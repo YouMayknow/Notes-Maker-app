@@ -62,7 +62,9 @@ fun SignupScreen(
     ) {
          val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(uiState.isLoginSuccess) {
+        if (uiState.isLoginSuccess) {
         navigateToMainScreen()
+        }
     }
         val currentUiScreen = uiState.currentScreen
         Card(

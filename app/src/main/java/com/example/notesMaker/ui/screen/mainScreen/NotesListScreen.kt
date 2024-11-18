@@ -80,6 +80,7 @@ fun NotesListMainScreen (
     onDetailsIconClicked : () -> Unit ,
     onAddNoteClick: () -> Unit,
     turnShouldRefreshFalse : ()-> Unit ,
+    onNotificationsIconClicked : () -> Unit  ,
     viewModel: NotesListScreenViewModel
  ) {
     val uiState by  viewModel.uiState.collectAsState()
@@ -106,7 +107,7 @@ fun NotesListMainScreen (
         modifier = modifier ,
         floatingActionButton = { FloatingActionButton(onClick = onAddNoteClick) { Icon(imageVector = Icons.Default.Add, contentDescription = "Add Note") }
         } ,
-        topBar = { SearchBar(onDetailsIconClicked = onDetailsIconClicked, onSearch =  {})
+        topBar = { SearchBar(onDetailsIconClicked = onDetailsIconClicked, onSearch =  {}, onNotificationsIconClicked =onNotificationsIconClicked )
         } ,
         snackbarHost = {SnackbarHost(hostState = snackBarHostState) } ,
     ) {
@@ -151,20 +152,6 @@ fun NotesListMainScreen (
         }
     }
 }
-
-@Composable
-fun NotesListLoadingScreen (
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier.fillMaxSize() ,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.Center
-    ) {
-        CircularProgressIndicator()
-    }
-}
-
 @Composable
 fun NotesList(
     modifier: Modifier = Modifier  ,
@@ -294,6 +281,7 @@ fun NoteItem(
 
 @Composable
 fun SearchBar (
+    onNotificationsIconClicked : () -> Unit ,
     onDetailsIconClicked : () -> Unit ,
     modifier: Modifier = Modifier ,
     onSearch: (String) -> Unit ,
@@ -305,8 +293,8 @@ fun SearchBar (
             start = 8.dp,
             bottom = 8.dp ,
         ).statusBarsPadding() , // Add status bar padding
-        horizontalArrangement = Arrangement.Center ,
-        verticalAlignment = Alignment.CenterVertically
+    horizontalArrangement = Arrangement.Center ,
+    verticalAlignment = Alignment.CenterVertically
     )  {
         var searchQuery by remember { mutableStateOf(TextFieldValue("")) }
         val keyboardController = LocalSoftwareKeyboardController.current
@@ -355,7 +343,7 @@ fun SearchBar (
                 .background(Color.LightGray, shape = RoundedCornerShape(24.dp))
         )
         IconButton(
-            onClick = onDetailsIconClicked ,
+            onClick = onNotificationsIconClicked ,
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.baseline_notifications_24), // Replace with your mic icon
@@ -388,14 +376,15 @@ fun PreviewNotesList() {
         onDetailsIconClicked = {},
         onAddNoteClick =  {},
         viewModel = hiltViewModel() ,
-        turnShouldRefreshFalse =  {}
+        turnShouldRefreshFalse =  {} ,
+        onNotificationsIconClicked = {}
     )
 }
 
 @Preview
 @Composable
 fun SearchBarPreview() {
-    SearchBar(onSearch = { } , onDetailsIconClicked = {})
+    SearchBar(onSearch = { } , onDetailsIconClicked = {} , onNotificationsIconClicked = {})
 }
 
 @Preview
@@ -411,8 +400,6 @@ fun NotesListPreview() {
         onShareIconClicked = {})
     }
 }
-
-
 @Composable
 @Preview
 fun CircularProgressBarPreview() {

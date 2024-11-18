@@ -11,6 +11,7 @@ import com.example.notesMaker.repository.NoteDatabase
 import com.example.notesMaker.repository.NotesWorkManagerRepository
 import com.example.notesMaker.repository.OfflineUserDataRepository
 import com.example.notesMaker.repository.OfflineUserTokenRepository
+import com.example.notesMaker.repository.UnSyncedUserNoteIdRepository
 import com.example.notesMaker.repository.UserDataRepository
 import com.example.notesMaker.repository.WorkManagerRepository
 import dagger.Binds
@@ -19,7 +20,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
- import javax.inject.Singleton
+import javax.inject.Singleton
 
 
 private const val USER_PREFERENCE_NAME = "token_preferences"
@@ -27,41 +28,46 @@ private val Application.datastore : DataStore<Preferences> by preferencesDataSto
 
 @Module
 @InstallIn(SingletonComponent::class)
-object AppModuleForToken{
+object AppModuleForToken {
 
     @Provides
     @Singleton // other option is binding .
-    fun provideDataStore(application: Application )  : DataStore<Preferences> {
+    fun provideDataStore(application: Application): DataStore<Preferences> {
         return application.datastore
     }
+
     @Provides // tell how we will create the token provider instance
     @Singleton
-    fun provideUserTokenRepository (dataStore: DataStore<Preferences>) : OfflineUserTokenRepository {
-        return OfflineUserTokenRepository(dataStore = dataStore )
+    fun provideUserTokenRepository(dataStore: DataStore<Preferences>): OfflineUserTokenRepository {
+        return OfflineUserTokenRepository(dataStore = dataStore)
     }
 
 
     @Provides // tell how we will create the token provider instance
     @Singleton
-    fun provideOfflineUserDataRepository (
-        @ApplicationContext  context : Context
-    ) : OfflineUserDataRepository {
-        return OfflineUserDataRepository(noteDao = NoteDatabase.getDatabase(context = context ).noteDao() )
+    fun provideOfflineUserDataRepository(
+        @ApplicationContext context: Context
+    ): OfflineUserDataRepository {
+        return OfflineUserDataRepository(
+            noteDao = NoteDatabase.getDatabase(context = context).noteDao()
+        )
     }
 
     @Provides
     @Singleton
     fun provideNoteWorkManagerRepository(
         @ApplicationContext context: Context
-    ) : WorkManagerRepository {
+    ): WorkManagerRepository {
         return NotesWorkManagerRepository(context)
     }
-//    @Provides
-//    @Singleton
-//    fun provideWorkManagerWorkerBuilder(
-//        ) : CustomWorkerFactory {
-//            return CustomWorkerFactory()
-//    }
+
+    @Provides
+    @Singleton
+    fun provideUnSyncedUserNotes(
+        dataStore: DataStore<Preferences>
+    ): UnSyncedUserNoteIdRepository {
+        return UnSyncedUserNoteIdRepository(dataStore = dataStore)
+    }
 }
 
 
@@ -79,7 +85,5 @@ abstract class AppModule {
     abstract fun getFakeUserDataRepository(
         fakeUserDataRepository : FakeUserDataRepository
     ) : UserDataRepository
-
-
 }
 

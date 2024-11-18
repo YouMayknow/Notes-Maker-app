@@ -17,5 +17,6 @@ data class Notes(
 
 val defaultNote = ShortNote(
     content =  "",
-    heading =  ""
+    heading =  "",
+    dateCreated = ""
 )
