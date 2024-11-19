@@ -10,18 +10,13 @@ import com.example.notesMaker.network.DetailedNote
 import com.example.notesMaker.network.UpdatedShortNote
 import com.example.notesMaker.repository.NetworkUserDataRepository
 import com.example.notesMaker.repository.OfflineUserDataRepository
-import com.example.notesMaker.utils.InternetStatus
 import com.example.notesMaker.utils.isInternetAvailable
 import com.example.notesMaker.worker.LOGGING_OF_APP
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -49,21 +44,33 @@ class NotesListScreenViewModel @Inject constructor(
         }
 
     }
-   private fun checkForInternet() : Boolean {
-      val isOnline =  isInternetAvailable(context)
-       _uiState.update { it.copy(isInterNetAvailable =  isOnline) }
-       return  isOnline
-   }
+
+    fun searchForWords(query : String) = viewModelScope.launch {
+//        offlineUserDataRepository.noteDao.searchForWords(query)
+//           // .onEach {  _uiState.update { it.copy(isDetailedNoteVisible =  true) } }
+//            .filterNotNull()
+//            .map{
+//                UpdatedShortNote(
+//                    content = it.content  ?: "",
+//                    heading = it.heading ?: "",
+//                    id = it.noteId ?: -1,
+//                    localNoteId = it.id,
+//                    version = it.version
+//                )
+//            }
+//            .stateIn()
+//        _uiState.update { it.copy(suggestionsOfNotes = notes , isLoading = false) }
+    }
+
     private fun checkForInternetAndFetchNotes()  = viewModelScope.launch{
          val isOnline = checkForInternet()
          if (isOnline) {
-             try{
-                 this@NotesListScreenViewModel.fetchOnlineNotes()
-             } catch (e  : Exception){
-                 Log.e("problem" , "$e")
-                 catchingException(exception = e)
-                 this@NotesListScreenViewModel.fetchOfflineNotes()
-             }
+          runCatching { this@NotesListScreenViewModel.fetchOnlineNotes() }
+              .onFailure {
+                  Log.e("problem" , "$it")
+                  catchingException(it)
+                  this@NotesListScreenViewModel.fetchOfflineNotes()
+              }
          } else {
              this@NotesListScreenViewModel.fetchOfflineNotes()
          }
@@ -72,18 +79,15 @@ class NotesListScreenViewModel @Inject constructor(
     fun deleteNote(noteId : Int) = viewModelScope.launch {
         val isOnline = checkForInternet()
         if (isOnline){
-            try {
-              val response =   userDataRepository.deleteSelectedNote(noteId)
-                if (response.isSuccessful){
-                    _snackBarMessage.value = "Note deleted"
-                } else {
-                    _snackBarMessage.value = response.errorBody()?.string()
+            runCatching { userDataRepository.deleteSelectedNote(noteId) }
+                .onFailure {
+                    Log.e("problem" , "$it")
+                    catchingException(it)
                 }
-                checkForInternetAndFetchNotes()
-            }  catch (e  : Exception){
-                Log.e("problem" , "$e")
-                catchingException(e)
-            }
+                .onSuccess {
+                  _snackBarMessage.value = if (it.isSuccessful)  "Note deleted"  else it.errorBody()?.string()
+                    checkForInternetAndFetchNotes()
+                }
         } else {
             _snackBarMessage.value = "Can't perform without internet"
         }
@@ -106,17 +110,19 @@ class NotesListScreenViewModel @Inject constructor(
             }
         }
     }
+
     fun closeDetailedNote(){
         _uiState.update {
             it.copy(isDetailedNoteVisible =  false)
         }
     }
-    private  fun catchingException(exception: Exception) {
+
+    private  fun catchingException(exception: Throwable?) {
         val errorMessage = when (exception){
             is SocketTimeoutException -> "Check for internet : ${exception.message}"
             is IOException -> "Network error : ${exception.message}"
             is HttpException -> "Http error : ${exception.message}"
-            else  -> "Unknown error : ${exception.message}"
+            else  -> "Unknown error : ${exception?.message}"
         }
         _snackBarMessage.value = errorMessage
     }
@@ -149,6 +155,7 @@ class NotesListScreenViewModel @Inject constructor(
         _snackBarMessage.value = null
     }
 
+
     fun refreshNotes() {
         _uiState.update {
             it.copy(isLoading = true)
@@ -158,6 +165,14 @@ class NotesListScreenViewModel @Inject constructor(
             checkForInternetAndFetchNotes()
         }
         Log.e(LOGGING_OF_APP ,"refrshign just finsihed")
+    }
+
+
+    // helper function to check for internet
+    private fun checkForInternet() : Boolean {
+        val isOnline =  isInternetAvailable(context)
+        _uiState.update { it.copy(isInterNetAvailable =  isOnline) }
+        return  isOnline
     }
 }
 
@@ -170,4 +185,6 @@ data class  NotesListScreenUiState(
     val isInterNetAvailable: Boolean  = true ,
     val isLoading : Boolean = true ,
     val errorMessage : String = "" ,
+    val suggestionsOfNotes : List<UpdatedShortNote> = emptyList() ,
+    val searchWord : String  = ""
 )

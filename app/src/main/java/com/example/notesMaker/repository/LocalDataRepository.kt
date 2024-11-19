@@ -12,6 +12,7 @@ import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 
 interface LocalDataRepository  {
     suspend fun  getAllData() : List<Note>
@@ -23,6 +24,7 @@ interface LocalDataRepository  {
     suspend fun createNoteAndGetId(note: Note) : Int
     suspend fun addSyncedState(isSynced: Boolean , heading: String)
     suspend fun getUnSyncedNotes() : List<Note>
+    suspend fun getSearchedWord(word: String) :Flow<List<Note>>
 }
 
 
@@ -60,6 +62,10 @@ class OfflineUserDataRepository(val noteDao: NoteDao ) : LocalDataRepository {
 
     override suspend fun getUnSyncedNotes(): List<Note> {
         return noteDao.getUnSyncedNotes()
+    }
+
+    override suspend fun getSearchedWord(word: String):Flow<List<Note>>{
+        return noteDao.searchForWords(word)
     }
 }
 
@@ -109,6 +115,8 @@ interface NoteDao{
         saveNote(note)
         return getNoteID(note.heading ?: "") ?: -1
     }
+    @Query("SELECT * FROM note WHERE heading LIKE :word OR content LIKE :word")
+    suspend fun searchForWords(word: String) : Flow<List<Note>>
 }
 @Database(entities = [Note::class], version = 10  , exportSchema = false  )
 abstract class NoteDatabase : RoomDatabase() {

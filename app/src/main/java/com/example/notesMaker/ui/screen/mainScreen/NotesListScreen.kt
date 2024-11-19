@@ -17,9 +17,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
@@ -32,6 +34,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -58,6 +61,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
@@ -65,6 +69,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.notesMaker.R
+import com.example.notesMaker.model.Notes
 import com.example.notesMaker.network.UpdatedShortNote
 import com.example.notesMaker.ui.screen.noteScreen.DetailedScreen
 import com.example.notesMaker.ui.theme.NotesMakerTheme
@@ -88,6 +93,7 @@ fun NotesListMainScreen (
     val snackBarHostState = remember { SnackbarHostState()}
     val scope = rememberCoroutineScope()
     val pullToRefreshState = rememberPullToRefreshState()
+    var  searchWord by remember {  mutableStateOf("")}
 
     LaunchedEffect(shouldRefresh) {
         if (shouldRefresh) {
@@ -107,7 +113,17 @@ fun NotesListMainScreen (
         modifier = modifier ,
         floatingActionButton = { FloatingActionButton(onClick = onAddNoteClick) { Icon(imageVector = Icons.Default.Add, contentDescription = "Add Note") }
         } ,
-        topBar = { SearchBar(onDetailsIconClicked = onDetailsIconClicked, onSearch =  {}, onNotificationsIconClicked =onNotificationsIconClicked )
+        topBar = {
+            SearchBar(
+                onDetailsIconClicked = onDetailsIconClicked,
+                onSearch =  {},
+                onNotificationsIconClicked =onNotificationsIconClicked ,
+                onSearchValueChanged =  {
+                    searchWord = it
+                    viewModel.searchForWords(it)
+                                        } ,
+                searchValue =  searchWord
+            )
         } ,
         snackbarHost = {SnackbarHost(hostState = snackBarHostState) } ,
     ) {
@@ -134,8 +150,15 @@ fun NotesListMainScreen (
                     onBackupIconClicked ={},
                     onShareIconClicked = {   }
                 )
+                NotesSearchScreen(
+                    onNoteClick= onNoteClick ,
+                    listOfSearchOutcomes = uiState.suggestionsOfNotes
+                )
               if (uiState.isLoading){
-                  CircularProgressIndicator(modifier = modifier.align(Alignment.TopCenter).size(24.dp).padding(top =8.dp) , strokeWidth = 2.dp)
+                  CircularProgressIndicator(modifier = modifier
+                      .align(Alignment.TopCenter)
+                      .size(24.dp)
+                      .padding(top = 8.dp) , strokeWidth = 2.dp)
               }
                 AnimatedVisibility(visible = uiState.isDetailedNoteVisible ) {// add animation here
                     DetailedScreen(
@@ -169,7 +192,7 @@ fun NotesList(
     ) {
         items(notes) { note ->
             Box {
-                NoteItem(
+                NoteCard(
                     modifier = Modifier.aspectRatio(0.75f),
                     onDetailsIconClicked = { onDetailsIconClicked(note.id)},
                     onDeleteIconClicked = {onDeleteIconClicked(note.id)},
@@ -184,7 +207,7 @@ fun NotesList(
     }
 }
 @Composable
-fun NoteItem(
+fun NoteCard(
     modifier: Modifier = Modifier ,
     onDetailsIconClicked: () -> Unit ,
     onDeleteIconClicked: () -> Unit ,
@@ -281,18 +304,22 @@ fun NoteItem(
 
 @Composable
 fun SearchBar (
+    searchValue : String ,
+    onSearchValueChanged : (String) -> Unit ,
     onNotificationsIconClicked : () -> Unit ,
     onDetailsIconClicked : () -> Unit ,
     modifier: Modifier = Modifier ,
     onSearch: (String) -> Unit ,
 ) {
+
     Row(  modifier = modifier
         .padding(
             top = 12.dp,
             end = 8.dp,
             start = 8.dp,
-            bottom = 8.dp ,
-        ).statusBarsPadding() , // Add status bar padding
+            bottom = 8.dp,
+        )
+        .statusBarsPadding() , // Add status bar padding
     horizontalArrangement = Arrangement.Center ,
     verticalAlignment = Alignment.CenterVertically
     )  {
@@ -309,8 +336,8 @@ fun SearchBar (
             )
         }
         TextField(
-            value = searchQuery,
-            onValueChange = { searchQuery = it },
+            value = searchValue  ,
+            onValueChange = onSearchValueChanged,
             placeholder = { Text(text = "Search...", fontSize = 16.sp) },
             trailingIcon = {
                 IconButton(onClick = {
@@ -354,10 +381,50 @@ fun SearchBar (
         }
     }
 }
+
+@Composable
+fun NotesSearchScreen(
+    modifier: Modifier =  Modifier,
+    listOfSearchOutcomes  : List<UpdatedShortNote>,
+    onNoteClick: (UpdatedShortNote) -> Unit,
+) {
+    LazyColumn(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp, vertical = 8.dp)
+    ) {
+        items(listOfSearchOutcomes , {it.id}){ note ->
+            Row(
+                Modifier
+                    .fillMaxWidth()
+                    .clickable(onClick = { onNoteClick(note) })
+                    .padding(horizontal = 4.dp, vertical = 2.dp) ,
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text("${note.heading} : ", fontWeight = FontWeight.SemiBold , style = MaterialTheme.typography.bodyMedium)
+                Text(note.content, style = MaterialTheme.typography.bodySmall)
+            }
+            HorizontalDivider()
+        }
+    }
+}
+
+@Composable
+@Preview
+fun NotesSearchScreenPreview() {
+    NotesSearchScreen(
+        listOfSearchOutcomes = listOf(
+            UpdatedShortNote(id = 1, heading = "Note 1", content = "Content of Note 1" ),
+            UpdatedShortNote(id = 2, heading = "Note 2", content = "Content of Note 2"),
+            UpdatedShortNote(id = 3, heading = "Note 3", content = "Content of Note 3")
+        ) ,
+        onNoteClick = {}
+    )
+}
 @Preview(showBackground = true)
 @Composable
 fun PreviewNoteItem() {
-    NoteItem(
+    NoteCard(
         onDetailsIconClicked = {},
         onDeleteIconClicked = {},
         onBackupIconClicked = {},
@@ -384,7 +451,8 @@ fun PreviewNotesList() {
 @Preview
 @Composable
 fun SearchBarPreview() {
-    SearchBar(onSearch = { } , onDetailsIconClicked = {} , onNotificationsIconClicked = {})
+    var  header = ""
+    SearchBar(onSearch = { } , onDetailsIconClicked = {} , onNotificationsIconClicked = {} , onSearchValueChanged = { header = it } , searchValue = "header" )
 }
 
 @Preview
@@ -397,13 +465,16 @@ fun NotesListPreview() {
         onDetailsIconClicked = {},
         onDeleteIconClicked = {},
         onBackupIconClicked = {},
-        onShareIconClicked = {})
+        onShareIconClicked = {}
+    )
     }
 }
 @Composable
 @Preview
 fun CircularProgressBarPreview() {
     NotesMakerTheme {
-    CircularProgressIndicator(modifier = Modifier.size(24.dp).padding(top =8.dp) , strokeWidth = 2.dp)
+    CircularProgressIndicator(modifier = Modifier
+        .size(24.dp)
+        .padding(top = 8.dp) , strokeWidth = 2.dp)
     }
 }
