@@ -69,7 +69,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.notesMaker.R
-import com.example.notesMaker.model.Notes
 import com.example.notesMaker.network.UpdatedShortNote
 import com.example.notesMaker.ui.screen.noteScreen.DetailedScreen
 import com.example.notesMaker.ui.theme.NotesMakerTheme
@@ -79,28 +78,26 @@ import kotlinx.coroutines.launch
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NotesListMainScreen (
-    modifier : Modifier = Modifier  ,
-    shouldRefresh : Boolean = false ,
-    onNoteClick: (UpdatedShortNote) -> Unit ,
-    onDetailsIconClicked : () -> Unit ,
+    modifier: Modifier = Modifier,
+    onNoteClick: (UpdatedShortNote) -> Unit,
+    onDetailsIconClicked: () -> Unit,
     onAddNoteClick: () -> Unit,
-    turnShouldRefreshFalse : ()-> Unit ,
-    onNotificationsIconClicked : () -> Unit  ,
+    onNotificationsIconClicked: () -> Unit,
     viewModel: NotesListScreenViewModel
- ) {
+) {
+    val notes by viewModel.notes.collectAsState(emptyList())
     val uiState by  viewModel.uiState.collectAsState()
+    val searchUiState by  viewModel.searchUiState.collectAsState()
     val snackBarMessage by viewModel.snackBarMessage.collectAsState()
     val snackBarHostState = remember { SnackbarHostState()}
     val scope = rememberCoroutineScope()
     val pullToRefreshState = rememberPullToRefreshState()
     var  searchWord by remember {  mutableStateOf("")}
 
-    LaunchedEffect(shouldRefresh) {
-        if (shouldRefresh) {
-            viewModel.refreshNotes()
-            turnShouldRefreshFalse()
-        }
+    LaunchedEffect(Unit) {
+        // here comes the attempt of syncing  the data with the server
     }
+
     snackBarMessage?.let {message ->
             LaunchedEffect(message) {
                 scope.launch {
@@ -118,11 +115,8 @@ fun NotesListMainScreen (
                 onDetailsIconClicked = onDetailsIconClicked,
                 onSearch =  {},
                 onNotificationsIconClicked =onNotificationsIconClicked ,
-                onSearchValueChanged =  {
-                    searchWord = it
-                    viewModel.searchForWords(it)
-                                        } ,
-                searchValue =  searchWord
+                onSearchValueChanged = viewModel::updateSearchWord,
+                searchValue =  searchUiState.searchWord
             )
         } ,
         snackbarHost = {SnackbarHost(hostState = snackBarHostState) } ,
@@ -139,7 +133,7 @@ fun NotesListMainScreen (
             Box(modifier = Modifier.padding(it)
             ){
                 NotesList(
-                    notes =   uiState.notes ,
+                    notes =   notes ,
                     onNoteClick =  onNoteClick ,
                     onDetailsIconClicked = {noteId ->
                         viewModel.getDetailsOfNote(noteId)
@@ -152,7 +146,7 @@ fun NotesListMainScreen (
                 )
                 NotesSearchScreen(
                     onNoteClick= onNoteClick ,
-                    listOfSearchOutcomes = uiState.suggestionsOfNotes
+                    listOfSearchOutcomes = searchUiState.suggestionsOfNotes
                 )
               if (uiState.isLoading){
                   CircularProgressIndicator(modifier = modifier
@@ -442,9 +436,8 @@ fun PreviewNotesList() {
         onNoteClick =  {},
         onDetailsIconClicked = {},
         onAddNoteClick =  {},
-        viewModel = hiltViewModel() ,
-        turnShouldRefreshFalse =  {} ,
-        onNotificationsIconClicked = {}
+        onNotificationsIconClicked = {},
+        viewModel = hiltViewModel()
     )
 }
 

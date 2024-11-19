@@ -11,11 +11,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Help
 import androidx.compose.material.icons.filled.AccessTime
 import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Help
 import androidx.compose.material.icons.filled.OfflinePin
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Star
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -44,14 +42,12 @@ main Screen that adhere the notes from the database and also have button to add 
  */
 @Composable
 fun UserDetailsAndDrawerScreen(
-    modifier : Modifier =   Modifier ,
-     shouldRefresh : Boolean = false ,
-    viewModel: NotesListScreenViewModel ,
-    onNoteClick : (String) -> Unit,
-    onAddNoteClick :()-> Unit,
-     turnShouldRefreshFalse : () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: NotesListScreenViewModel,
+    onNoteClick: (String) -> Unit,
+    onAddNoteClick: () -> Unit,
     onDrawerItemClicked: (String) -> Unit,
-    onNotificationsIconClicked : () -> Unit
+    onNotificationsIconClicked: () -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val scope = rememberCoroutineScope()
@@ -64,7 +60,6 @@ fun UserDetailsAndDrawerScreen(
     ) {
         NotesListMainScreen(
             modifier = modifier,
-            shouldRefresh = shouldRefresh,
             onNoteClick = {
                         val note =  Json.encodeToString(it)
                 onNoteClick(note)
@@ -77,9 +72,8 @@ fun UserDetailsAndDrawerScreen(
                 }
             },
             onAddNoteClick = onAddNoteClick,
-            viewModel = viewModel ,
-            turnShouldRefreshFalse = turnShouldRefreshFalse ,
-            onNotificationsIconClicked = onNotificationsIconClicked
+            onNotificationsIconClicked = onNotificationsIconClicked,
+            viewModel = viewModel
         )
     }
 }
@@ -133,10 +127,8 @@ fun NavigationRailPreview() {
             viewModel = hiltViewModel(),
             onNoteClick =  {},
             onAddNoteClick = {},
-            turnShouldRefreshFalse = {},
-            onDrawerItemClicked =  {} ,
-            onNotificationsIconClicked ={}
-        )
+            onDrawerItemClicked =  {}
+        ) {}
     }
 }
 

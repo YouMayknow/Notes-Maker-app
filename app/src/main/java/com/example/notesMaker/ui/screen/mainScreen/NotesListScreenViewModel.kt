@@ -14,9 +14,17 @@ import com.example.notesMaker.utils.isInternetAvailable
 import com.example.notesMaker.worker.LOGGING_OF_APP
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import retrofit2.HttpException
@@ -26,17 +34,38 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NotesListScreenViewModel @Inject constructor(
-    private val offlineUserDataRepository: OfflineUserDataRepository ,
-    private val userDataRepository: NetworkUserDataRepository ,
-    @ApplicationContext val context: Context ,
+    private val offlineUserDataRepository: OfflineUserDataRepository,
+    private val onlineUserDataRepository: NetworkUserDataRepository,
+    @ApplicationContext val context: Context,
 ) : ViewModel() {
     private  val _uiState  = MutableStateFlow(NotesListScreenUiState())
       val uiState  :  StateFlow<NotesListScreenUiState> = _uiState.asStateFlow()
+
     private val _snackBarMessage = MutableStateFlow<String?>(null)
     val snackBarMessage : StateFlow<String?> =  _snackBarMessage
 
+    private val _searchUiState = MutableStateFlow(NotesSearchUiState())
+    val searchUiState : StateFlow<NotesSearchUiState> = _searchUiState.asStateFlow()
+
+    var notes : Flow<List<UpdatedShortNote>> = offlineUserDataRepository.noteDao.getAllNotes()
+        .map {
+            it.map {
+                UpdatedShortNote(
+                    content = it.content  ?: "",
+                    heading = it.heading ?: "",
+                    id = it.noteId ?: -1,
+                    localNoteId = it.id,
+                    version = it.version
+                )
+            }
+        }.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = emptyList()
+        )
+    private  set
+
     init {
-        checkForInternetAndFetchNotes()
         if (uiState.value.isInterNetAvailable){
            _snackBarMessage.value = "Connected to the server"
         } else {
@@ -45,58 +74,76 @@ class NotesListScreenViewModel @Inject constructor(
 
     }
 
-    fun searchForWords(query : String) = viewModelScope.launch {
-//        offlineUserDataRepository.noteDao.searchForWords(query)
-//           // .onEach {  _uiState.update { it.copy(isDetailedNoteVisible =  true) } }
-//            .filterNotNull()
-//            .map{
-//                UpdatedShortNote(
-//                    content = it.content  ?: "",
-//                    heading = it.heading ?: "",
-//                    id = it.noteId ?: -1,
-//                    localNoteId = it.id,
-//                    version = it.version
-//                )
-//            }
-//            .stateIn()
-//        _uiState.update { it.copy(suggestionsOfNotes = notes , isLoading = false) }
+    fun updateSearchWord(word : String){
+        _searchUiState.update {
+            it.copy(searchWord = word)
+        }
+        Log.e(LOGGING_OF_APP , "search word updated to : $word")
     }
 
-    private fun checkForInternetAndFetchNotes()  = viewModelScope.launch{
-         val isOnline = checkForInternet()
-         if (isOnline) {
-          runCatching { this@NotesListScreenViewModel.fetchOnlineNotes() }
-              .onFailure {
-                  Log.e("problem" , "$it")
-                  catchingException(it)
-                  this@NotesListScreenViewModel.fetchOfflineNotes()
-              }
-         } else {
-             this@NotesListScreenViewModel.fetchOfflineNotes()
-         }
+    @OptIn(FlowPreview::class)
+    val persons  =  searchUiState
+            .debounce(500)
+            .onEach { _searchUiState.update { it.copy(isSearching = true)   }
+                Log.e(LOGGING_OF_APP , "searching in database function called ")
+             }
+            .combine(searchUiState.map { it.suggestionsOfNotes }) { word , list ->
+                offlineUserDataRepository.getSearchedWord(word.searchWord)
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = NotesSearchUiState() ,
+            ).onEach {         _searchUiState.update {it.copy(suggestionsOfNotes = it.suggestionsOfNotes , isSearching = false) } }
+
+  val searchNotes  =  searchUiState
+            .debounce(500)
+            .onEach { _searchUiState.update { it.copy(isSearching = true)   }
+                Log.e(LOGGING_OF_APP , "searching in database function called ")
+             }
+            .combine(searchUiState.map { it.suggestionsOfNotes }) { word , list ->
+                offlineUserDataRepository.getSearchedWord(word.searchWord)
+            }.stateIn(
+                scope = viewModelScope,
+                started = SharingStarted.WhileSubscribed(),
+                initialValue = NotesSearchUiState() ,
+            ).onEach {         _searchUiState.update {it.copy(suggestionsOfNotes = it.suggestionsOfNotes , isSearching = false) } }
+
+    private fun syncWithDatabase()  = viewModelScope.launch{
+        val isOnline = checkForInternet()
+        if (isOnline){
+            try {
+                fetchOnlineNotes()
+            }catch (e : Exception){
+                Log.e("problem" , "$e")
+                catchingException(e)
+            }
+        } else {
+            _snackBarMessage.value = "Can't perform without internet"
+        }
      }
 
     fun deleteNote(noteId : Int) = viewModelScope.launch {
         val isOnline = checkForInternet()
         if (isOnline){
-            runCatching { userDataRepository.deleteSelectedNote(noteId) }
+            runCatching { onlineUserDataRepository.deleteSelectedNote(noteId) }
                 .onFailure {
                     Log.e("problem" , "$it")
                     catchingException(it)
                 }
                 .onSuccess {
                   _snackBarMessage.value = if (it.isSuccessful)  "Note deleted"  else it.errorBody()?.string()
-                    checkForInternetAndFetchNotes()
                 }
         } else {
             _snackBarMessage.value = "Can't perform without internet"
         }
     }
+
+
     fun getDetailsOfNote(noteId: Int) = viewModelScope.launch {
        val isOnline = checkForInternet()
         if (isOnline){
             try {
-                val response =  userDataRepository.getSelectedNote(noteId)
+                val response =  onlineUserDataRepository.getSelectedNote(noteId)
                 _uiState.update {
                     it.copy(
                         isDetailedNoteVisible =  true ,
@@ -126,26 +173,11 @@ class NotesListScreenViewModel @Inject constructor(
         }
         _snackBarMessage.value = errorMessage
     }
-    private  suspend fun fetchOfflineNotes() {
-        val notes = offlineUserDataRepository.noteDao.getAllNotes().map {
-            UpdatedShortNote(
-                content = it.content  ?: "",
-                heading = it.heading ?: "",
-                id = it.noteId ?: -1,
-                localNoteId = it.id,
-                version = it.version
-            )
-        }
-        _uiState.update {
-            it.copy(
-                notes = notes , isLoading = false , isInterNetAvailable = false
-            )
-        }
-    }
+
 
 
     private suspend fun  fetchOnlineNotes() {
-        val  response = userDataRepository.getAllUserNotes()
+        val  response = onlineUserDataRepository.getAllUserNotes()
         _uiState.update {
             it.copy(notes = response.body() ?: emptyList() , isInterNetAvailable =  true , isLoading = false)
         }
@@ -162,7 +194,7 @@ class NotesListScreenViewModel @Inject constructor(
         }
         Log.e(LOGGING_OF_APP ,"Refreshing notes")
         viewModelScope.launch{
-            checkForInternetAndFetchNotes()
+            syncWithDatabase()
         }
         Log.e(LOGGING_OF_APP ,"refrshign just finsihed")
     }
@@ -183,8 +215,11 @@ data class  NotesListScreenUiState(
     val detailedNoteMessage : String = "" ,
     val notes : List<UpdatedShortNote> = emptyList() ,
     val isInterNetAvailable: Boolean  = true ,
-    val isLoading : Boolean = true ,
+    val isLoading : Boolean = false ,
     val errorMessage : String = "" ,
-    val suggestionsOfNotes : List<UpdatedShortNote> = emptyList() ,
-    val searchWord : String  = ""
+)
+data class NotesSearchUiState(
+    val isSearching : Boolean = false ,
+    val searchWord : String = "" ,
+    val suggestionsOfNotes : List<UpdatedShortNote> = emptyList()
 )

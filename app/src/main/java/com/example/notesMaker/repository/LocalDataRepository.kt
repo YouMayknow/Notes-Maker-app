@@ -15,7 +15,7 @@ import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 interface LocalDataRepository  {
-    suspend fun  getAllData() : List<Note>
+     fun  getAllData() : Flow<List<Note>>
     suspend fun update(note : Note)
     suspend fun save(note: Note)
     suspend fun saveNoteId(heading : String ,noteId : Int)
@@ -24,12 +24,12 @@ interface LocalDataRepository  {
     suspend fun createNoteAndGetId(note: Note) : Int
     suspend fun addSyncedState(isSynced: Boolean , heading: String)
     suspend fun getUnSyncedNotes() : List<Note>
-    suspend fun getSearchedWord(word: String) :Flow<List<Note>>
+     fun getSearchedWord(word: String) :Flow<List<Note>>
 }
 
 
 class OfflineUserDataRepository(val noteDao: NoteDao ) : LocalDataRepository {
-    override suspend fun getAllData() : List<Note> {
+     override fun getAllData() :  Flow<List<Note>>{
       return  noteDao.getAllNotes()
     }
     override suspend fun update(note: Note) {
@@ -64,7 +64,7 @@ class OfflineUserDataRepository(val noteDao: NoteDao ) : LocalDataRepository {
         return noteDao.getUnSyncedNotes()
     }
 
-    override suspend fun getSearchedWord(word: String):Flow<List<Note>>{
+      override fun getSearchedWord(word: String): Flow<List<Note>>{
         return noteDao.searchForWords(word)
     }
 }
@@ -89,7 +89,7 @@ data class Note(
 @Dao
 interface NoteDao{
     @Query("SELECT * FROM Note")
-    suspend fun  getAllNotes() : List<Note>
+     fun  getAllNotes() : Flow<List<Note>>
 
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateNote(note: Note)
@@ -116,7 +116,7 @@ interface NoteDao{
         return getNoteID(note.heading ?: "") ?: -1
     }
     @Query("SELECT * FROM note WHERE heading LIKE :word OR content LIKE :word")
-    suspend fun searchForWords(word: String) : Flow<List<Note>>
+     fun searchForWords(word: String) : Flow<List<Note>>
 }
 @Database(entities = [Note::class], version = 10  , exportSchema = false  )
 abstract class NoteDatabase : RoomDatabase() {
