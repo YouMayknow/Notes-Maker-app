@@ -9,7 +9,6 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.notesMaker.network.ShortNote
 import com.example.notesMaker.repository.Note
 import java.time.Instant.now
 

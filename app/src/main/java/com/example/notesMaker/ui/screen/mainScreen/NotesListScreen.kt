@@ -1,5 +1,6 @@
 package com.example.notesMaker.ui.screen.mainScreen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -70,6 +71,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.notesMaker.R
 import com.example.notesMaker.network.UpdatedShortNote
+import com.example.notesMaker.repository.Note
 import com.example.notesMaker.ui.screen.noteScreen.DetailedScreen
 import com.example.notesMaker.ui.theme.NotesMakerTheme
 import kotlinx.coroutines.launch
@@ -85,19 +87,22 @@ fun NotesListMainScreen (
     onNotificationsIconClicked: () -> Unit,
     viewModel: NotesListScreenViewModel
 ) {
+    val query = viewModel.query.collectAsState()
     val notes by viewModel.notes.collectAsState(emptyList())
+    val searchResults  by viewModel.searchResults.collectAsState(emptyList())
     val uiState by  viewModel.uiState.collectAsState()
     val searchUiState by  viewModel.searchUiState.collectAsState()
     val snackBarMessage by viewModel.snackBarMessage.collectAsState()
     val snackBarHostState = remember { SnackbarHostState()}
     val scope = rememberCoroutineScope()
     val pullToRefreshState = rememberPullToRefreshState()
-    var  searchWord by remember {  mutableStateOf("")}
 
     LaunchedEffect(Unit) {
         // here comes the attempt of syncing  the data with the server
     }
-
+    BackHandler(enabled = query.value.isNotEmpty()) {
+        viewModel.clearSearchWord()
+    }
     snackBarMessage?.let {message ->
             LaunchedEffect(message) {
                 scope.launch {
@@ -146,7 +151,7 @@ fun NotesListMainScreen (
                 )
                 NotesSearchScreen(
                     onNoteClick= onNoteClick ,
-                    listOfSearchOutcomes = searchUiState.suggestionsOfNotes
+                    listOfSearchOutcomes = searchResults
                 )
               if (uiState.isLoading){
                   CircularProgressIndicator(modifier = modifier
@@ -379,7 +384,7 @@ fun SearchBar (
 @Composable
 fun NotesSearchScreen(
     modifier: Modifier =  Modifier,
-    listOfSearchOutcomes  : List<UpdatedShortNote>,
+    listOfSearchOutcomes  : List<Note>,
     onNoteClick: (UpdatedShortNote) -> Unit,
 ) {
     LazyColumn(
@@ -391,12 +396,23 @@ fun NotesSearchScreen(
             Row(
                 Modifier
                     .fillMaxWidth()
-                    .clickable(onClick = { onNoteClick(note) })
+                    .background(MaterialTheme.colorScheme.background, shape = RoundedCornerShape(8.dp))
+                    .clickable(onClick = {
+                       val note = UpdatedShortNote(
+                            heading = note.heading,
+                            content = note.content,
+                            id = note.id,
+                            version = note.version ,
+                            localNoteId = note.id ,
+                           lastUpdated = note.lastUpdated
+                       )
+                        onNoteClick(note)
+                    })
                     .padding(horizontal = 4.dp, vertical = 2.dp) ,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text("${note.heading} : ", fontWeight = FontWeight.SemiBold , style = MaterialTheme.typography.bodyMedium)
-                Text(note.content, style = MaterialTheme.typography.bodySmall)
+                Text("${note.heading} : ", fontWeight = FontWeight.SemiBold , style = MaterialTheme.typography.bodyMedium , maxLines = 1)
+                Text(note.content, style = MaterialTheme.typography.bodySmall , maxLines = 1 )
             }
             HorizontalDivider()
         }
@@ -407,11 +423,12 @@ fun NotesSearchScreen(
 @Preview
 fun NotesSearchScreenPreview() {
     NotesSearchScreen(
-        listOfSearchOutcomes = listOf(
-            UpdatedShortNote(id = 1, heading = "Note 1", content = "Content of Note 1" ),
-            UpdatedShortNote(id = 2, heading = "Note 2", content = "Content of Note 2"),
-            UpdatedShortNote(id = 3, heading = "Note 3", content = "Content of Note 3")
-        ) ,
+//        listOfSearchOutcomes = listOf(
+//            UpdatedShortNote(id = 1, heading = "Note 1", content = "Content of Note 1" ),
+//            UpdatedShortNote(id = 2, heading = "Note 2", content = "Content of Note 2"),
+//            UpdatedShortNote(id = 3, heading = "Note 3", content = "Content of Note 3")
+//        )
+      listOfSearchOutcomes =   emptyList(),
         onNoteClick = {}
     )
 }
@@ -452,14 +469,14 @@ fun SearchBarPreview() {
 @Composable
 fun NotesListPreview() {
     NotesMakerTheme(darkTheme =  false) {
-    NotesList(
-        notes = listOf(UpdatedShortNote("hero is the best ", "he is the badass person in the group ", 1, 0)),
-        onNoteClick = {},
-        onDetailsIconClicked = {},
-        onDeleteIconClicked = {},
-        onBackupIconClicked = {},
-        onShareIconClicked = {}
-    )
+        NotesList(
+            notes = listOf(UpdatedShortNote("hero is the best ", "he is the badass person in the group ", 1, 0)),
+            onNoteClick = {},
+            onDetailsIconClicked = {},
+            onDeleteIconClicked = {},
+            onBackupIconClicked = {},
+            onShareIconClicked = {}
+        )
     }
 }
 @Composable

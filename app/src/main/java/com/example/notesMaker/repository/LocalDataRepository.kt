@@ -65,7 +65,7 @@ class OfflineUserDataRepository(val noteDao: NoteDao ) : LocalDataRepository {
     }
 
       override fun getSearchedWord(word: String): Flow<List<Note>>{
-        return noteDao.searchForWords(word)
+        return noteDao.getSuggestedNotes(word)
     }
 }
 
@@ -76,14 +76,14 @@ on editing the same note and this enable it to distinguish between edit and upda
 
 @Entity()
 data class Note(
-    @PrimaryKey(autoGenerate = true ) val id : Int = 0,
-    @ColumnInfo val heading : String?,
-    @ColumnInfo val content : String?,
-    @ColumnInfo val noteId : Int? = null,
-    @ColumnInfo val createdAt : String? = null,
-    @ColumnInfo val lastUpdated : String? = null,
-    @ColumnInfo val version : Int = 1,
-    @ColumnInfo val isSynced : Boolean = false,
+    @PrimaryKey(autoGenerate = true ) val id: Int = 0,
+    @ColumnInfo val heading: String,
+    @ColumnInfo val content: String,
+    @ColumnInfo val noteId: Int? = null,
+    @ColumnInfo val createdAt: String = "",
+    @ColumnInfo val lastUpdated: String? = null,
+    @ColumnInfo val version: Int = 1,
+    @ColumnInfo val isSynced: Boolean = false,
 )
 
 @Dao
@@ -113,12 +113,12 @@ interface NoteDao{
 
     suspend fun  createNoteAndGetId(note: Note) : Int {
         saveNote(note)
-        return getNoteID(note.heading ?: "") ?: -1
+        return getNoteID(note.heading) ?: -1
     }
     @Query("SELECT * FROM note WHERE heading LIKE :word OR content LIKE :word")
-     fun searchForWords(word: String) : Flow<List<Note>>
+     fun getSuggestedNotes(word: String) : Flow<List<Note>>
 }
-@Database(entities = [Note::class], version = 10  , exportSchema = false  )
+@Database(entities = [Note::class], version = 12 , exportSchema = false  )
 abstract class NoteDatabase : RoomDatabase() {
     abstract  fun noteDao() : NoteDao
     companion object {

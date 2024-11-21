@@ -67,5 +67,3 @@ fun HomeScreen (
         }
     }
 }
-@Serializable object EntryScreen
-@Serializable object MainScreen

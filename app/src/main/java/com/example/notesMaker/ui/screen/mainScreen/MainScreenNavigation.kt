@@ -81,3 +81,6 @@ data class RouteUpdateNoteScreen(val shortNote: String = "")
 object RouteNotificationScreen
 @Serializable
 object RouteCreateNoteScreen
+
+@Serializable object EntryScreen
+@Serializable object MainScreen

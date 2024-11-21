@@ -9,19 +9,23 @@ import androidx.lifecycle.viewModelScope
 import com.example.notesMaker.network.DetailedNote
 import com.example.notesMaker.network.UpdatedShortNote
 import com.example.notesMaker.repository.NetworkUserDataRepository
+import com.example.notesMaker.repository.Note
 import com.example.notesMaker.repository.OfflineUserDataRepository
 import com.example.notesMaker.utils.isInternetAvailable
 import com.example.notesMaker.worker.LOGGING_OF_APP
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
@@ -46,13 +50,24 @@ class NotesListScreenViewModel @Inject constructor(
 
     private val _searchUiState = MutableStateFlow(NotesSearchUiState())
     val searchUiState : StateFlow<NotesSearchUiState> = _searchUiState.asStateFlow()
+    private val _query = MutableStateFlow("")
+    val query : StateFlow<String> = _query.asStateFlow()
+    init {
+        if (uiState.value.isInterNetAvailable){
+            _snackBarMessage.value = "Connected to the server"
+        } else {
+            _snackBarMessage.value = "Performing in Offline Mode"
+        }
+
+    }
 
     var notes : Flow<List<UpdatedShortNote>> = offlineUserDataRepository.noteDao.getAllNotes()
+        .filterNotNull()
         .map {
             it.map {
                 UpdatedShortNote(
-                    content = it.content  ?: "",
-                    heading = it.heading ?: "",
+                    content = it.content ,
+                    heading = it.heading,
                     id = it.noteId ?: -1,
                     localNoteId = it.id,
                     version = it.version
@@ -65,48 +80,31 @@ class NotesListScreenViewModel @Inject constructor(
         )
     private  set
 
-    init {
-        if (uiState.value.isInterNetAvailable){
-           _snackBarMessage.value = "Connected to the server"
-        } else {
-            _snackBarMessage.value = "Performing in Offline Mode"
-        }
-
-    }
-
+    @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
+    val searchResults : Flow<List<Note>> =
+        query
+            .debounce(500)
+            .flatMapLatest { query ->
+                if (query.isEmpty()) {
+                    flowOf(emptyList())
+                } else {
+                    Log.e(LOGGING_OF_APP , "searching in database function called ${query}")
+               val notes =  offlineUserDataRepository.noteDao.getSuggestedNotes("%$query%")
+                    Log.e(LOGGING_OF_APP , "searching in database function called ${notes.map { it.map { it.heading } }}")
+                    return@flatMapLatest notes
+                }
+            }
     fun updateSearchWord(word : String){
-        _searchUiState.update {
+        _searchUiState
+            .update {
             it.copy(searchWord = word)
         }
+        _query.value = word
         Log.e(LOGGING_OF_APP , "search word updated to : $word")
     }
-
-    @OptIn(FlowPreview::class)
-    val persons  =  searchUiState
-            .debounce(500)
-            .onEach { _searchUiState.update { it.copy(isSearching = true)   }
-                Log.e(LOGGING_OF_APP , "searching in database function called ")
-             }
-            .combine(searchUiState.map { it.suggestionsOfNotes }) { word , list ->
-                offlineUserDataRepository.getSearchedWord(word.searchWord)
-            }.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(),
-                initialValue = NotesSearchUiState() ,
-            ).onEach {         _searchUiState.update {it.copy(suggestionsOfNotes = it.suggestionsOfNotes , isSearching = false) } }
-
-  val searchNotes  =  searchUiState
-            .debounce(500)
-            .onEach { _searchUiState.update { it.copy(isSearching = true)   }
-                Log.e(LOGGING_OF_APP , "searching in database function called ")
-             }
-            .combine(searchUiState.map { it.suggestionsOfNotes }) { word , list ->
-                offlineUserDataRepository.getSearchedWord(word.searchWord)
-            }.stateIn(
-                scope = viewModelScope,
-                started = SharingStarted.WhileSubscribed(),
-                initialValue = NotesSearchUiState() ,
-            ).onEach {         _searchUiState.update {it.copy(suggestionsOfNotes = it.suggestionsOfNotes , isSearching = false) } }
+    fun clearSearchWord(){
+        _query.value = ""
+    }
 
     private fun syncWithDatabase()  = viewModelScope.launch{
         val isOnline = checkForInternet()
