@@ -16,6 +16,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.notesMaker.ui.screen.entryScreen.SignupScreen
+import com.example.notesMaker.ui.screen.mainScreen.EntryScreen
+import com.example.notesMaker.ui.screen.mainScreen.MainScreen
 import com.example.notesMaker.ui.screen.mainScreen.MainScreenNavigation
 import kotlinx.serialization.Serializable
 
@@ -28,42 +30,10 @@ is implemented with it
 @Composable
 fun HomeScreen (
     modifier: Modifier = Modifier ,
-    navController: NavHostController = rememberNavController() ,
-    viewModel: HomeScreenViewModel = hiltViewModel() ,
 ) {
     Column(
-        Modifier.fillMaxSize() ,
-        horizontalAlignment = Alignment.CenterHorizontally ,
-        verticalArrangement = Arrangement.Center
+        modifier.fillMaxSize(),
     ) {
-        val uiState by viewModel.uiState.collectAsState()
-        LaunchedEffect(Unit) {
-            viewModel.checkLoginRequirement()
-        }
-        if ((uiState.isNewUser == null || uiState.isTokenValid == null)  && uiState.isNetworkAvailable == null ){
-            CircularProgressIndicator()
-        }
-        else {
-            NavHost(
-                navController = navController,
-                startDestination = MainScreen ,
-                /* here the below s=logic have to udpate so temporary
-                when {
-                    uiState.isNewUser == true -> EntryScreen
-                    uiState.isTokenValid == false -> EntryScreen
-                    uiState.isNetworkAvailable == false -> MainScreen
-                    uiState.isTokenValid == true -> MainScreen
-                    else -> EntryScreen
-                } ,*/
-                modifier = modifier
-            ){
-                composable<MainScreen>{
-                    MainScreenNavigation(modifier = modifier)
-                }
-                composable<EntryScreen> {
-                    SignupScreen(navigateToMainScreen = {navController.navigate(MainScreen)} , modifier =  modifier )
-                }
-            }
-        }
+        MainScreenNavigation()
     }
 }

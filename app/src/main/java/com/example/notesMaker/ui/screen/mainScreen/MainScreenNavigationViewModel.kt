@@ -1,4 +1,4 @@
-package com.example.notesMaker.ui.screen
+package com.example.notesMaker.ui.screen.mainScreen
 
 import android.content.Context
 import android.util.Log
@@ -19,16 +19,13 @@ import javax.inject.Inject
 
 
 @HiltViewModel
-class HomeScreenViewModel @Inject constructor(
+class MainScreenNavigationViewModel @Inject constructor(
     private  val userTokenRepository: OfflineUserTokenRepository ,
     private val userDataRepository: NetworkUserDataRepository ,
     @ApplicationContext val context: Context ,
 ) : ViewModel() {
     private  val _uiState = MutableStateFlow(HomeScreenUiState())
       val uiState : StateFlow<HomeScreenUiState> = _uiState.asStateFlow()
-
-
-
     fun checkLoginRequirement() = viewModelScope.launch {
         if (!isInternetAvailable(context = context)) {
             _uiState.update {
@@ -61,4 +58,4 @@ data class HomeScreenUiState (
         val isNewUser : Boolean? = null ,
         val isNetworkAvailable : Boolean? = null ,
         val isTokenValid : Boolean? = null
-        )
+)

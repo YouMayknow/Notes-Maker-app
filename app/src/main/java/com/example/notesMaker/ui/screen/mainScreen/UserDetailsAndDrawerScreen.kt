@@ -43,7 +43,8 @@ main Screen that adhere the notes from the database and also have button to add 
 @Composable
 fun UserDetailsAndDrawerScreen(
     modifier: Modifier = Modifier,
-    viewModel: NotesListScreenViewModel,
+//    viewModel: NotesListScreenViewModel,
+    viewModel: NotesListScreenViewModel = hiltViewModel(),
     onNoteClick: (String) -> Unit,
     onAddNoteClick: () -> Unit,
     onDrawerItemClicked: (String) -> Unit,

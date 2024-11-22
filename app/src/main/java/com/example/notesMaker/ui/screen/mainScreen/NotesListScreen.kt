@@ -74,6 +74,7 @@ import com.example.notesMaker.network.UpdatedShortNote
 import com.example.notesMaker.repository.Note
 import com.example.notesMaker.ui.screen.noteScreen.DetailedScreen
 import com.example.notesMaker.ui.theme.NotesMakerTheme
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
@@ -87,30 +88,28 @@ fun NotesListMainScreen (
     onNotificationsIconClicked: () -> Unit,
     viewModel: NotesListScreenViewModel
 ) {
-    val query = viewModel.query.collectAsState()
+    val query by viewModel.query.collectAsState()
     val notes by viewModel.notes.collectAsState(emptyList())
     val searchResults  by viewModel.searchResults.collectAsState(emptyList())
     val uiState by  viewModel.uiState.collectAsState()
     val searchUiState by  viewModel.searchUiState.collectAsState()
-    val snackBarMessage by viewModel.snackBarMessage.collectAsState()
+//    val snackBarMessage by viewModel.snackBarMessage.collectAsState()
     val snackBarHostState = remember { SnackbarHostState()}
     val scope = rememberCoroutineScope()
     val pullToRefreshState = rememberPullToRefreshState()
 
     LaunchedEffect(Unit) {
         // here comes the attempt of syncing  the data with the server
+        viewModel.snackBarMessage.collect{ message ->
+            scope.launch{
+                snackBarHostState.showSnackbar(message)
+            }
+        }
     }
-    BackHandler(enabled = query.value.isNotEmpty()) {
+    BackHandler(enabled = query.isNotEmpty()) {
         viewModel.clearSearchWord()
     }
-    snackBarMessage?.let {message ->
-            LaunchedEffect(message) {
-                scope.launch {
-                    snackBarHostState.showSnackbar(message)
-                    viewModel.resetSnackBar()
-                }
-            }
-    }
+
     Scaffold(
         modifier = modifier ,
         floatingActionButton = { FloatingActionButton(onClick = onAddNoteClick) { Icon(imageVector = Icons.Default.Add, contentDescription = "Add Note") }

@@ -18,9 +18,11 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filterNotNull
@@ -45,20 +47,17 @@ class NotesListScreenViewModel @Inject constructor(
     private  val _uiState  = MutableStateFlow(NotesListScreenUiState())
       val uiState  :  StateFlow<NotesListScreenUiState> = _uiState.asStateFlow()
 
-    private val _snackBarMessage = MutableStateFlow<String?>(null)
-    val snackBarMessage : StateFlow<String?> =  _snackBarMessage
+    private val _snackBarMessage = MutableSharedFlow<String>()
+    val snackBarMessage  =  _snackBarMessage.asSharedFlow()
 
     private val _searchUiState = MutableStateFlow(NotesSearchUiState())
     val searchUiState : StateFlow<NotesSearchUiState> = _searchUiState.asStateFlow()
     private val _query = MutableStateFlow("")
     val query : StateFlow<String> = _query.asStateFlow()
     init {
-        if (uiState.value.isInterNetAvailable){
-            _snackBarMessage.value = "Connected to the server"
-        } else {
-            _snackBarMessage.value = "Performing in Offline Mode"
-        }
-
+      showSnackBarMessage(
+          if (isInternetAvailable(context)) "Internet is available" else "No internet"
+      )
     }
 
     var notes : Flow<List<UpdatedShortNote>> = offlineUserDataRepository.noteDao.getAllNotes()
@@ -81,7 +80,7 @@ class NotesListScreenViewModel @Inject constructor(
     private  set
 
     @OptIn(ExperimentalCoroutinesApi::class, FlowPreview::class)
-    val searchResults : Flow<List<Note>> =
+    val searchResults : Flow<List<Note>> by lazy {
         query
             .debounce(500)
             .flatMapLatest { query ->
@@ -89,11 +88,13 @@ class NotesListScreenViewModel @Inject constructor(
                     flowOf(emptyList())
                 } else {
                     Log.e(LOGGING_OF_APP , "searching in database function called ${query}")
-               val notes =  offlineUserDataRepository.noteDao.getSuggestedNotes("%$query%")
+                    val notes =  offlineUserDataRepository.noteDao.getSuggestedNotes("%$query%")
                     Log.e(LOGGING_OF_APP , "searching in database function called ${notes.map { it.map { it.heading } }}")
                     return@flatMapLatest notes
                 }
             }
+    }
+
     fun updateSearchWord(word : String){
         _searchUiState
             .update {
@@ -116,7 +117,7 @@ class NotesListScreenViewModel @Inject constructor(
                 catchingException(e)
             }
         } else {
-            _snackBarMessage.value = "Can't perform without internet"
+            showSnackBarMessage("Can't perform without internet")
         }
      }
 
@@ -129,10 +130,10 @@ class NotesListScreenViewModel @Inject constructor(
                     catchingException(it)
                 }
                 .onSuccess {
-                  _snackBarMessage.value = if (it.isSuccessful)  "Note deleted"  else it.errorBody()?.string()
+                    showSnackBarMessage(if (it.isSuccessful)  "Note deleted"  else it.errorBody()?.string() ?: "Unknown error")
                 }
         } else {
-            _snackBarMessage.value = "Can't perform without internet"
+            showSnackBarMessage("Can't perform without internet")
         }
     }
 
@@ -169,7 +170,7 @@ class NotesListScreenViewModel @Inject constructor(
             is HttpException -> "Http error : ${exception.message}"
             else  -> "Unknown error : ${exception?.message}"
         }
-        _snackBarMessage.value = errorMessage
+        showSnackBarMessage(errorMessage)
     }
 
 
@@ -181,8 +182,10 @@ class NotesListScreenViewModel @Inject constructor(
         }
     }
 
-    fun resetSnackBar() {
-        _snackBarMessage.value = null
+    fun showSnackBarMessage(message: String){
+        viewModelScope.launch{
+            _snackBarMessage.emit(message)
+        }
     }
 
 
