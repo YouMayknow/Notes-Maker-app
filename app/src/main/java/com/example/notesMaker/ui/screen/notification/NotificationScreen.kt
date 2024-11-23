@@ -15,7 +15,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AccessTime
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -34,13 +33,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import com.example.notesMaker.ui.screen.mainScreen.NotificationScreenVIewModel
 
 @Composable
 fun NotificationScreen(
     modifier: Modifier = Modifier ,
     onBackClick : () -> Unit ,
-    viewModel: NotificationScreenVIewModel = hiltViewModel()
+    viewModel: NotificationScreenViewModel = hiltViewModel()
 ) {
     val uiState =  viewModel.uiState.collectAsState()
     LaunchedEffect(Unit) {

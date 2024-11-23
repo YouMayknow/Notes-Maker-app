@@ -74,7 +74,6 @@ data class ShortNote(
     val heading: String,
     val dateCreated: String,
 )
-
 @Serializable
 data class UpdatedShortNote(
     val content : String,
