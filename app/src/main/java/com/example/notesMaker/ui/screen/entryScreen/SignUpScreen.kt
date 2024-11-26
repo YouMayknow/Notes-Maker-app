@@ -2,6 +2,7 @@ package com.example.notesMaker.ui.screen.entryScreen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -68,7 +69,7 @@ fun SignupScreen(
     }
         val currentUiScreen = uiState.currentScreen
         Card(
-            modifier = Modifier,
+            modifier = Modifier.padding(horizontal = 12.dp),
             shape = RoundedCornerShape(8.dp),
             elevation = CardDefaults.outlinedCardElevation(4.dp)
         ) {
@@ -89,6 +90,12 @@ fun SignupScreen(
                         textAlign = TextAlign.Center
                     )
                 }
+                Text(
+                    text = "Skip",
+                    fontSize = MaterialTheme.typography.titleMedium.fontSize,
+                    fontWeight = FontWeight.Bold,
+                    modifier = Modifier.clickable(onClick = navigateToMainScreen)
+                )
             }
         }
     }
@@ -149,7 +156,7 @@ fun CredentialsOfSigningColumn(
             maxLines = 1 ,
         )
 
-        // singup or login button
+        // singUP or login button
         Button(
             onClick = { aheadAction(userName, password) } ,
             modifier = Modifier

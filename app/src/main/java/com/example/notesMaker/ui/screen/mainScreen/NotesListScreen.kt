@@ -74,15 +74,14 @@ import com.example.notesMaker.network.UpdatedShortNote
 import com.example.notesMaker.repository.Note
 import com.example.notesMaker.ui.screen.noteScreen.DetailedScreen
 import com.example.notesMaker.ui.theme.NotesMakerTheme
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun NotesListMainScreen (
+fun NotesListScreen (
     modifier: Modifier = Modifier,
-    onNoteClick: (UpdatedShortNote) -> Unit,
+    onNoteClick: (Int) -> Unit,
     onDetailsIconClicked: () -> Unit,
     onAddNoteClick: () -> Unit,
     onNotificationsIconClicked: () -> Unit,
@@ -93,7 +92,6 @@ fun NotesListMainScreen (
     val searchResults  by viewModel.searchResults.collectAsState(emptyList())
     val uiState by  viewModel.uiState.collectAsState()
     val searchUiState by  viewModel.searchUiState.collectAsState()
-//    val snackBarMessage by viewModel.snackBarMessage.collectAsState()
     val snackBarHostState = remember { SnackbarHostState()}
     val scope = rememberCoroutineScope()
     val pullToRefreshState = rememberPullToRefreshState()
@@ -128,12 +126,12 @@ fun NotesListMainScreen (
         PullToRefreshBox(
             isRefreshing = uiState.isLoading ,
             onRefresh = {
-                viewModel.refreshNotes()
+                viewModel.syncNotes()
                         },
             state =pullToRefreshState ,
             modifier = Modifier
-                .fillMaxSize()
-        ){
+                .fillMaxSize() ,
+            ){
             Box(modifier = Modifier.padding(it)
             ){
                 NotesList(
@@ -142,8 +140,8 @@ fun NotesListMainScreen (
                     onDetailsIconClicked = {noteId ->
                         viewModel.getDetailsOfNote(noteId)
                     } ,
-                    onDeleteIconClicked = {noteId ->
-                        viewModel.deleteNote(noteId)
+                    onDeleteIconClicked = {noteId , localNoteId ->
+                        viewModel.deleteNote(noteId , localNoteId)
                     },
                     onBackupIconClicked ={},
                     onShareIconClicked = {   }
@@ -156,7 +154,7 @@ fun NotesListMainScreen (
                   CircularProgressIndicator(modifier = modifier
                       .align(Alignment.TopCenter)
                       .size(24.dp)
-                      .padding(top = 8.dp) , strokeWidth = 2.dp)
+                      .padding(top = 12.dp) , strokeWidth = 3.dp)
               }
                 AnimatedVisibility(visible = uiState.isDetailedNoteVisible ) {// add animation here
                     DetailedScreen(
@@ -177,9 +175,9 @@ fun NotesListMainScreen (
 fun NotesList(
     modifier: Modifier = Modifier  ,
     notes:List<UpdatedShortNote>,
-    onNoteClick : (UpdatedShortNote) -> Unit ,
+    onNoteClick : (Int) -> Unit ,
     onDetailsIconClicked: (Int) -> Unit ,
-    onDeleteIconClicked: (Int) -> Unit ,
+    onDeleteIconClicked: (Int , Int) -> Unit ,
     onBackupIconClicked: (Int) -> Unit ,
     onShareIconClicked : (Int) -> Unit ,
 ) {
@@ -193,12 +191,12 @@ fun NotesList(
                 NoteCard(
                     modifier = Modifier.aspectRatio(0.75f),
                     onDetailsIconClicked = { onDetailsIconClicked(note.id)},
-                    onDeleteIconClicked = {onDeleteIconClicked(note.id)},
+                    onDeleteIconClicked = {onDeleteIconClicked(note.id  ,note.localNoteId ?: -1)},
                     onBackupIconClicked = {onBackupIconClicked(note.id)},
                     onShareIconClicked = {onShareIconClicked(note.id)},
                     noteTitle = note.heading,
                     imageUrl = note.content,
-                    onNoteClick = { onNoteClick(note) }
+                    onNoteClick = { onNoteClick(note.localNoteId ?: -1) }
                 )
             }
         }
@@ -384,7 +382,7 @@ fun SearchBar (
 fun NotesSearchScreen(
     modifier: Modifier =  Modifier,
     listOfSearchOutcomes  : List<Note>,
-    onNoteClick: (UpdatedShortNote) -> Unit,
+    onNoteClick: (Int) -> Unit,
 ) {
     LazyColumn(
         modifier = modifier
@@ -405,7 +403,7 @@ fun NotesSearchScreen(
                             localNoteId = note.id ,
                            lastUpdated = note.lastUpdated
                        )
-                        onNoteClick(note)
+                        onNoteClick(note.localNoteId ?: -1)
                     })
                     .padding(horizontal = 4.dp, vertical = 2.dp) ,
                 horizontalArrangement = Arrangement.Center
@@ -448,7 +446,7 @@ fun PreviewNoteItem() {
 @Preview(showBackground = true)
 @Composable
 fun PreviewNotesList() {
-    NotesListMainScreen(
+    NotesListScreen(
         onNoteClick =  {},
         onDetailsIconClicked = {},
         onAddNoteClick =  {},
@@ -469,10 +467,10 @@ fun SearchBarPreview() {
 fun NotesListPreview() {
     NotesMakerTheme(darkTheme =  false) {
         NotesList(
-            notes = listOf(UpdatedShortNote("hero is the best ", "he is the badass person in the group ", 1, 0)),
+            notes = listOf(UpdatedShortNote("hero is the best ", "he is the badass person in the group ", 1)),
             onNoteClick = {},
             onDetailsIconClicked = {},
-            onDeleteIconClicked = {},
+            onDeleteIconClicked = { _ ,_  -> },
             onBackupIconClicked = {},
             onShareIconClicked = {}
         )

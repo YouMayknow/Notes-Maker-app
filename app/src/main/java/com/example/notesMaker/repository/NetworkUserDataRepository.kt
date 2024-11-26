@@ -31,7 +31,7 @@ class NetworkUserDataRepository @Inject constructor(
             .callTimeout(5 , TimeUnit.SECONDS)
             .addInterceptor(AuthInspector(tokenRepository))
             .build()
-                private  val baseUrl = "http://192.168.1.11:8080"
+                private  val baseUrl = "http://192.168.1.22:8080"
                 private val json = Json{ignoreUnknownKeys = true }
                 private val retrofit = Retrofit.Builder()
             .baseUrl(baseUrl)
@@ -43,7 +43,7 @@ class NetworkUserDataRepository @Inject constructor(
     }
     override suspend fun registerUser(username: String, password: String) = retrofitService.registerUser(username, password)
     override suspend fun loginUser(username: String, password: String): Response<LoginResponse> = retrofitService.loginUser(username, password)
-    override suspend fun getAllUserNotes(): Response<List<UpdatedShortNote>> =  retrofitService.getAllUserNotes()
+    override suspend fun getAllNotes(): Response<List<UpdatedShortNote>> =  retrofitService.getAllNotes()
     override suspend fun createNewNote(shortNote: ShortNote): Response<CreateNoteResponse> = retrofitService.createNewNote(shortNote)
     override suspend fun isTokenValid(): Response<ResponseBody> = retrofitService.isTokenValid()
     override suspend fun updateNote(updatedShortNote: UpdatedShortNote): Response<ResponseBody>  = retrofitService.updateNote(updatedShortNote)

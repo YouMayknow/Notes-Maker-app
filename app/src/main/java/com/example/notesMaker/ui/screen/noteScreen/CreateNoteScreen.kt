@@ -15,9 +15,9 @@ import java.time.Instant.now
 @Composable
 fun CreateNoteScreen (
     modifier: Modifier  = Modifier,
-    viewModel: EditScreenVIewModel = hiltViewModel(),
+    viewModel: UpdateAndEditNoteScreenViewModel = hiltViewModel(),
     onBackPressed : () -> Unit,
-    redirectBackToDetailedList : () -> Unit ,
+    redirectBackToDetailedList : () -> Unit,
     ) {
     val uiState by  viewModel.uiState.collectAsState()
     var content by rememberSaveable { mutableStateOf("") }

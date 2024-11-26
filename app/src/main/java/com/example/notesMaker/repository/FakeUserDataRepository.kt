@@ -18,7 +18,7 @@ class FakeUserDataRepository @Inject constructor () : UserDataRepository {
         TODO("Not yet implemented")
     }
 
-    override suspend fun getAllUserNotes(): Response<List<UpdatedShortNote>> {
+    override suspend fun getAllNotes(): Response<List<UpdatedShortNote>> {
       return  Response.success(
             listOfNotes
         )
@@ -46,8 +46,8 @@ class FakeUserDataRepository @Inject constructor () : UserDataRepository {
 }
 
 val listOfNotes = listOf(
-    UpdatedShortNote("hero", "rajeshwar", 1, 0) ,
-    UpdatedShortNote("rahjua", "rajeshwar", 1, 0) ,
-    UpdatedShortNote("dasf", "rajeshwar", 1, 0) ,
+    UpdatedShortNote("hero", "rajeshwar", 1, "0") ,
+    UpdatedShortNote("rahjua", "rajeshwar", 1, "0") ,
+    UpdatedShortNote("dasf", "rajeshwar", 1, "0") ,
 
 )

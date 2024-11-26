@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.notesMaker.network.DetailedNote
+import com.example.notesMaker.network.ShortNote
 import com.example.notesMaker.network.UpdatedShortNote
 import com.example.notesMaker.repository.NetworkUserDataRepository
 import com.example.notesMaker.repository.Note
@@ -24,12 +25,14 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -56,7 +59,12 @@ class NotesListScreenViewModel @Inject constructor(
     val query : StateFlow<String> = _query.asStateFlow()
     init {
       showSnackBarMessage(
-          if (isInternetAvailable(context)) "Internet is available" else "No internet"
+          if (isInternetAvailable(context)) {
+              syncNotes()
+              "Internet is available"
+          } else {
+              "No internet"
+          }
       )
     }
 
@@ -121,9 +129,10 @@ class NotesListScreenViewModel @Inject constructor(
         }
      }
 
-    fun deleteNote(noteId : Int) = viewModelScope.launch {
+    fun deleteNote(noteId : Int , localNoteId : Int) = viewModelScope.launch {
         val isOnline = checkForInternet()
         if (isOnline){
+            offlineUserDataRepository.deleteNote(localNoteId)
             runCatching { onlineUserDataRepository.deleteSelectedNote(noteId) }
                 .onFailure {
                     Log.e("problem" , "$it")
@@ -173,10 +182,8 @@ class NotesListScreenViewModel @Inject constructor(
         showSnackBarMessage(errorMessage)
     }
 
-
-
     private suspend fun  fetchOnlineNotes() {
-        val  response = onlineUserDataRepository.getAllUserNotes()
+        val  response = onlineUserDataRepository.getAllNotes()
         _uiState.update {
             it.copy(notes = response.body() ?: emptyList() , isInterNetAvailable =  true , isLoading = false)
         }
@@ -189,25 +196,87 @@ class NotesListScreenViewModel @Inject constructor(
     }
 
 
-    fun refreshNotes() {
-        _uiState.update {
-            it.copy(isLoading = true)
-        }
-        Log.e(LOGGING_OF_APP ,"Refreshing notes")
-        viewModelScope.launch{
-            syncWithDatabase()
-        }
-        Log.e(LOGGING_OF_APP ,"refrshign just finsihed")
-    }
-
-
     // helper function to check for internet
     private fun checkForInternet() : Boolean {
         val isOnline =  isInternetAvailable(context)
         _uiState.update { it.copy(isInterNetAvailable =  isOnline) }
         return  isOnline
     }
+
+     fun syncNotes() = viewModelScope.launch {
+        _uiState.update { it.copy(isLoading = true) }
+        val onlineCalls = runCatching { onlineUserDataRepository.getAllNotes()}
+        if ( onlineCalls.getOrNull()?.isSuccessful == true) {
+            val onlineNotes : List<UpdatedShortNote> = onlineCalls.getOrNull()?.body() ?: emptyList()
+            val offlineNotes : List<Note> = offlineUserDataRepository.noteDao.getAllNotes().firstOrNull() ?: emptyList()
+
+            val onlineNotesMap = onlineNotes.associateBy { it.id }
+            val offlineNotesMap = offlineNotes.associateBy { it.noteId }
+
+            // Update notes with different versions
+            onlineNotesMap.forEach { (id, onlineNote) ->
+                offlineNotesMap[id]?.let { offlineNote ->
+                    if (onlineNote.version > offlineNote.version) {
+                        offlineUserDataRepository.update(
+                            offlineNote.copy(
+                                content = onlineNote.content,
+                                heading = onlineNote.heading,
+                                version = onlineNote.version,
+                                lastUpdated = onlineNote.lastUpdated
+                            )
+                        )
+                    } else if (onlineNote.version < offlineNote.version) {
+                        onlineUserDataRepository.updateNote(
+                            UpdatedShortNote(
+                                content = offlineNote.content,
+                                heading = offlineNote.heading,
+                                id = offlineNote.noteId ?: -1,
+                                localNoteId = offlineNote.id,
+                                version = offlineNote.version,
+                                lastUpdated = offlineNote.lastUpdated
+                            )
+                        )
+                    }
+                }
+            }
+
+            // Add unmatched notes
+            onlineNotesMap.keys.subtract(offlineNotesMap.keys).forEach { id ->
+                onlineNotesMap[id]?.let { onlineNote ->
+                    offlineUserDataRepository.save(
+                        Note(
+                            heading = onlineNote.heading,
+                            content = onlineNote.content,
+                            noteId = onlineNote.id,
+                            createdAt = onlineNote.createdAt,
+                            lastUpdated = onlineNote.lastUpdated,
+                            version = onlineNote.version,
+                            isSynced = true
+                        )
+                    )
+                }
+            }
+
+            offlineNotesMap.keys.subtract(onlineNotesMap.keys).forEach { id ->
+                offlineNotesMap[id]?.let { offlineNote ->
+                    onlineUserDataRepository.createNewNote(
+                        ShortNote(
+                            heading = offlineNote.heading,
+                            content = offlineNote.content,
+                            dateCreated = offlineNote.createdAt
+                        )
+                    )
+                }
+            }
+            _uiState.update { it.copy(isLoading = false) }
+            showSnackBarMessage("Notes synced")
+        } else {
+            _uiState.update { it.copy(isLoading = false) }
+            showSnackBarMessage("Can't sync notes ${onlineCalls.exceptionOrNull()?.message ?: "Unknown error"}")
+        }
+    }
 }
+
 
 
 data class  NotesListScreenUiState(

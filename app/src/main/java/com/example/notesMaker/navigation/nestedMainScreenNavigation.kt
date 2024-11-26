@@ -8,7 +8,7 @@ import androidx.navigation.navArgument
 import androidx.navigation.navigation
 import androidx.navigation.toRoute
 import com.example.notesMaker.ui.screen.mainScreen.IndividualDrawerScreen
-import com.example.notesMaker.ui.screen.mainScreen.UserDetailsAndDrawerScreen
+import com.example.notesMaker.ui.screen.mainScreen.MainScreen
 import com.example.notesMaker.ui.screen.noteScreen.CreateNoteScreen
 import com.example.notesMaker.ui.screen.noteScreen.UpdateNoteScreen
 import com.example.notesMaker.ui.screen.notification.NotificationScreen
@@ -17,9 +17,9 @@ import kotlinx.serialization.Serializable
 fun NavGraphBuilder.nestedMainScreenNavigation(navController : NavHostController) {
     navigation<MainScreen>(RouteScreenUserDetail){
         composable<RouteScreenUserDetail>{
-            UserDetailsAndDrawerScreen(
+            MainScreen(
 //                    viewModel = viewModel,
-                onNoteClick = { navController.navigate(RouteUpdateNoteScreen(it)) },
+                onNoteClick = { navController.navigate(RouteUpdateNoteScreen(localNoteId = it)) },
                 onAddNoteClick = { navController.navigate(RouteCreateNoteScreen) },
                 onDrawerItemClicked = { drawerItem ->
                     navController.navigate("DrawerItems/${drawerItem}")
@@ -47,7 +47,7 @@ fun NavGraphBuilder.nestedMainScreenNavigation(navController : NavHostController
         composable<RouteUpdateNoteScreen> {
             val args =  it.toRoute<RouteUpdateNoteScreen>()
             UpdateNoteScreen(
-                shortNote = args.shortNote,
+                localNoteId = args.localNoteId,
                 onBackPressed = { navController.navigateUp() },
                 redirectBackToDetailedList = { navController.navigateUp() }
             )
@@ -69,7 +69,7 @@ fun NavGraphBuilder.nestedMainScreenNavigation(navController : NavHostController
 @Serializable
 object RouteScreenUserDetail
 @Serializable
-data class RouteUpdateNoteScreen(val shortNote: String = "")
+data class RouteUpdateNoteScreen(val localNoteId : Int)
 
 
 @Serializable

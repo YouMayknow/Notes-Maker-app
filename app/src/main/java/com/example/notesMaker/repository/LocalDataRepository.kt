@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Database
+import androidx.room.Delete
 import androidx.room.Entity
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -21,9 +22,11 @@ interface LocalDataRepository  {
     suspend fun saveNoteId(heading : String ,noteId : Int)
     suspend fun getNoteId(heading : String): Int?
     suspend fun getNoteWithNoteId(noteId: Int) : Note
+    suspend fun getNoteWithLocalNoteId(localNoteId: Int) : Note
     suspend fun createNoteAndGetId(note: Note) : Int
     suspend fun addSyncedState(isSynced: Boolean , heading: String)
     suspend fun getUnSyncedNotes() : List<Note>
+    suspend fun deleteNote(localNoteId: Int)
      fun getSearchedWord(word: String) :Flow<List<Note>>
 }
 
@@ -37,7 +40,7 @@ class OfflineUserDataRepository(val noteDao: NoteDao ) : LocalDataRepository {
     }
 
     override suspend fun save(note: Note) {
-        noteDao.saveNote(note)
+        noteDao.createNote(note)
     }
 
     override suspend fun saveNoteId(heading: String, noteId: Int) {
@@ -52,6 +55,10 @@ class OfflineUserDataRepository(val noteDao: NoteDao ) : LocalDataRepository {
         return noteDao.getNoteWithNoteId(noteId)
     }
 
+    override suspend fun getNoteWithLocalNoteId(localNoteId: Int): Note {
+        return noteDao.getNoteWithLocalNoteId(localNoteId)
+    }
+
     override suspend fun createNoteAndGetId(note: Note): Int {
         return noteDao.createNoteAndGetId(note)
     }
@@ -64,7 +71,11 @@ class OfflineUserDataRepository(val noteDao: NoteDao ) : LocalDataRepository {
         return noteDao.getUnSyncedNotes()
     }
 
-      override fun getSearchedWord(word: String): Flow<List<Note>>{
+    override suspend fun deleteNote(localNoteId: Int) {
+        noteDao.deleteNote(localNoteId)
+    }
+
+    override fun getSearchedWord(word: String): Flow<List<Note>>{
         return noteDao.getSuggestedNotes(word)
     }
 }
@@ -95,7 +106,10 @@ interface NoteDao{
     suspend fun updateNote(note: Note)
 
     @Insert()
-    suspend fun saveNote(note: Note)
+    suspend fun createNote(note: Note)
+
+    @Query("DELETE FROM note WHERE id = :localNoteId")
+    suspend fun deleteNote(localNoteId: Int)
 
     @Query("UPDATE note SET noteId = :noteId WHERE heading = :heading ")
     suspend fun saveNoteId(heading: String? , noteId: Int)
@@ -105,6 +119,10 @@ interface NoteDao{
 
     @Query("SELECT * FROM note WHERE noteId = :noteId")
     suspend fun  getNoteWithNoteId(noteId: Int) : Note
+
+    @Query("SELECT * FROM note WHERE id = :localNoteId")
+    suspend fun  getNoteWithLocalNoteId(localNoteId: Int) : Note
+
     @Query("UPDATE note SET isSynced = :isSynced WHERE heading = :heading")
     suspend  fun addSyncedState(isSynced: Boolean , heading: String)
 
@@ -112,7 +130,7 @@ interface NoteDao{
     suspend fun getUnSyncedNotes() : List<Note>
 
     suspend fun  createNoteAndGetId(note: Note) : Int {
-        saveNote(note)
+        createNote(note)
         return getNoteID(note.heading) ?: -1
     }
     @Query("SELECT * FROM note WHERE heading LIKE :word OR content LIKE :word")

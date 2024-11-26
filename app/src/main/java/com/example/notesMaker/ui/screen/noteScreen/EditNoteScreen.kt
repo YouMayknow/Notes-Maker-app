@@ -264,6 +264,6 @@ fun PreviewSaveButton() {
 @Composable
 fun PreviewEditNoteScreen() {
     NotesMakerTheme {
-        RouteUpdateNoteScreen()
+        RouteUpdateNoteScreen(localNoteId = -1)
     }
 }

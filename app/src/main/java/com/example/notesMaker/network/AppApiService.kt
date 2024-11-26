@@ -30,7 +30,7 @@ interface AppApiService {
     ) : retrofit2.Response<LoginResponse>
 
     @GET("/notes/all")
-    suspend fun  getAllUserNotes() : Response<List<UpdatedShortNote>>
+    suspend fun  getAllNotes() : Response<List<UpdatedShortNote>>
 
     @POST("/notes/new")
     suspend fun createNewNote(
@@ -79,6 +79,7 @@ data class UpdatedShortNote(
     val content : String,
     val heading: String,
     val  id : Int ,
+    val createdAt : String = "",
     val localNoteId : Int? = -1,
     val lastUpdated : String? = null,
     val version: Int = 1

@@ -8,11 +8,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.IntOffset
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.example.notesMaker.ui.screen.mainScreen.MainScreen
+import com.example.notesMaker.utils.isInternetAvailable
 
 
 /*it is a main  navigation screen that have access of all the screen except entry screen it takes to notesListAndDetail
@@ -29,13 +32,19 @@ fun  NavigationScreen (
     LaunchedEffect(Unit) {
             viewModel.checkLoginRequirement()
     }
-    if ((uiState.value.isNewUser == null || uiState.value.isTokenValid == null)  && uiState.value.isNetworkAvailable == null ){
+    if (uiState.value.isNewUser == null || uiState.value.isTokenValid == null || uiState.value.isNetworkAvailable == null ){
         CircularProgressIndicator()
     }
     else {
         NavHost(
             navController = navController,
-            startDestination = MainScreen , // here the start destination will differ on the basis of the viewmodl need to implement
+            startDestination = when
+            {
+               uiState.value.isNewUser  == true && uiState.value.isNetworkAvailable == true -> EntryScreen
+               uiState.value.isTokenValid == true -> MainScreen
+               else -> MainScreen
+            } , // here the start destination will differ on the basis of the viewModel need to implement
+
             modifier = modifier ,
                 popEnterTransition = {
                     slideIn(tween(100, easing = LinearOutSlowInEasing)) { fullSize ->
