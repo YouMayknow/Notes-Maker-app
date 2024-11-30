@@ -4,7 +4,6 @@ import android.content.Context
 import androidx.room.ColumnInfo
 import androidx.room.Dao
 import androidx.room.Database
-import androidx.room.Delete
 import androidx.room.Entity
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
@@ -87,7 +86,7 @@ on editing the same note and this enable it to distinguish between edit and upda
 
 @Entity()
 data class Note(
-    @PrimaryKey(autoGenerate = true ) val id: Int = 0,
+    @PrimaryKey(autoGenerate = true ) val localNoteId: Int = 0,
     @ColumnInfo val heading: String,
     @ColumnInfo val content: String,
     @ColumnInfo val noteId: Int? = null,
@@ -108,19 +107,19 @@ interface NoteDao{
     @Insert()
     suspend fun createNote(note: Note)
 
-    @Query("DELETE FROM note WHERE id = :localNoteId")
+    @Query("DELETE FROM note WHERE localNoteId = :localNoteId")
     suspend fun deleteNote(localNoteId: Int)
 
     @Query("UPDATE note SET noteId = :noteId WHERE heading = :heading ")
     suspend fun saveNoteId(heading: String? , noteId: Int)
 
-    @Query("SELECT id FROM note WHERE heading = :heading")
+    @Query("SELECT localNoteId FROM note WHERE heading = :heading")
     suspend fun  getNoteID(heading: String) : Int?
 
     @Query("SELECT * FROM note WHERE noteId = :noteId")
     suspend fun  getNoteWithNoteId(noteId: Int) : Note
 
-    @Query("SELECT * FROM note WHERE id = :localNoteId")
+    @Query("SELECT * FROM note WHERE localNoteId = :localNoteId")
     suspend fun  getNoteWithLocalNoteId(localNoteId: Int) : Note
 
     @Query("UPDATE note SET isSynced = :isSynced WHERE heading = :heading")
@@ -136,7 +135,7 @@ interface NoteDao{
     @Query("SELECT * FROM note WHERE heading LIKE :word OR content LIKE :word")
      fun getSuggestedNotes(word: String) : Flow<List<Note>>
 }
-@Database(entities = [Note::class], version = 12 , exportSchema = false  )
+@Database(entities = [Note::class], version = 13 , exportSchema = false  )
 abstract class NoteDatabase : RoomDatabase() {
     abstract  fun noteDao() : NoteDao
     companion object {

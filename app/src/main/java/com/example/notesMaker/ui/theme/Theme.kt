@@ -40,7 +40,6 @@ private val lightScheme = lightColorScheme(
     inverseSurface = inverseSurfaceLight,
     inverseOnSurface = inverseOnSurfaceLight,
     inversePrimary = inversePrimaryLight,
-
 )
 
 private val darkScheme = darkColorScheme(
@@ -100,7 +99,6 @@ fun NotesMakerTheme(
           val context = LocalContext.current
           if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
       }
-      
       darkTheme -> darkScheme
       else -> lightScheme
   }
@@ -108,7 +106,7 @@ fun NotesMakerTheme(
   MaterialTheme(
     colorScheme = colorScheme,
     typography = AppTypography,
-    content = content
+    content = content ,
   )
 }
 

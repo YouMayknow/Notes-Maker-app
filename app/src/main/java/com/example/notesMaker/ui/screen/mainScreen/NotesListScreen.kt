@@ -297,7 +297,6 @@ fun NoteCard(
 }
 
 
-
 @Composable
 fun SearchBar (
     searchValue : String ,
@@ -389,7 +388,7 @@ fun NotesSearchScreen(
             .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 8.dp)
     ) {
-        items(listOfSearchOutcomes , {it.id}){ note ->
+        items(listOfSearchOutcomes , {it.localNoteId }){ note ->
             Row(
                 Modifier
                     .fillMaxWidth()
@@ -398,9 +397,9 @@ fun NotesSearchScreen(
                        val note = UpdatedShortNote(
                             heading = note.heading,
                             content = note.content,
-                            id = note.id,
+                            id = note.localNoteId,
                             version = note.version ,
-                            localNoteId = note.id ,
+                            localNoteId = note.localNoteId,
                            lastUpdated = note.lastUpdated
                        )
                         onNoteClick(note.localNoteId ?: -1)

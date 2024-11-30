@@ -10,6 +10,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
 import com.example.notesMaker.ui.screen.HomeScreen
+import com.example.notesMaker.ui.screen.entryScreen.LoginScreen
+import com.example.notesMaker.ui.theme.NotesMakerTheme
 
 @Composable
 fun AppScreen(
@@ -22,6 +24,5 @@ fun AppScreen(
             .calculateEndPadding(layoutDirection = LayoutDirection.Ltr )
     )
 ) {
-    HomeScreen()
-
+   HomeScreen()
 }

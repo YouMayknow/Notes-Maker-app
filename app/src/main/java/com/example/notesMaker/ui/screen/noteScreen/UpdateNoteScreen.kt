@@ -5,9 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.notesMaker.network.UpdatedShortNote
@@ -22,24 +19,21 @@ fun UpdateNoteScreen(
     viewModel: UpdateAndEditNoteScreenViewModel = hiltViewModel()
 ) {
     val uiState by  viewModel.uiState.collectAsState()
-    var heading by rememberSaveable { mutableStateOf(uiState.note.heading) }
-    var content by rememberSaveable { mutableStateOf(uiState.note.content) }
-
     LaunchedEffect (Unit){
         viewModel.getNote(localNoteId) // here 1 will be replaced to the note get from the shortNote
     }
 
     EditNoteScreen(
-        content = content,
+        content = uiState.note.content,
         serverResponse = uiState.serverResponse,
-        heading =  heading,
+        heading =  uiState.note.heading,
         onSaveNoteClick = {
             viewModel.updateNote(
                 UpdatedShortNote(
-                    content = content,
-                    heading = heading,
-                    id = uiState.note.id ,
-                    localNoteId = uiState.note.noteId ,
+                    content = uiState.note.content,
+                    heading = uiState.note.heading,
+                    id = uiState.note.noteId ?: -1,
+                    localNoteId = uiState.note.localNoteId ,
                     lastUpdated = now().toString() ,
                     version = uiState.note.version + 1
                 )
@@ -47,10 +41,10 @@ fun UpdateNoteScreen(
             redirectBackToDetailedList()
         },
         onBackPressed = onBackPressed,
-        onHeadingValueChange =  {heading = it},
-        onContentValueChange =  {content = it} ,
+        onHeadingValueChange =  viewModel::onNoteHeadingChange,
+        onContentValueChange =  viewModel::onNoteContentChange ,
         modifier =  modifier.fillMaxSize()
-
     )
 }
 
+  

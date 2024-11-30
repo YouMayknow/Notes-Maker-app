@@ -1,21 +1,14 @@
 package com.example.notesMaker.navigation
 
-import androidx.compose.animation.core.LinearOutSlowInEasing
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideIn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.unit.IntOffset
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
-import com.example.notesMaker.ui.screen.mainScreen.MainScreen
-import com.example.notesMaker.utils.isInternetAvailable
 
 
 /*it is a main  navigation screen that have access of all the screen except entry screen it takes to notesListAndDetail
@@ -46,15 +39,6 @@ fun  NavigationScreen (
             } , // here the start destination will differ on the basis of the viewModel need to implement
 
             modifier = modifier ,
-                popEnterTransition = {
-                    slideIn(tween(100, easing = LinearOutSlowInEasing)) { fullSize ->
-                        // Specifies the starting offset of the slide-in to be 1/4 of the width to the
-                        // right,
-                        // 100 (pixels) below the content position, which results in a simultaneous slide up
-                        // and slide left.
-                        IntOffset(fullSize.width / 4, 100)
-                    }
-                },
         ) {
             nestedMainScreenNavigation(navController = navController)
             nestedAuthNavigation(navController = navController)

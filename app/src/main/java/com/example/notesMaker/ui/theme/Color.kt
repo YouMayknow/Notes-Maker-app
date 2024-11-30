@@ -23,13 +23,14 @@ val onBackgroundLight = Color(0xFF171C1F)
 val surfaceLight = Color(0xFFF5FAFD)
 val onSurfaceLight = Color(0xFF171C1F)
 val surfaceVariantLight = Color(0xFFDCE4E9)
-val onSurfaceVariantLight = Color(0xFF40484C)
+val onSurfaceVariantLight = Color(0xFFBA1A1A)
 val outlineLight = Color(0xFF70787D)
 val outlineVariantLight = Color(0xFFC0C8CC)
 val scrimLight = Color(0xFF000000)
 val inverseSurfaceLight = Color(0xFF2C3134)
 val inverseOnSurfaceLight = Color(0xFFEDF1F5)
 val inversePrimaryLight = Color(0xFF8AD0EE)
+val baseGrey = Color(0xFFC8C5CB)
 
 
 val primaryDark = Color(0xFF8AD0EE)
@@ -49,17 +50,18 @@ val onErrorDark = Color(0xFF690005)
 val errorContainerDark = Color(0xFF93000A)
 val onErrorContainerDark = Color(0xFFFFDAD6)
 val backgroundDark = Color(0xFF0F1417)
-val onBackgroundDark = Color(0xFFDEE3E6)
+val onBackgroundDark = Color(0xFFDEE3E6) // color for the text
 val surfaceDark = Color(0xFF0F1417)
-val onSurfaceDark = Color(0xFFDEE3E6)
+val onSurfaceDark = Color(0xFFDEE3E6) // color for the text
 val surfaceVariantDark = Color(0xFF40484C)
-val onSurfaceVariantDark = Color(0xFFC0C8CC)
+val onSurfaceVariantDark = Color(0xFF93000A) // placeholder text
 val outlineDark = Color(0xFF8A9296)
 val outlineVariantDark = Color(0xFF40484C)
 val scrimDark = Color(0xFF000000)
 val inverseSurfaceDark = Color(0xFFDEE3E6)
 val inverseOnSurfaceDark = Color(0xFF2C3134)
 val inversePrimaryDark = Color(0xFF0E6681)
+val lightGrey = Color(0xFFEFEEF0)
 
 
 

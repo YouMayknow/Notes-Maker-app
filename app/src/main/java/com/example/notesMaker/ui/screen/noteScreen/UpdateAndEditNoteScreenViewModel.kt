@@ -46,6 +46,14 @@ class UpdateAndEditNoteScreenViewModel @Inject constructor(
         _uiState.update { it.copy(note = note) }
     }
 
+    fun onNoteContentChange( content: String){
+        _uiState.update { it.copy(note = it.note.copy(content = content))
+        }
+    }
+    fun onNoteHeadingChange(heading: String){
+        _uiState.update { it.copy(note = it.note.copy(heading = heading))
+        }
+    }
     private suspend fun saveNotesLocally(note: Note) : Int {
        try {
            val localNoteId = offlineUserDataRepository.createNoteAndGetId(note)
@@ -73,7 +81,7 @@ class UpdateAndEditNoteScreenViewModel @Inject constructor(
         val note = Note(
             heading = updatedShortNote.heading,
             content = updatedShortNote.content ,
-            id = updatedShortNote.localNoteId ?: -1 ,
+            localNoteId = updatedShortNote.localNoteId ?: -1 ,
             noteId = updatedShortNote.id ,
             createdAt = LocalDateTime.now().toString() ,
             version = updatedShortNote.version ,

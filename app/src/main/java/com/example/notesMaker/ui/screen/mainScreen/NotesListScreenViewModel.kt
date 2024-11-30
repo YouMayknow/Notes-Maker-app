@@ -25,9 +25,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -76,7 +74,7 @@ class NotesListScreenViewModel @Inject constructor(
                     content = it.content ,
                     heading = it.heading,
                     id = it.noteId ?: -1,
-                    localNoteId = it.id,
+                    localNoteId = it.localNoteId,
                     version = it.version
                 )
             }
@@ -231,7 +229,7 @@ class NotesListScreenViewModel @Inject constructor(
                                 content = offlineNote.content,
                                 heading = offlineNote.heading,
                                 id = offlineNote.noteId ?: -1,
-                                localNoteId = offlineNote.id,
+                                localNoteId = offlineNote.localNoteId,
                                 version = offlineNote.version,
                                 lastUpdated = offlineNote.lastUpdated
                             )

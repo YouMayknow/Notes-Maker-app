@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:rotation="6"
+    android:rotationY="6"
+    android:scrollbarSize="12.dp"
+    android:textAlignment="center">
+
+    <EditText
+        android:id="@+id/helper_function"
+        android:layout_width="384dp"
+        android:layout_height="457dp"
+        android:ems="10"
+        android:inputType="text"
+        android:text="@string/Login" />
+</LinearLayout>

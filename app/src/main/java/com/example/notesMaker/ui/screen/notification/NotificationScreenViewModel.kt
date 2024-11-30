@@ -58,7 +58,7 @@ class NotificationScreenViewModel  @Inject constructor(
         val unSyncedNotes = localDataRepository.getUnSyncedNotes()
         Log.e(LOGGING_OF_APP, "worker came to retry function")
         for (unSyncedNote in unSyncedNotes) {
-            Log.e(LOGGING_OF_APP, "Retrying to sync notes with id ${unSyncedNote.id} and heading : ${unSyncedNote.heading}")
+            Log.e(LOGGING_OF_APP, "Retrying to sync notes with id ${unSyncedNote.localNoteId} and heading : ${unSyncedNote.heading}")
             viewModelScope.launch{
                 if (unSyncedNote.noteId == null || unSyncedNote.noteId == -1) {
                     Log.e(LOGGING_OF_APP, "Retrying to save notes with heading ${unSyncedNote.heading}")
