@@ -14,6 +14,9 @@ fun NavGraphBuilder.nestedAuthNavigation (navController : NavHostController) {
         }
     }
 }
-@Serializable object EntryScreen
-@Serializable object SignUpScreen
-@Serializable object MainScreen
+@Serializable   object EntryScreen
+@Serializable  object SignUpScreen
+@Serializable  object MainScreen
+@Serializable private object ForgotPasswordScreen
+@Serializable private object ResetPasswordScreen
+@Serializable private object LoginScreen

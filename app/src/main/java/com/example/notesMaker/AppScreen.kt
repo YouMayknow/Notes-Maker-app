@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.LayoutDirection
@@ -22,7 +24,8 @@ fun AppScreen(
         end = WindowInsets.safeDrawing
             .asPaddingValues()
             .calculateEndPadding(layoutDirection = LayoutDirection.Ltr )
-    )
+    ).navigationBarsPadding()
+        .statusBarsPadding()
 ) {
-   HomeScreen()
+   HomeScreen(modifier)
 }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.example.notesMaker.navigation.NavigationScreen
+import com.example.notesMaker.ui.screen.entryScreen.ForgotPasswordScreen
 import com.example.notesMaker.ui.screen.entryScreen.LoginScreen
 import com.example.notesMaker.ui.screen.entryScreen.SignupScreen
 
@@ -18,5 +19,6 @@ is implemented with it
 fun HomeScreen (
     modifier: Modifier = Modifier ,
 ) {
-    SignupScreen(modifier)
+//    ForgotPasswordScreen(modifier, {}){}
+    SignupScreen({} , {})
 }

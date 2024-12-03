@@ -50,4 +50,10 @@
     <string name="or">Or</string>
     <string name="full_name">Full Name</string>
     <string name="already_have_account_login">Already have account ? Login here</string>
+    <string name="back_to_login"> Back to Login</string>
+    <string name="create_a_new_password">Create a New Password</string>
+    <string name="your_new_password_should_be_different_from_the_previous_password">Your new password should be different from the previous password</string>
+    <string name="new_password">New Password</string>
+    <string name="min_8_characters_combination_of_0_9_a_z_a_z">min. 8 characters, combination of 0-9, A-Z, a-z</string>
+    <string name="retype_new_password">Retype New Password</string>
 </resources>

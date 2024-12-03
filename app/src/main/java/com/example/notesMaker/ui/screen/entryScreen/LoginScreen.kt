@@ -1,11 +1,6 @@
 package com.example.notesMaker.ui.screen.entryScreen
 
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.ScrollScope
-import androidx.compose.foundation.gestures.ScrollableState
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -45,7 +40,12 @@ import com.example.notesMaker.R
 import com.example.notesMaker.ui.theme.NotesMakerTheme
 
 @Composable
-fun LoginScreen(modifier: Modifier = Modifier) {
+fun LoginScreen(
+    modifier: Modifier = Modifier,
+    navigateToMainScreen : () -> Unit,
+    navigateToForgetPasswordScreen : () -> Unit,
+    navigateToRegisterScreen : () -> Unit,
+) {
     val scrollState = rememberScrollState()
     Column (
         modifier = modifier
@@ -118,14 +118,14 @@ fun LoginScreen(modifier: Modifier = Modifier) {
             textDecoration = TextDecoration.Underline,
             modifier = Modifier
                 .align(Alignment.Start)
-                .clickable { /* Handle forgot password */ }
+                .clickable { navigateToForgetPasswordScreen()}
         )
 
         Spacer(modifier = Modifier.height(30.dp))
 
         // Login Button
         Button(
-            onClick = { /* Handle login */ },
+            onClick = { navigateToMainScreen() },
             modifier = Modifier
                 .fillMaxWidth()
                 .height(48.dp),
@@ -174,7 +174,7 @@ fun LoginScreen(modifier: Modifier = Modifier) {
             text = stringResource(R.string.don_t_have_any_account_register_here),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.clickable { /* Handle register */ }
+            modifier = Modifier.clickable {navigateToRegisterScreen() }
         )
     }
 }
@@ -187,7 +187,6 @@ fun TextFieldLabel( name : Int , modifier : Modifier = Modifier ){
         text = stringResource(name),
         fontWeight = FontWeight.Bold,
         style = MaterialTheme.typography.bodyMedium,
-        color = MaterialTheme.colorScheme.onSurfaceVariant ,
         textAlign = TextAlign.Left,
         modifier = modifier.fillMaxWidth()
     )
@@ -195,7 +194,9 @@ fun TextFieldLabel( name : Int , modifier : Modifier = Modifier ){
 @Composable
 @Preview
 fun LoginScreenPreview() {
-    NotesMakerTheme (darkTheme = false){
-        LoginScreen()
+    NotesMakerTheme (darkTheme = true){
+       LoginScreen(
+           navigateToMainScreen = {} , navigateToForgetPasswordScreen =  {}
+       ) { }
     }
 }

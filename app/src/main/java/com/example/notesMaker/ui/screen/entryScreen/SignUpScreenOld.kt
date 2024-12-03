@@ -52,7 +52,7 @@ import com.example.notesMaker.ui.theme.NotesMakerTheme
 @Composable
 fun SignupScreenOld(
     modifier: Modifier = Modifier,
-    viewModel: EntryScreenViewModel = hiltViewModel(),
+    viewModel: EntryScreenViewModelOld = hiltViewModel(),
     navigateToMainScreen : () -> Unit
 ) {
     Box(
